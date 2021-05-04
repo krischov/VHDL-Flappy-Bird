@@ -14,13 +14,23 @@ end entity;
 architecture x of main is 
 	signal y0, x0: integer := 50;
 	signal w, h: integer := 15;
+	signal colour: std_logic_vector(3 downto 0) := "0000";
 begin
 
 	process(clk)
 	begin
+		-- change background colour
+		if (mouse_lbtn = '1') then
+			colour <= "0101";
+		elsif (mouse_rbtn = '1') then
+			colour <= "1010";
+		else
+			colour <= "0000";
+		end if;
+		
 		-- draw red square
 		if (vga_row < std_logic_vector(to_unsigned(y0 + w, 10))) then
-			red_out <= "1111";
+			red_out <= colour;
 			green_out <= "0000";
 			blue_out <= "0000";
 		else
