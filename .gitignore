@@ -1,3 +1,4 @@
 # Vim VHDL intelisense tool convig 
 vhdltool-config.yaml
-
+# Ignore quartus backup files 
+*.bak
