@@ -5,8 +5,10 @@ use ieee.numeric_std.all;
 entity main is
 	port (signal clk : in std_ulogic;
 		signal vga_row, vga_col : in std_logic_vector(9 downto 0);
+		 mouse_lbtn, mouse_rbtn : in std_logic;
+		 mouse_row 			: in std_logic_vector(9 DOWNTO 0); 
+		 mouse_col 		: in std_logic_vector(9 DOWNTO 0);       	
 		signal red_out, green_out, blue_out : OUT STD_LOGIC_VECTOR(3 downto 0));
-		
 end entity;
 
 architecture x of main is 
