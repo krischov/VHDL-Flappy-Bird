@@ -2,3 +2,7 @@
 vhdltool-config.yaml
 # Ignore quartus backup files 
 *.bak
+# Ignore compilation output files
+output_files/
+*db/
+
