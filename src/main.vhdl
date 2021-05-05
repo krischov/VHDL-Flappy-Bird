@@ -12,8 +12,8 @@ entity main is
 end entity;
 
 architecture x of main is 
-	signal y0, x0: integer := 50;
-	signal w, h: integer := 15;
+	signal y0, x0: integer := 200;
+	signal w, h: integer := 100;
 	signal colour: std_logic_vector(3 downto 0) := "0000";
 begin
 
@@ -25,11 +25,12 @@ begin
 		elsif (mouse_rbtn = '1') then
 			colour <= "1010";
 		else
-			colour <= "0000";
+			colour <= "1111";
 		end if;
 		
 		-- draw red square
-		if (vga_row < std_logic_vector(to_unsigned(y0 + w, 10))) then
+		if (vga_row < std_logic_vector(to_unsigned(y0 + h, 10)) and vga_row > std_logic_vector(to_unsigned(y0, 10)) and 
+				vga_col < std_logic_vector(to_unsigned(x0 + w, 10)) and vga_col > std_logic_vector(to_unsigned(x0, 10))) then
 			red_out <= colour;
 			green_out <= "0000";
 			blue_out <= "0000";
