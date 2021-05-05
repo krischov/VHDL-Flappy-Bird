@@ -2,6 +2,9 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+library lib;
+use lib.textengine_package.all;
+
 entity main is
 	port (clk : in std_ulogic;
 		 vga_row, vga_col : in unsigned(9 downto 0);
@@ -16,24 +19,25 @@ architecture x of main is
 	signal w, h: unsigned(9 downto 0) := to_unsigned(100, 10);
 	signal colour: unsigned(3 downto 0) := "0000";
 	
-	signal x : std_logic := '0';
-
-	
-	-- components go here 
-	COMPONENT char_rom IS
-	PORT
-	(
-		character_address	:	IN STD_LOGIC_VECTOR (5 DOWNTO 0);
-		font_row, font_col	:	IN STD_LOGIC_VECTOR (2 DOWNTO 0);
-		clock				: 	IN STD_LOGIC ;
-		rom_mux_output		:	OUT STD_LOGIC
-	);
-	END COMPONENT char_rom;
+	signal text_vector: textengine_vector := (others => init_textengine_row);
+	signal txt_r : unsigned(3 downto 0) := "0000";
+	signal txt_g : unsigned(3 downto 0) := "0000";
+	signal txt_b : unsigned(3 downto 0) := "0000";
+	signal txt_not_a : unsigned(3 downto 0) := "0000";
 	
 begin
-	-- Try get some text on the screen
-	cr1: char_rom port map ("000001", std_logic_vector(vga_row(2 downto 0)), std_logic_vector(vga_col(2 downto 0)), clk, x);
+	textengine0: textengine port map(clk, text_vector, vga_row, vga_col, txt_r, txt_g, txt_b, txt_not_a);
+
+	text_vector(0).txt(1 to 55) <= "ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789 []!@#$%""()&*+-,./";
+	text_vector(0).txt_len <= to_unsigned(55, text_vector(0).txt_len'length);
 	
+	text_vector(5).txt(1 to 29) <= "The Modelsim Mobsters Present";
+	text_vector(5).txt_len <= to_unsigned(29, text_vector(5).txt_len'length);
+	text_vector(6).txt(1 to 17) <= "text (in colour!)";
+	text_vector(6).txt_len <= to_unsigned(17, text_vector(6).txt_len'length);
+	text_vector(6).r <= "1010";
+	text_vector(6).g <= "0101";
+	text_vector(6).b <= "1100";
 	
 	process(clk)
 	begin
@@ -46,16 +50,17 @@ begin
 			colour <= "1111";
 		end if;
 	
+		-- draw text
+		if (txt_not_a = "1111") then
+			red_out <= txt_r;
+			green_out <= txt_g;
+			blue_out <= txt_b;
 		-- draw red square
-		if (vga_row < y0 + h and vga_row > y0 and 
+		elsif (vga_row < y0 + h and vga_row > y0 and 
 				vga_col < x0 + w and vga_col > x0) then
 			red_out <= colour;
 			green_out <= "0000";
 			blue_out <= "0000";
-		elsif (vga_row > 7 and vga_row < 16 and vga_col > 7 and vga_col < 16) then
-			red_out <= x & x & x & x;
-			green_out <= x & x & x & x;
-			blue_out <= x & x & x & x;
 		else
 			red_out <= "0000";
 			green_out <= "0000";
