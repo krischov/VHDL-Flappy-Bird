@@ -76,8 +76,8 @@ set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -
 set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -fall
 set_location_assignment PIN_P22 -to mouse_clk
 set_location_assignment PIN_P21 -to mouse_data
+set_global_assignment -name MIF_FILE tcgrom.mif
 set_global_assignment -name VHDL_FILE ../src/bcd27seg.vhdl
-set_global_assignment -name MIF_FILE ../src/TCGROM.MIF
 set_global_assignment -name VHDL_FILE ../src/vga_sync.vhd
 set_global_assignment -name VHDL_FILE ../src/mouse.vhd
 set_global_assignment -name VHDL_FILE ../src/char_rom.vhd
