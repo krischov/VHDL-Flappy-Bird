@@ -14,8 +14,9 @@ package textengine_package is
 		col			: unsigned(9 downto 0);
 		char_row	: unsigned(5 downto 0);
 		char_col	: unsigned(6 downto 0);
-		txt			: string(1 to 80);
-		txt_len		: unsigned(6 downto 0); -- number of characters in string
+		txt			: string(1 to 80);		-- note string should be NUL terminated!
+		txt_len		: unsigned(6 downto 0); -- number of characters in string (minus NUL byte)
+		scale		: unsigned(3 downto 0); -- scale character with 1 being 8x8, 2 being 16x16, 3 being 32x32; 4 being 64x64 etc.
 		r			: unsigned(3 downto 0);
 		g			: unsigned(3 downto 0);
 		b			: unsigned(3 downto 0);
@@ -28,13 +29,44 @@ package textengine_package is
 			char_col => to_unsigned(0, textengine_row.char_col'length), 
 			txt => (others => '0'),
 			txt_len => to_unsigned(0, textengine_row.txt_len'length),
+			scale => to_unsigned(0, textengine_row.scale'length),
 			r => "1111",
 			g => "1111",
 			b => "1111"
 		);		
 	type textengine_vector is array (59 downto 0) of textengine_row;
 	
-		-- function to map character to char_rom address
+	
+	-- add the string s to the text vector txt_vector
+	procedure str2text(
+		signal txt_vector	: inout textengine_vector; 
+		in_char_row			: in unsigned(5 downto 0);
+		in_char_col			: in unsigned(6 downto 0);
+		in_scale			: in unsigned(3 downto 0);
+		in_r				: in unsigned(3 downto 0);
+		in_g				: in unsigned(3 downto 0);
+		in_b				: in unsigned(3 downto 0);
+		s 					: in string
+	);
+		
+	-- wrapper for str2text that converts integer paramaters to unsigned 
+	procedure str2text(
+		signal txt_vector	: inout textengine_vector; 
+		in_char_row			: in integer;
+		in_char_col			: in integer;
+		in_scale			: in integer;
+		in_r				: in unsigned(3 downto 0);
+		in_g				: in unsigned(3 downto 0);
+		in_b				: in unsigned(3 downto 0);
+		s 					: in string
+	);
+	
+	
+	-- function to return a string of variable length with only the 
+	-- data you want filled (remaining bytes are nulled out)
+	function var_len_str(s : in string; total_len : positive range 1 to 80) return string;
+	
+	-- function to map character to char_rom address
 	function char2rom(c : in character) return unsigned;
 
 	
@@ -55,6 +87,87 @@ package textengine_package is
 end package;
 
 package body textengine_package is
+
+	-- function to return a string of variable length with only the 
+	-- data you want filled (remaining bytes are nulled out)
+	function var_len_str(s : in string; total_len : positive range 1 to 80) return string is
+		variable result : string(1 to total_len) := (others => nul);
+	begin
+		result(1 to s'length) := s;
+		return result;
+	end function;
+
+	-- add the string s to the text vector txt_vector
+	procedure str2text(
+		signal txt_vector	: inout textengine_vector; 
+		in_char_row			: in unsigned(5 downto 0);
+		in_char_col			: in unsigned(6 downto 0);
+		in_scale			: in unsigned(3 downto 0);
+		in_r				: in unsigned(3 downto 0);
+		in_g				: in unsigned(3 downto 0);
+		in_b				: in unsigned(3 downto 0);
+		s 					: in string
+	) is
+		variable len : positive range 1 to 127;
+		-- string index must start @ 1 (doens't start at 0)
+		variable start_idx : positive range 1 to 127;
+		variable end_idx : positive range 1 to 127;
+	begin
+		
+		if (s(s'length) = nul) then
+		-- find the actual length of the string (strign ends at last printable character before null)
+			for i in s'length - 1 downto 1 loop
+				if (s(i) /= nul and s(i + 1) = nul) then
+					len := i;
+					exit;
+				end if;
+			end loop;
+		else
+			-- the last character is not null, thus the string does not contain the null character
+			-- so the actual length of the string is the length of the string
+			len := s'length;
+		end if;
+		
+		start_idx := to_integer(in_char_col) + 1;
+		end_idx := start_idx + s'length - 1;
+		
+		txt_vector(to_integer(in_char_row)) <=
+			(
+				row => "0000000000",
+				col => "0000000000",
+				char_row => in_char_row, 
+				char_col => in_char_col, 
+				txt_len => to_unsigned(len, 7),
+				txt => (others => nul), -- initalise everything to null
+				scale => in_scale,
+				r => in_r,
+				g => in_g,
+				b => in_b
+			);
+			
+			txt_vector(to_integer(in_char_row)).txt(start_idx to end_idx) <= s;
+	
+	end procedure;
+
+	-- wrapper for str2text that converts integer paramaters to unsigned 
+	procedure str2text(
+		signal txt_vector	: inout textengine_vector; 
+		in_char_row			: in integer;
+		in_char_col			: in integer;
+		in_scale			: in integer;
+		in_r				: in unsigned(3 downto 0);
+		in_g				: in unsigned(3 downto 0);
+		in_b				: in unsigned(3 downto 0);
+		s 					: in string
+	) is
+	begin
+		str2text(txt_vector, 
+			to_unsigned(in_char_row, textengine_row.char_row'length),
+			to_unsigned(in_char_col, textengine_row.char_col'length),
+			to_unsigned(in_scale, textengine_row.scale'length),
+			in_r, in_g, in_b, s);
+	end procedure;
+
 	-- function to map character to char_rom address
 	function char2rom(c : in character := '!') return unsigned is
 	begin

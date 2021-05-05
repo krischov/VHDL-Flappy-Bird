@@ -25,31 +25,48 @@ architecture x of main is
 	signal txt_b : unsigned(3 downto 0) := "0000";
 	signal txt_not_a : unsigned(3 downto 0) := "0000";
 	
+	signal mouse_btn : string(1 to 50) := var_len_str("No Mouse Button Pressed", 50);
+	
 begin
 	textengine0: textengine port map(clk, text_vector, vga_row, vga_col, txt_r, txt_g, txt_b, txt_not_a);
 
-	text_vector(0).txt(1 to 55) <= "ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789 []!@#$%""()&*+-,./";
-	text_vector(0).txt_len <= to_unsigned(55, text_vector(0).txt_len'length);
+	str2text(text_vector, 0, 0, 1, "1111", "1111", "1111", "ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789 []!@#$%""()&*+-,./");
+	str2text(text_vector, 1, 0, 1, "1111", "0000", "0000", ".........1.........2.........3.........4.........5.........6.........7.........8");
+	str2text(text_vector, 59, 0, 1, "1111", "0000", "0000", ".........1.........2.........3.........4.........5.........6.........7.........8");
+	str2text(text_vector, 5, 30, 1, "1111", "1111", "1111", "The Modelsim Mobsters Present");
+	str2text(text_vector, 6, 30, 1, "1010", "0101", "1100", "text (in colour!)");
+	str2text(text_vector, 10, 30, 1, "0011", "1100", "1001", mouse_btn);
+	str2text(text_vector, 11, 30, 1, "0011", "1100", "1001", "Null Here /" & nul);
+
 	
-	text_vector(5).txt(1 to 29) <= "The Modelsim Mobsters Present";
-	text_vector(5).txt_len <= to_unsigned(29, text_vector(5).txt_len'length);
-	text_vector(6).txt(1 to 17) <= "text (in colour!)";
-	text_vector(6).txt_len <= to_unsigned(17, text_vector(6).txt_len'length);
-	text_vector(6).r <= "1010";
-	text_vector(6).g <= "0101";
-	text_vector(6).b <= "1100";
-	
+	--	Old Text System (In A Previous Git Commit)
+--	text_vector(0).txt(1 to 55) <= "ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789 []!@#$%""()&*+-,./";
+--	text_vector(0).txt_len <= to_unsigned(55, text_vector(0).txt_len'length);
+--	
+--	text_vector(5).txt(1 to 29) <= "The Modelsim Mobsters Present";
+--	text_vector(5).txt_len <= to_unsigned(29, text_vector(5).txt_len'length);
+--	text_vector(6).txt(1 to 17) <= "text (in colour!)";
+--	text_vector(6).txt_len <= to_unsigned(17, text_vector(6).txt_len'length);
+--	text_vector(6).r <= "1010";
+--	text_vector(6).g <= "0101";
+--	text_vector(6).b <= "1100";
+--	
+
 	process(clk)
+		variable counter : integer := 1;
 	begin
 		-- change background colour
 		if (mouse_lbtn = '1') then
 			colour <= "0101";
+			mouse_btn <= var_len_str("Left Mouse button Pressed", mouse_btn'length);
 		elsif (mouse_rbtn = '1') then
 			colour <= "1010";
+			mouse_btn <= var_len_str("Right Mouse button Pressed", mouse_btn'length);
 		else
 			colour <= "1111";
+			mouse_btn <= var_len_str("No Mouse button Pressed", mouse_btn'length);
 		end if;
-	
+		
 		-- draw text
 		if (txt_not_a = "1111") then
 			red_out <= txt_r;

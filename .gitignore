@@ -5,4 +5,4 @@ vhdltool-config.yaml
 # Ignore compilation output files
 output_files/
 *db/
-
+.qsys_edit/
