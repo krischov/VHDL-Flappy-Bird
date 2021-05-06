@@ -37,6 +37,8 @@ package textengine_package is
 	type textengine_vector is array (59 downto 0) of textengine_row;
 	
 	
+	function int2str(n : in integer) return string;
+	
 	-- add the string s to the text vector txt_vector
 	procedure str2text(
 		signal txt_vector	: inout textengine_vector; 
@@ -87,6 +89,35 @@ package textengine_package is
 end package;
 
 package body textengine_package is
+
+	function int2str(n : in integer range 0 to 16383) return string is 
+		-- max integer value is (2^13 - 1) = 16383 = 5 characters
+		variable len : integer range 0 to 9 := 0;
+		constant max_digits : integer range 0 to 9 := 5;
+		
+		variable s : string(1 to 10);
+		variable x : integer range 0 to 16384 := n;
+		variable digits : string(1 to 10) := "0123456789";
+	begin
+		for i in max_digits downto 1 loop
+			len := len + 1;
+			x := x / 10;
+			if (x < 1) then
+				exit;
+			end if;
+		end loop;		
+		x := n;
+		for i in max_digits downto 1 loop
+			if (i > len) then
+				next;
+			end if;
+			s(i) := digits(x mod 10 + 1);
+			x := x / 10;
+		end loop;
+		
+		s(len + 1) := nul;
+		return s;
+	end function;
 
 	-- function to return a string of variable length with only the 
 	-- data you want filled (remaining bytes are nulled out)
@@ -233,6 +264,7 @@ package body textengine_package is
 			when '8' => return o"70";
 			when '9' => return o"71";
 			
+			when nul => return o"46"; -- return an ampersand for null
 			when others => return o"41"; -- unknown character is displays exclimation (!)
 		end case;
 	end function;
