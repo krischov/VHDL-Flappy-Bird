@@ -15,7 +15,7 @@ entity main is
 end entity;
 
 architecture x of main is 
-	signal y0, x0: unsigned(9 downto 0) := to_unsigned(200, 10);
+	signal y0, x0: unsigned(9 downto 0) := to_unsigned(50, 10);
 	signal w, h: unsigned(9 downto 0) := to_unsigned(100, 10);
 	signal colour: unsigned(3 downto 0) := "0000";
 	
@@ -45,11 +45,27 @@ begin
 	
 	process(clk)
 		variable ticks : integer := 0;
+		variable square_at_bottom : boolean := false;
 	begin
 		if (rising_edge(clk)) then
 			ticks := ticks + 1;
 			if (ticks >= 25000000) then
+				-- things to happen every second
 				num_test <= num_test + 1;
+				
+				-- make the red square move in a square
+				if (square_at_bottom) then
+					y0 <= y0 - 10;
+					if (y0 <= 50) then
+						square_at_bottom := false;
+					end if;
+				else
+					y0 <= y0 + 10;
+					if (y0 >= 250) then
+						square_at_bottom := true;
+					end if;
+				end if;
+				
 				bcd_test <= bcd_test + 1;
 				ticks := 0;
 			end if;
@@ -65,8 +81,6 @@ begin
 				colour <= "1111";
 				mouse_btn <= var_len_str("No Mouse button Pressed", mouse_btn'length);
 			end if;
-			
-			
 			
 			-- draw text
 			if (txt_not_a = "1111") then
