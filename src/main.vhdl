@@ -27,7 +27,7 @@ architecture x of main is
 	
 	signal mouse_btn : string(1 to 50) := var_len_str("No Mouse Button Pressed", 50);
 	
-	signal num_test : integer range 1 to 50 := 50;
+	signal num_test : natural range 0 to 2**16-1 := 65525;
 begin
 	textengine0: textengine port map(clk, text_vector, vga_row, vga_col, txt_r, txt_g, txt_b, txt_not_a);
 	
