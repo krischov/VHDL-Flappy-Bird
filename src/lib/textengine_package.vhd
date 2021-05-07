@@ -27,7 +27,7 @@ package textengine_package is
 			col => to_unsigned(0, textengine_row.col'length), 
 			char_row => to_unsigned(0, textengine_row.char_row'length), 
 			char_col => to_unsigned(0, textengine_row.char_col'length), 
-			txt => (others => '0'),
+			txt => (others => nul),
 			txt_len => to_unsigned(0, textengine_row.txt_len'length),
 			scale => to_unsigned(0, textengine_row.scale'length),
 			r => "1111",
@@ -61,12 +61,22 @@ package textengine_package is
 	);
 	
 	
+	-- This function takes a (maximum) 14bit unsigned input and converts it to a string
+	-- The function is only accurate in the range: 0 to 2^14 - 1
+	function int2str(n : in natural range 0 to 2**14-1) return string;
+	function int2str(n : in unsigned(13 downto 0)) return string;
 	
-	function int2str(n : in natural range 0 to 2**16-1) return string;
-
+	-- this function takes an input of max unsigned 2^13 bits (range 0 to 8191) and places the seven segment
+	-- code for the corrosponding digits in d3, d2, d1 and d0 
+	-- (with d3 being the most significant digit and d0 being the least significant digit).
+	-- (note the input is limited to 2^13 bits as there are only 4 seven-segment-displays on the FPGA)
+	procedure int2bcd(n: in natural range 0 to 2**13-1; d3, d2, d1, d0 : out unsigned(7 downto 0));
+	procedure int2bcd(n: in unsigned(12 downto 0); d3, d2, d1, d0 : out unsigned(7 downto 0));
+	
+	
 	-- function to return a string of variable length with only the 
 	-- data you want filled (remaining bytes are nulled out)
-	function var_len_str(s : in string; total_len : positive range 1 to 80) return string;
+	function var_len_str(s : in string; total_len : in positive range 1 to 80) return string;
 	
 	-- function to map character to char_rom address
 	function char2rom(c : in character) return unsigned;
@@ -90,38 +100,50 @@ end package;
 
 package body textengine_package is
 
-	function int2str(n : in natural range 0 to 2**16-1) return string is
-		-- max integer value is (2^13 - 1) = 8191 = 4 characters
+	-- This function takes a (maximum) 14bit unsigned input and converts it to a string
+	-- The function is only accurate in the range: 0 to 2^14 - 1
+	-- This is because division and mod operations are extreamly slow
+	-- Thus we use strength reduction to impliment an approximate division and mod
+	-- 	using only additions and bitshifts.
+	-- This means any number from 0 to 16383 will be correctly converted to a string.
+	-- The original (exact accuracy) implimentation is left in comments for code clarity.
+	function int2str(n : in natural range 0 to 2**14-1) return string is
+	begin
+		return int2str(to_unsigned(n, 14));
+	end function;
+	function int2str(n : in unsigned(13 downto 0)) return string is
+		-- max integer value is (2^14 - 1) = 16383 = 5 characters
 		variable len : natural range 0 to 7 := 0;
 		constant max_digits : natural range 0 to 7 := 5;
 		
 		variable s : string(1 to max_digits);
-		--variable x : unsigned(31 downto 0) := to_unsigned(n, 32);
-		variable x : natural range 0 to 2**16-1 := n;
+		variable x : unsigned(31 downto 0) := resize(n, 32);
+		--variable x : natural range 0 to 2**16-1 := to_integer(n);
 		variable digits : string(1 to 10) := "0123456789";
 	begin
 		for i in max_digits downto 1 loop
 			len := len + 1;
-			--x := shift_right(shift_left(x, 12) + shift_left(x, 11) + shift_left(x, 8) + shift_left(x, 7) + shift_left(x, 4) + shift_left(x, 3) + shift_left(x, 1), 16);
-			x := x / 10;
+			-- apx. division of (x / 10) by (x / 10) = (1/x * 10) ~= ((1/10) * 2^16 * x) / 2^16) ~= 6554 * x / 65536
+			x := shift_right(shift_left(x, 12) + shift_left(x, 11) + shift_left(x, 8) + shift_left(x, 7) + shift_left(x, 4) + shift_left(x, 3) + shift_left(x, 1), 16);
+			--x := x / 10;
 			if (x < 1) then
 				exit;
 			end if;
 		end loop;		
-		--x := to_unsigned(n, x'length);
-		x := n;
+		x := resize(n, 32);
+		--x := to_integer(n);
 		for i in max_digits downto 1 loop
 			if (i > len) then
 				next;
 			end if;
-			-- a % b = a - (b * (int) (a/b))
---			s(i) := digits(to_integer(x - (
---						shift_left(shift_right(shift_left(x, 12) + shift_left(x, 11) + shift_left(x, 8) + shift_left(x, 7) + shift_left(x, 4) + shift_left(x, 3) + shift_left(x, 1), 16), 3) +
---						shift_left(shift_right(shift_left(x, 12) + shift_left(x, 11) + shift_left(x, 8) + shift_left(x, 7) + shift_left(x, 4) + shift_left(x, 3) + shift_left(x, 1), 16), 1)) 
---					) + 1);
-			s(i) := digits(x mod 10 + 1);
-			--x := shift_right(shift_left(x, 12) + shift_left(x, 11) + shift_left(x, 8) + shift_left(x, 7) + shift_left(x, 4) + shift_left(x, 3) + shift_left(x, 1), 16);
-			x := x / 10;
+			-- The C Programming Language's defintion of mod/remainder: a % b = a - (b * (int) (a/b))
+			s(i) := digits(to_integer(x - (
+						shift_left(shift_right(shift_left(x, 12) + shift_left(x, 11) + shift_left(x, 8) + shift_left(x, 7) + shift_left(x, 4) + shift_left(x, 3) + shift_left(x, 1), 16), 3) +
+						shift_left(shift_right(shift_left(x, 12) + shift_left(x, 11) + shift_left(x, 8) + shift_left(x, 7) + shift_left(x, 4) + shift_left(x, 3) + shift_left(x, 1), 16), 1)) 
+					) + 1);
+			--s(i) := digits(x mod 10 + 1);
+			x := shift_right(shift_left(x, 12) + shift_left(x, 11) + shift_left(x, 8) + shift_left(x, 7) + shift_left(x, 4) + shift_left(x, 3) + shift_left(x, 1), 16);
+			--x := x / 10;
 		end loop;
 		
 		s(len + 1) := nul;
@@ -129,41 +151,82 @@ package body textengine_package is
 	
 	end function;
 
---	function int2str(n : in integer range 0 to 16383) return string is 
---		-- max integer value is (2^13 - 1) = 16383 = 5 characters
---		variable len : integer range 0 to 9 := 0;
---		constant max_digits : integer range 0 to 9 := 5;
---		
---		variable s : string(1 to 10);
---		variable x : integer range 0 to 16384 := n;
---		variable digits : string(1 to 10) := "0123456789";
---	begin
---		for i in max_digits downto 1 loop
---			len := len + 1;
---			x := x / 10;
---			if (x < 1) then
---				exit;
---			end if;
---		end loop;		
---		x := n;
---		for i in max_digits downto 1 loop
---			if (i > len) then
---				next;
---			end if;
---			s(i) := digits(x mod 10 + 1);
---			x := x / 10;
---		end loop;
---		
---		s(len + 1) := nul;
---		return s;
---	end function;
-
+	-- this function takes an input of max unsigned 2^13 bits (range 0 to 8191) and places the seven segment
+	-- code for the corrosponding digits in d3, d2, d1 and d0 
+	-- (with d3 being the most significant digit and d0 being the least significant digit).
+	-- (note the input is limited to 2^13 bits as there are only 4 seven-segment-displays on the FPGA)
+	procedure int2bcd(n: in natural range 0 to 2**13-1; d3, d2, d1, d0 : out unsigned(7 downto 0)) is
+	begin
+		int2bcd(to_unsigned(n, 13), d3, d2, d1, d0);
+	end procedure;
+	procedure int2bcd(n: in unsigned(12 downto 0); d3, d2, d1, d0 : out unsigned(7 downto 0)) is
+		variable s: string(1 to 4) := var_len_str(int2str(resize(n, 14)), 4);
+		
+		function digit27seg(c: in character) return unsigned is
+			variable q : unsigned(7 downto 0);
+		begin
+			if (c = '0') then
+				return "11000000";
+			elsif (c = '1') then
+				return "11111001";
+			elsif (c = '2') then
+				return "10100100";
+			elsif (c = '3') then
+				return "10110000";
+			elsif (c = '4') then
+				return "10011001";
+			elsif (c = '5') then
+				return "10010010";
+			elsif (c = '6') then
+				return "10000010";
+			elsif (c = '7') then
+				return "11111000";
+			elsif (c = '8') then
+				return "10000000";
+			elsif (c = '9') then
+				return "10011000";
+			else
+				return "11111111";
+			end if;
+		end function;
+	begin
+		if (s(4) /= nul) then -- no null digits
+			d3 := digit27seg(s(4));
+			d2 := digit27seg(s(3));
+			d1 := digit27seg(s(2));
+			d0 := digit27seg(s(1));
+		elsif (s(3) /= nul) then -- most significant digit is null (0)
+			d3 := digit27seg('0');
+			d2 := digit27seg(s(3));
+			d1 := digit27seg(s(2));
+			d0 := digit27seg(s(1));
+		elsif (s(2) /= nul) then
+			d3 := digit27seg('0');
+			d2 := digit27seg('0');
+			d1 := digit27seg(s(2));
+			d0 := digit27seg(s(1));
+		else
+			d3 := digit27seg('0');
+			d2 := digit27seg('0');
+			d1 := digit27seg('0');
+			d0 := digit27seg(s(1));
+		end if;
+	end procedure;
+	
 	-- function to return a string of variable length with only the 
 	-- data you want filled (remaining bytes are nulled out)
-	function var_len_str(s : in string; total_len : positive range 1 to 80) return string is
+	function var_len_str(s : in string; total_len : in positive range 1 to 80) return string is
 		variable result : string(1 to total_len) := (others => nul);
 	begin
-		result(1 to s'length) := s;
+		if (s'length <= total_len) then
+			result(1 to s'length) := s;
+		else
+			-- the string is to long to fit in users buffer.
+			-- lets just take the most significant characters (left most characters)
+			-- and work our way right (to least significant) as much as we can.
+			result(1 to total_len) := s(1 to total_len);
+		end if;
+			
 		return result;
 	end function;
 

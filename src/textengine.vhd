@@ -53,5 +53,6 @@ begin
 	r <= txtrow.r;
 	g <= txtrow.g;
 	b <= txtrow.b;
-	not_a <= (others => pixel) when (char_col + 1 > txtrow.char_col and char_col < txtrow.char_col + txtrow.txt_len) else "0000";
+	--not_a <= (others => pixel) when (char_col + 1 > txtrow.char_col and char_col < txtrow.char_col + txtrow.txt_len) else "0000";
+	not_a <= (others => pixel) when txtrow.txt(to_integer(char_col) + 1) /= nul else "0000";
 end architecture;
