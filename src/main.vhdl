@@ -50,12 +50,13 @@ begin
 			if (ticks >= 25000000) then
 				-- things to happen every second
 				num_test <= num_test + 1;
+
 				
 				-- make the red square move in a square
-				if (not (y0 <= 50) and pb_0 = '1') then
-					y0 <= y0 - 2;
-				elsif(not (y0 >= 430) and pb_1 = '1') then
-					y0 <= y0 + 2;
+				if (not (y0 < 50) and pb_0 = '1') then
+					y0 <= y0 - 10;
+				elsif(not (y0 > 430) and pb_1 = '1') then
+					y0 <= y0 + 10;
 				end if;
 				
 				ticks := 0;
@@ -81,12 +82,9 @@ begin
 			-- draw red square
 			elsif (vga_row < y0 + h and vga_row > y0 and 
 					vga_col < x0 + w and vga_col > x0) then
-				red_out <= "1111";
-				green_out <= "1111";
-				blue_out <= "1111";
-				--red_out <= red_in & '0';
-				--green_out <= green_in & '0';
-				--blue_out <= blue_in & '0';
+				red_out <= red_in & '0';
+				green_out <= green_in & '0';
+				blue_out <= blue_in & '0';
 			else
 				red_out <= "0000";
 				green_out <= "0000";

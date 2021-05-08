@@ -12,8 +12,13 @@ begin
 	process (Clk)
 		begin
 		if (pb0 = '1') then
+			up <= '0';
+		else
 			up <= '1';
-		elsif (pb1 = '1') then
+		end if;
+		if (pb1 = '1') then
+			down <= '0';
+		else
 			down <= '1';
 		end if;
 	end process;
