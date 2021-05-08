@@ -12,7 +12,7 @@ entity main is
 		 mouse_row 			: in unsigned(9 DOWNTO 0); 
 		 mouse_col 		: in unsigned(9 DOWNTO 0);
 		 pb_0, pb_1 : in std_logic;
-		 red_in, green_in, blue_in : in unsigned (2 down to 0);
+		 red_in, green_in, blue_in : in unsigned (2 downto 0);
 		 red_out, green_out, blue_out : OUT unsigned(3 downto 0));
 end entity;
 
