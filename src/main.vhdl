@@ -10,7 +10,9 @@ entity main is
 		 vga_row, vga_col : in unsigned(9 downto 0);
 		 mouse_lbtn, mouse_rbtn : in std_logic;
 		 mouse_row 			: in unsigned(9 DOWNTO 0); 
-		 mouse_col 		: in unsigned(9 DOWNTO 0);       	
+		 mouse_col 		: in unsigned(9 DOWNTO 0);
+		 pb_0, pb_1 : in std_logic;
+		 red_in, green_in, blue_in : in unsigned (2 down to 0);
 		 red_out, green_out, blue_out : OUT unsigned(3 downto 0));
 end entity;
 
@@ -54,16 +56,10 @@ begin
 				num_test <= num_test + 1;
 				
 				-- make the red square move in a square
-				if (square_at_bottom) then
-					y0 <= y0 - 10;
-					if (y0 <= 50) then
-						square_at_bottom := false;
-					end if;
-				else
-					y0 <= y0 + 10;
-					if (y0 >= 250) then
-						square_at_bottom := true;
-					end if;
+				if (not (y0 <= 50) and pb_0 = '1') then
+					y0 <= y0 - 2;
+				elsif(not (y0 >= 430) and pb_1 = '1') then
+					y0 <= y0 + 2;
 				end if;
 				
 				bcd_test <= bcd_test + 1;
@@ -90,9 +86,9 @@ begin
 			-- draw red square
 			elsif (vga_row < y0 + h and vga_row > y0 and 
 					vga_col < x0 + w and vga_col > x0) then
-				red_out <= colour;
-				green_out <= "0000";
-				blue_out <= "0000";
+				red_out <= red_in & '0';
+				green_out <= green_in & '0';
+				blue_out <= blue_in & '0';
 			else
 				red_out <= "0000";
 				green_out <= "0000";
