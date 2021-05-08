@@ -38,23 +38,6 @@ applicable agreement for further details.
 )
 (pin
 	(input)
-	(rect 464 712 640 728)
-	(text "INPUT" (rect 133 0 161 10)(font "Arial" (font_size 6)))
-	(text "MouseToggleXY" (rect 9 0 86 12)(font "Arial" ))
-	(pt 176 8)
-	(drawing
-		(line (pt 92 12)(pt 117 12))
-		(line (pt 92 4)(pt 117 4))
-		(line (pt 121 8)(pt 176 8))
-		(line (pt 92 12)(pt 92 4))
-		(line (pt 117 4)(pt 121 8))
-		(line (pt 117 12)(pt 121 8))
-	)
-	(text "VCC" (rect 136 7 156 17)(font "Arial" (font_size 6)))
-	(annotation_block (location)(rect 408 728 464 744))
-)
-(pin
-	(input)
 	(rect 872 480 1040 496)
 	(text "INPUT" (rect 125 0 153 10)(font "Arial" (font_size 6)))
 	(text "pb_0" (rect 5 0 29 12)(font "Arial" ))
@@ -68,6 +51,7 @@ applicable agreement for further details.
 		(line (pt 109 12)(pt 113 8))
 	)
 	(text "VCC" (rect 128 7 148 17)(font "Arial" (font_size 6)))
+	(annotation_block (location)(rect 816 496 872 512))
 )
 (pin
 	(input)
@@ -84,6 +68,24 @@ applicable agreement for further details.
 		(line (pt 109 12)(pt 113 8))
 	)
 	(text "VCC" (rect 128 7 148 17)(font "Arial" (font_size 6)))
+	(annotation_block (location)(rect 816 512 872 528))
+)
+(pin
+	(input)
+	(rect 768 624 944 640)
+	(text "INPUT" (rect 133 0 161 10)(font "Arial" (font_size 6)))
+	(text "switches[9..0]" (rect 5 0 74 12)(font "Arial" ))
+	(pt 176 8)
+	(drawing
+		(line (pt 92 12)(pt 117 12))
+		(line (pt 92 4)(pt 117 4))
+		(line (pt 121 8)(pt 176 8))
+		(line (pt 92 12)(pt 92 4))
+		(line (pt 117 4)(pt 121 8))
+		(line (pt 117 12)(pt 121 8))
+	)
+	(text "VCC" (rect 136 7 156 17)(font "Arial" (font_size 6)))
+	(annotation_block (location)(rect 712 640 768 656))
 )
 (pin
 	(output)
@@ -254,7 +256,7 @@ applicable agreement for further details.
 		(line (pt 52 8)(pt 56 12))
 	)
 	(text "VCC" (rect 4 7 24 17)(font "Arial" (font_size 6)))
-	(annotation_block (location)(rect 520 440 576 456))
+	(annotation_block (location)(rect 520 408 576 424))
 )
 (pin
 	(bidir)
@@ -1125,16 +1127,8 @@ applicable agreement for further details.
 	(pt 664 752)
 )
 (connector
-	(pt 656 736)
-	(pt 656 720)
-)
-(connector
 	(pt 664 736)
 	(pt 656 736)
-)
-(connector
-	(pt 656 720)
-	(pt 640 720)
 )
 (connector
 	(pt 312 512)
@@ -1173,32 +1167,16 @@ applicable agreement for further details.
 	(pt 960 592)
 )
 (connector
-	(pt 648 440)
-	(pt 624 440)
+	(pt 592 616)
+	(pt 592 440)
 )
 (connector
-	(pt 624 616)
-	(pt 624 440)
-)
-(connector
-	(pt 648 456)
-	(pt 632 456)
-)
-(connector
-	(pt 632 456)
-	(pt 632 608)
-)
-(connector
-	(pt 632 608)
-	(pt 912 608)
+	(pt 600 456)
+	(pt 600 608)
 )
 (connector
 	(pt 912 608)
 	(pt 912 400)
-)
-(connector
-	(pt 624 616)
-	(pt 920 616)
 )
 (connector
 	(pt 920 616)
@@ -1247,6 +1225,123 @@ applicable agreement for further details.
 (connector
 	(pt 1040 504)
 	(pt 1064 504)
+)
+(connector
+	(pt 592 440)
+	(pt 648 440)
+)
+(connector
+	(pt 600 456)
+	(pt 648 456)
+)
+(connector
+	(pt 600 608)
+	(pt 912 608)
+)
+(connector
+	(pt 592 616)
+	(pt 920 616)
+)
+(connector
+	(pt 1192 640)
+	(pt 1208 640)
+	(bus)
+)
+(connector
+	(pt 1208 640)
+	(pt 1208 680)
+	(bus)
+)
+(connector
+	(pt 1208 680)
+	(pt 640 680)
+	(bus)
+)
+(connector
+	(pt 640 504)
+	(pt 648 504)
+	(bus)
+)
+(connector
+	(pt 640 504)
+	(pt 640 680)
+	(bus)
+)
+(connector
+	(pt 1192 624)
+	(pt 1216 624)
+	(bus)
+)
+(connector
+	(pt 1216 624)
+	(pt 1216 688)
+	(bus)
+)
+(connector
+	(pt 632 688)
+	(pt 632 488)
+	(bus)
+)
+(connector
+	(pt 1192 608)
+	(pt 1224 608)
+	(bus)
+)
+(connector
+	(pt 1224 608)
+	(pt 1224 696)
+	(bus)
+)
+(connector
+	(pt 632 488)
+	(pt 648 488)
+	(bus)
+)
+(connector
+	(pt 632 688)
+	(pt 1216 688)
+	(bus)
+)
+(connector
+	(pt 616 472)
+	(pt 616 696)
+	(bus)
+)
+(connector
+	(pt 616 472)
+	(pt 648 472)
+	(bus)
+)
+(connector
+	(pt 616 696)
+	(pt 1224 696)
+	(bus)
+)
+(connector
+	(pt 960 608)
+	(pt 944 608)
+	(bus)
+)
+(connector
+	(pt 944 608)
+	(pt 944 632)
+	(bus)
+)
+(connector
+	(pt 656 672)
+	(pt 656 736)
+)
+(connector
+	(pt 656 672)
+	(pt 1240 672)
+)
+(connector
+	(pt 1240 672)
+	(pt 1240 592)
+)
+(connector
+	(pt 1192 592)
+	(pt 1240 592)
 )
 (junction (pt 176 200))
 (junction (pt 176 328))
