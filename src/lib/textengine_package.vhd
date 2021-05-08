@@ -33,7 +33,8 @@ package textengine_package is
 			r => "1111",
 			g => "1111",
 			b => "1111"
-		);		
+		);
+	--array of textengine record for each of the 60 rows		
 	type textengine_vector is array (59 downto 0) of textengine_row;
 		
 	-- add the string s to the text vector txt_vector
