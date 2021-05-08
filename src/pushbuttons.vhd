@@ -12,9 +12,9 @@ begin
 	process (Clk)
 		begin
 		if (pb0 = '1') then
-			up <= 1;
+			up <= '1';
 		elsif (pb1 = '1') then
-			down <= 1;
+			down <= '1';
 		end if;
 	end process;
 end architecture behaviour;
