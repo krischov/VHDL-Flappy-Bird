@@ -81,9 +81,12 @@ begin
 			-- draw red square
 			elsif (vga_row < y0 + h and vga_row > y0 and 
 					vga_col < x0 + w and vga_col > x0) then
-				red_out <= red_in & '0';
-				green_out <= green_in & '0';
-				blue_out <= blue_in & '0';
+				red_out <= "1111";
+				green_out <= "1111";
+				blue_out <= "1111";
+				--red_out <= red_in & '0';
+				--green_out <= green_in & '0';
+				--blue_out <= blue_in & '0';
 			else
 				red_out <= "0000";
 				green_out <= "0000";

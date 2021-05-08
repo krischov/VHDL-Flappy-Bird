@@ -30,14 +30,14 @@ architecture behaviour of dipswitch is
 		GREEN: process (Clk)
 			begin
 			if (rising_edge(Clk)) then
-				red_control <= switches(5 downto 3);
+				green_control <= switches(5 downto 3);
 			end if;
 		end process GREEN;
 		
 		BLUE: process (Clk)
 			begin
 			if (rising_edge(Clk)) then
-				red_control <= switches(2 downto 0);
+				blue_control <= switches(2 downto 0);
 			end if;
 		end process BLUE;
 end architecture behaviour;
