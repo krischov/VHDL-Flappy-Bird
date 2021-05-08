@@ -79,6 +79,9 @@ package textengine_package is
 	-- data you want filled (remaining bytes are nulled out)
 	function var_len_str(s : in string; total_len : in positive range 1 to 80) return string;
 	
+	-- find the null byte, and report that as the length of the string (c-style)
+	function strlen(s : in string) return positive;
+	
 	-- function to map character to char_rom address
 	function char2rom(c : in character) return unsigned;
 
@@ -152,6 +155,20 @@ package body textengine_package is
 	
 	end function;
 
+	-- find the null byte, and report that as the length of the string (c-style)
+	function strlen(s : in string) return natural is
+	begin
+		if (s'length = 1) then
+			return s'length;
+		end if;
+		for i in 1 to s'length loop
+			if (s(i) = nul) then
+				return i - 1;
+			end if;
+		end loop;
+		return s'length;
+	end function;
+	
 	-- this function takes an input of max unsigned 2^13 bits (range 0 to 8191) and places the seven segment
 	-- code for the corrosponding digits in d3, d2, d1 and d0 
 	-- (with d3 being the most significant digit and d0 being the least significant digit).
@@ -162,6 +179,7 @@ package body textengine_package is
 	end procedure;
 	procedure int2bcd(n: in unsigned(12 downto 0); d3, d2, d1, d0 : out unsigned(7 downto 0)) is
 		variable s: string(1 to 4) := var_len_str(int2str(resize(n, 14)), 4);
+		variable len: positive := strlen(s);
 		
 		function digit27seg(c: in character) return unsigned is
 			variable q : unsigned(7 downto 0);
@@ -191,17 +209,17 @@ package body textengine_package is
 			end if;
 		end function;
 	begin
-		if (s(4) /= nul) then -- no null digits
+		if (len = 4) then -- no null digits
 			d3 := digit27seg(s(1));
 			d2 := digit27seg(s(2));
 			d1 := digit27seg(s(3));
 			d0 := digit27seg(s(4));
-		elsif (s(3) /= nul) then -- most significant digit is null (0)
+		elsif (len = 3) then -- most significant digit is null (0)
 			d3 := digit27seg('0');
 			d2 := digit27seg(s(1));
 			d1 := digit27seg(s(2));
 			d0 := digit27seg(s(3));
-		elsif (s(2) /= nul) then
+		elsif (len = 2) then
 			d3 := digit27seg('0');
 			d2 := digit27seg('0');
 			d1 := digit27seg(s(1));

@@ -30,7 +30,6 @@ architecture x of main is
 	signal mouse_btn : string(1 to 50) := var_len_str("No Mouse Button Pressed", 50);
 	
 	signal num_test : natural range 0 to 2**14-1 := 16375;
-	signal bcd_test : natural range 0 to 2**13-1 := 8180;
 begin
 	textengine0: textengine port map(clk, text_vector, vga_row, vga_col, txt_r, txt_g, txt_b, txt_not_a);
 	
@@ -41,9 +40,6 @@ begin
 	str2text(text_vector, 6, 30, 1, "1010", "0101", "1100", "text (in colour!)");
 	str2text(text_vector, 10, 30, 1, "0011", "1100", "1001", mouse_btn);
 	str2text(text_vector, 13, 20, 1, "0011", "1100", "1001", "second counter [ " & int2str(num_test) & " ]");
-	
-	-- connect this to seven segment display for testing
-	int2bcd(bcd_test);
 	
 	process(clk)
 		variable ticks : integer := 0;
@@ -62,7 +58,6 @@ begin
 					y0 <= y0 + 2;
 				end if;
 				
-				bcd_test <= bcd_test + 1;
 				ticks := 0;
 			end if;
 			
