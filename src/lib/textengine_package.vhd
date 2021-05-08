@@ -192,20 +192,20 @@ package body textengine_package is
 		end function;
 	begin
 		if (s(4) /= nul) then -- no null digits
-			d3 := digit27seg(s(4));
-			d2 := digit27seg(s(3));
-			d1 := digit27seg(s(2));
-			d0 := digit27seg(s(1));
+			d3 := digit27seg(s(1));
+			d2 := digit27seg(s(2));
+			d1 := digit27seg(s(3));
+			d0 := digit27seg(s(4));
 		elsif (s(3) /= nul) then -- most significant digit is null (0)
 			d3 := digit27seg('0');
-			d2 := digit27seg(s(3));
+			d2 := digit27seg(s(1));
 			d1 := digit27seg(s(2));
-			d0 := digit27seg(s(1));
+			d0 := digit27seg(s(3));
 		elsif (s(2) /= nul) then
 			d3 := digit27seg('0');
 			d2 := digit27seg('0');
-			d1 := digit27seg(s(2));
-			d0 := digit27seg(s(1));
+			d1 := digit27seg(s(1));
+			d0 := digit27seg(s(2));
 		else
 			d3 := digit27seg('0');
 			d2 := digit27seg('0');
