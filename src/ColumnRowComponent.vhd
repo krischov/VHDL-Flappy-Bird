@@ -42,6 +42,10 @@ begin
 					when "11" => current_Value := "0000000100";
 				end case;
 				int2bcd(resize(current_Value, 13), thou, hund, ten, one);
+				Thousands <= thou;
+				Hundreds <= hund;
+				Tens <= ten;
+				Ones <= one;
 			end if;
 		end if;
     end process;
