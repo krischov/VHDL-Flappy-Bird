@@ -385,6 +385,10 @@ package body textengine_package is
 			when '8' => return o"70";
 			when '9' => return o"71";
 			
+			-- characters added to (and replaced in) the rom by the modelsim mobsters
+			when '\' => return o"72";
+			when '_' => return o"74";
+			
 			when nul => return o"46"; -- return an ampersand for null
 			when others => return o"41"; -- unknown character is displays exclimation (!)
 		end case;

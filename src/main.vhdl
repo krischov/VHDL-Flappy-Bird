@@ -33,13 +33,20 @@ architecture x of main is
 begin
 	textengine0: textengine port map(clk, text_vector, vga_row, vga_col, txt_r, txt_g, txt_b, txt_not_a);
 	
-	str2text(text_vector, 0, 0, 1, "1111", "1111", "1111", "ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789 []!@#$%""()&*+-,./");
-	str2text(text_vector, 1, 0, 1, "1111", "0000", "0000", ".........1.........2.........3.........4.........5.........6.........7.........8");
-	str2text(text_vector, 59, 0, 1, "1111", "0000", "0000", ".........1.........2.........3.........4.........5.........6.........7.........8");
-	str2text(text_vector, 5, 30, 1, "1111", "1111", "1111", "The Modelsim Mobsters Present");
-	str2text(text_vector, 6, 30, 1, "1010", "0101", "1100", "text (in colour!)");
-	str2text(text_vector, 10, 30, 1, "0011", "1100", "1001", mouse_btn);
-	str2text(text_vector, 13, 20, 1, "0011", "1100", "1001", "second counter [ " & int2str(num_test) & " ]");
+	str2text(text_vector, 0, 0, 1, '1' & red_in, '0' & green_in, '1' & blue_in, " __  __           _      _     _            __  __       _         _");
+	str2text(text_vector, 1, 0, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|  \/  |         | |    | |   (_)          |  \/  |     | |       | |");
+	str2text(text_vector, 2, 0, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| \  / | ___   __| | ___| |___ _ _ __ ___  | \  / | ___ | |__  ___| |_ ___ _ __");
+	str2text(text_vector, 3, 0, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| |\/| |/ _ \ / _` |/ _ \ / __| | '_ ` _ \ | |\/| |/ _ \| '_ \/ __| __/ _ \ '__|");
+	str2text(text_vector, 4, 0, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| |  | | (_) | (_| |  __/ \__ \ | | | | | || |  | | (_) | |_) \__ \ ||  __/ |");
+	str2text(text_vector, 5, 0, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|_|  |_|\___/ \__,_|\___|_|___/_|_| |_| |_||_|  |_|\___/|_.__/|___/\__\___|_|");
+	
+	--str2text(text_vector, 2, 20, 1, "1111", "1111", "1111", "The Modelsim Mobsters:");
+	str2text(text_vector, 8, 30, 1, "1010", "0101", "1100", " Project Demo ");
+	str2text(text_vector, 10, 20, 1, "0011", "1100", "1001", mouse_btn);
+	str2text(text_vector, 13, 20, 1, "0011", "1100", "1001", "HOLD DOWN BUTTON0 and BUTTON1 to move the square up or down");
+	str2text(text_vector, 14, 20, 1, "0011", "1100", "1001", "The 7segmment shows the x or y position of the mouse");
+	str2text(text_vector, 15, 20, 1, "0011", "1100", "1001", "SW9 Down shows Mouse Y pos, SW0 Up shows Mouse X pos");
+	str2text(text_vector, 16, 20, 1, "0011", "1100", "1001", "SW0 to SW8 control the colours");
 	
 	process(clk)
 		variable ticks : integer := 0;
@@ -53,10 +60,10 @@ begin
 
 				
 				-- make the red square move in a square
-				if (not (y0 < 50) and pb_0 = '1') then
-					y0 <= y0 - 10;
-				elsif(not (y0 > 430) and pb_1 = '1') then
-					y0 <= y0 + 10;
+				if (not (y0 < 1) and pb_0 = '1') then
+					y0 <= y0 - 25;
+				elsif(not (y0 > 400) and pb_1 = '1') then
+					y0 <= y0 + 25;
 				end if;
 				
 				ticks := 0;
