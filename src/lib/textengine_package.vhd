@@ -81,7 +81,7 @@ package textengine_package is
 	
 	-- find the null byte, and report that as the length of the string (c-style)
 	function strlen(s : in string) return positive;
-	
+		
 	-- function to map character to char_rom address
 	function char2rom(c : in character) return unsigned;
 
@@ -388,6 +388,8 @@ package body textengine_package is
 			-- characters added to (and replaced in) the rom by the modelsim mobsters
 			when '\' => return o"72";
 			when '_' => return o"74";
+			when '|' => return o"75";
+			when '`' => return o"76";
 			
 			when nul => return o"46"; -- return an ampersand for null
 			when others => return o"41"; -- unknown character is displays exclimation (!)

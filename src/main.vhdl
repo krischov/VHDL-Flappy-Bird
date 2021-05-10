@@ -29,7 +29,7 @@ architecture x of main is
 	
 	signal mouse_btn : string(1 to 50) := var_len_str("No Mouse Button Pressed", 50);
 	
-	signal num_test : natural range 0 to 2**14-1 := 16375;
+	signal sec : natural range 0 to 59 := 0;
 begin
 	textengine0: textengine port map(clk, text_vector, vga_row, vga_col, txt_r, txt_g, txt_b, txt_not_a);
 	
@@ -50,19 +50,18 @@ begin
 	
 	process(clk)
 		variable ticks : integer := 0;
-		variable square_at_bottom : boolean := false;
 	begin
 		if (rising_edge(clk)) then
 			ticks := ticks + 1;
 			if (ticks >= 25000000) then
 				-- things to happen every second
-				num_test <= num_test + 1;
+				sec <= sec + 1;
 
 				
 				-- make the red square move in a square
 				if (not (y0 < 1) and pb_0 = '1') then
 					y0 <= y0 - 25;
-				elsif(not (y0 > 400) and pb_1 = '1') then
+				elsif(not (y0 > 375) and pb_1 = '1') then
 					y0 <= y0 + 25;
 				end if;
 				
