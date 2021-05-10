@@ -1,4 +1,4 @@
-Depth = 512;
+Depth = 4194304;
 Width = 8;
 Address_radix = oct;
 Data_radix = bin;
@@ -582,4 +582,8 @@ Content
 776  : 01100000 ; %   **        %
 777  : 00000000 ; %             %
 
+[2000..4000] : 11111111;
+
+
 End;
+
