@@ -19,8 +19,8 @@ END char_rom;
 
 ARCHITECTURE SYN OF char_rom IS
 
-	SIGNAL rom_data		: STD_LOGIC_VECTOR (7 DOWNTO 0);
-	SIGNAL rom_address	: STD_LOGIC_VECTOR (8 DOWNTO 0);
+	SIGNAL rom_data		: STD_LOGIC_VECTOR (15 DOWNTO 0);
+	SIGNAL rom_address	: STD_LOGIC_VECTOR (15 DOWNTO 0);
 
 	COMPONENT altsyncram
 	GENERIC (
@@ -41,8 +41,8 @@ ARCHITECTURE SYN OF char_rom IS
 	);
 	PORT (
 		clock0		: IN STD_LOGIC ;
-		address_a	: IN STD_LOGIC_VECTOR (8 DOWNTO 0);
-		q_a			: OUT STD_LOGIC_VECTOR (7 DOWNTO 0)
+		address_a	: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
+		q_a			: OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
 	);
 	END COMPONENT;
 
@@ -57,12 +57,12 @@ BEGIN
 		intended_device_family => "Cyclone III",
 		lpm_hint => "ENABLE_RUNTIME_MOD=NO",
 		lpm_type => "altsyncram",
-		numwords_a => 512,
+		numwords_a => 32256,
 		operation_mode => "ROM",
 		outdata_aclr_a => "NONE",
 		outdata_reg_a => "UNREGISTERED",
-		widthad_a => 9,
-		width_a => 8,
+		widthad_a => 15,
+		width_a => 16,
 		width_byteena_a => 1
 	)
 	PORT MAP (
@@ -71,7 +71,7 @@ BEGIN
 		q_a => rom_data
 	);
 
-	rom_address <= character_address & font_row;
+	rom_address <= "0000000" & character_address & font_row;
 	rom_mux_output <= rom_data (CONV_INTEGER(NOT font_col(2 DOWNTO 0)));
 
 END SYN;

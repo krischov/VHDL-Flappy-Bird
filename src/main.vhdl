@@ -17,8 +17,22 @@ entity main is
 end entity;
 
 architecture x of main is 
+	
+	-- components --
+	COMPONENT rom IS
+	PORT
+	(
+		address	:	IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+		clock	: 	IN STD_LOGIC;
+		data	:	OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
+	);
+	END COMPONENT rom;
+	
+	
+	-- signals -- 
+	
 	signal y0, x0: unsigned(9 downto 0) := to_unsigned(50, 10);
-	signal w, h: unsigned(9 downto 0) := to_unsigned(100, 10);
+	signal w, h: unsigned(9 downto 0) := to_unsigned(64, 10);
 	signal colour: unsigned(3 downto 0) := "0000";
 	
 	signal text_vector: textengine_vector := (others => init_textengine_row);
@@ -30,8 +44,18 @@ architecture x of main is
 	signal mouse_btn : string(1 to 50) := var_len_str("No Mouse Button Pressed", 50);
 	
 	signal sec : natural range 0 to 59 := 0;
+	
+	signal rom_addr: std_logic_vector(15 downto 0) := x"0000";
+	signal rom_data: std_logic_vector(15 downto 0) := x"0000";
+	signal rom_base_addr: std_logic_vector(15 downto 0) := x"0200";
+	-- For some unknown reason (we need to find out) if we want to add to the 
+	-- address we use to accsess rom, we cant have the signal/variable 
+	-- be larger then 14 bits. With 14 bits we can only accsess ~ 77% of the logic elements
+	--signal rom_addr_offset: natural range 0 to 7 := 0;
+	signal rom_addr_offset: unsigned(13 downto 0) := to_unsigned(0, 14);
 begin
 	textengine0: textengine port map(clk, text_vector, vga_row, vga_col, txt_r, txt_g, txt_b, txt_not_a);
+	rom0: rom port map(rom_addr, clk, rom_data);
 	
 	str2text(text_vector, 0, 0, 1, '1' & red_in, '0' & green_in, '1' & blue_in, " __  __           _      _     _            __  __       _         _");
 	str2text(text_vector, 1, 0, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|  \/  |         | |    | |   (_)          |  \/  |     | |       | |");
@@ -56,7 +80,15 @@ begin
 			if (ticks >= 25000000) then
 				-- things to happen every second
 				sec <= sec + 1;
-
+			
+				rom_addr_offset <= rom_addr_offset + 1;
+				-- cycle through square colours in the ROM 
+				if (rom_addr_offset > 1) then
+					rom_addr_offset <= to_unsigned(0, rom_addr_offset'length);
+				end if;
+				--rom_addr <= std_logic_vector(unsigned(rom_base_addr) + 2);
+				rom_addr <= std_logic_vector(unsigned(rom_base_addr) + rom_addr_offset);
+				
 				
 				-- make the red square move in a square
 				if (not (y0 < 1) and pb_0 = '1') then
@@ -88,9 +120,12 @@ begin
 			-- draw red square
 			elsif (vga_row < y0 + h and vga_row > y0 and 
 					vga_col < x0 + w and vga_col > x0) then
-				red_out <= red_in & '0';
-				green_out <= green_in & '0';
-				blue_out <= blue_in & '0';
+				--red_out <= red_in & '0';
+				--green_out <= green_in & '0';
+				--blue_out <= blue_in & '0';
+				red_out <= unsigned(rom_data(3 downto 0));
+				green_out <= unsigned(rom_data(7 downto 4));
+				blue_out <= unsigned(rom_data(11 downto 8));
 			else
 				red_out <= "0000";
 				green_out <= "0000";
