@@ -17,6 +17,22 @@ entity main is
 end entity;
 
 architecture x of main is 
+	
+	-- components
+	COMPONENT RAM_CTRL IS
+	PORT
+	(
+		address		: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
+		clock		: IN STD_LOGIC  := '1';
+		data		: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
+		wren		: IN STD_LOGIC ;
+		q		: OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
+	);
+	END COMPONENT RAM_CTRL;
+
+
+	-- signals 
+
 	signal y0, x0: unsigned(9 downto 0) := to_unsigned(50, 10);
 	signal w, h: unsigned(9 downto 0) := to_unsigned(100, 10);
 	signal colour: unsigned(3 downto 0) := "0000";
@@ -29,9 +45,16 @@ architecture x of main is
 	
 	signal mouse_btn : string(1 to 50) := var_len_str("No Mouse Button Pressed", 50);
 	
-	signal sec : natural range 0 to 59 := 0;
+	signal sec : natural range 0 to 59 := 0;	
+	
+	signal address: std_logic_vector(15 downto 0) := "0000000000000000";
+	signal empty_data: std_logic_vector(15 downto 0) := "0000000000000000";
+	signal colours: std_logic_vector(15 downto 0) := "0000000000000000";
+	
 begin
 	textengine0: textengine port map(clk, text_vector, vga_row, vga_col, txt_r, txt_g, txt_b, txt_not_a);
+	ram_ctrl0: ram_CTRL port map(address, clk, empty_data, '0', colours);
+	
 	
 	str2text(text_vector, 0, 0, 1, '1' & red_in, '0' & green_in, '1' & blue_in, " __  __           _      _     _            __  __       _         _");
 	str2text(text_vector, 1, 0, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|  \/  |         | |    | |   (_)          |  \/  |     | |       | |");
@@ -88,9 +111,12 @@ begin
 			-- draw red square
 			elsif (vga_row < y0 + h and vga_row > y0 and 
 					vga_col < x0 + w and vga_col > x0) then
-				red_out <= red_in & '0';
-				green_out <= green_in & '0';
-				blue_out <= blue_in & '0';
+				--red_out <= red_in & '0';
+				--green_out <= green_in & '0';
+				--blue_out <= blue_in & '0';
+				red_out <= unsigned(colours(3 downto 0));
+				green_out <= unsigned(colours(7 downto 4));
+				blue_out <= unsigned(colours(11 downto 8));
 			else
 				red_out <= "0000";
 				green_out <= "0000";
