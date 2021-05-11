@@ -35,7 +35,6 @@ architecture x of main is
 
 	signal y0, x0: unsigned(9 downto 0) := to_unsigned(50, 10);
 	signal w, h: unsigned(9 downto 0) := to_unsigned(100, 10);
-	signal colour: unsigned(3 downto 0) := "0000";
 	
 	signal text_vector: textengine_vector := (others => init_textengine_row);
 	signal txt_r : unsigned(3 downto 0) := "0000";
@@ -93,13 +92,10 @@ begin
 			
 			-- change background colour
 			if (mouse_lbtn = '1') then
-				colour <= "0101";
 				mouse_btn <= var_len_str("Left Mouse button Pressed", mouse_btn'length);
 			elsif (mouse_rbtn = '1') then
-				colour <= "1010";
 				mouse_btn <= var_len_str("Right Mouse button Pressed", mouse_btn'length);
 			else
-				colour <= "1111";
 				mouse_btn <= var_len_str("No Mouse button Pressed", mouse_btn'length);
 			end if;
 			

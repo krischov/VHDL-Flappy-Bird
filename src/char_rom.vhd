@@ -57,12 +57,13 @@ BEGIN
 		intended_device_family => "Cyclone III",
 		lpm_hint => "ENABLE_RUNTIME_MOD=NO",
 		lpm_type => "altsyncram",
-		numwords_a => 512,
+		--numwords_a => 20000,
+		numwords_a => 4194304,
 		operation_mode => "ROM",
 		outdata_aclr_a => "NONE",
 		outdata_reg_a => "UNREGISTERED",
-		widthad_a => 9,
-		width_a => 8,
+		widthad_a => 22,
+		width_a => 16,
 		width_byteena_a => 1
 	)
 	PORT MAP (
