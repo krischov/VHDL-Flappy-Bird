@@ -19,8 +19,8 @@ END char_rom;
 
 ARCHITECTURE SYN OF char_rom IS
 
-	SIGNAL rom_data		: STD_LOGIC_VECTOR (15 DOWNTO 0);
-	SIGNAL rom_address	: STD_LOGIC_VECTOR (15 DOWNTO 0);
+	SIGNAL rom_data		: STD_LOGIC_VECTOR (7 DOWNTO 0);
+	SIGNAL rom_address	: STD_LOGIC_VECTOR (8 DOWNTO 0);
 
 	COMPONENT altsyncram
 	GENERIC (
@@ -35,14 +35,15 @@ ARCHITECTURE SYN OF char_rom IS
 		operation_mode			: STRING;
 		outdata_aclr_a			: STRING;
 		outdata_reg_a			: STRING;
+		ram_block_type			: STRING;
 		widthad_a				: NATURAL;
 		width_a					: NATURAL;
 		width_byteena_a			: NATURAL
 	);
 	PORT (
 		clock0		: IN STD_LOGIC ;
-		address_a	: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
-		q_a			: OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
+		address_a	: IN STD_LOGIC_VECTOR (8 DOWNTO 0);
+		q_a			: OUT STD_LOGIC_VECTOR (7 DOWNTO 0)
 	);
 	END COMPONENT;
 
@@ -53,16 +54,17 @@ BEGIN
 		address_aclr_a => "NONE",
 		clock_enable_input_a => "BYPASS",
 		clock_enable_output_a => "BYPASS",
-		init_file => "TCGROM.MIF",
+		init_file => "../quartus/TCGROM.MIF",
 		intended_device_family => "Cyclone III",
 		lpm_hint => "ENABLE_RUNTIME_MOD=NO",
 		lpm_type => "altsyncram",
-		numwords_a => 32256,
+		numwords_a => 512,
 		operation_mode => "ROM",
 		outdata_aclr_a => "NONE",
 		outdata_reg_a => "UNREGISTERED",
-		widthad_a => 15,
-		width_a => 16,
+		ram_block_type => "M9K",
+		widthad_a => 9,
+		width_a => 8,
 		width_byteena_a => 1
 	)
 	PORT MAP (
@@ -71,7 +73,7 @@ BEGIN
 		q_a => rom_data
 	);
 
-	rom_address <= "0000000" & character_address & font_row;
+	rom_address <= character_address & font_row;
 	rom_mux_output <= rom_data (CONV_INTEGER(NOT font_col(2 DOWNTO 0)));
 
 END SYN;

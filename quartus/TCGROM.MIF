@@ -1,4 +1,4 @@
-Depth = 32256;
+Depth = 512;
 Width = 16;
 Address_radix = oct;
 Data_radix = bin;
@@ -581,14 +581,5 @@ Content
 775  : 0000000001100000 ; %   **        %
 776  : 0000000001100000 ; %   **        %
 777  : 0000000000000000 ; %             %
-
-
-
--- SPRITES --
-
-1000 : 0000111100000000 ; % Test Address - Fully Blue %
-1001 : 0000000011110000 ; % Test Address - Fully Green %
-1002 : 0000000000001111 ; % Test Address - Fully Red %
-
 
 End;

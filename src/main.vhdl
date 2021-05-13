@@ -19,21 +19,27 @@ end entity;
 architecture x of main is 
 	
 	-- components --
-	COMPONENT rom IS
+	COMPONENT rom_ctrl IS
+	GENERIC (mif_file : STRING);
 	PORT
 	(
-		address	:	IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-		clock	: 	IN STD_LOGIC;
-		data	:	OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
+		address		: IN STD_LOGIC_VECTOR (9 DOWNTO 0);
+		clock		: IN STD_LOGIC  := '1';
+		q		: OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
 	);
-	END COMPONENT rom;
-	
+	END COMPONENT rom_ctrl;
 	
 	-- signals -- 
 	
-	signal y0, x0: unsigned(9 downto 0) := to_unsigned(50, 10);
-	signal w, h: unsigned(9 downto 0) := to_unsigned(64, 10);
-	signal colour: unsigned(3 downto 0) := "0000";
+	signal y0_0: unsigned(9 downto 0) := to_unsigned(100, 10);
+	signal x0_0: unsigned(9 downto 0) := to_unsigned(50, 10);
+	signal y0_1: unsigned(9 downto 0) := to_unsigned(100, 10);
+	signal x0_1: unsigned(9 downto 0) := to_unsigned(50, 10);
+	signal y0_2: unsigned(9 downto 0) := to_unsigned(200, 10);
+	signal x0_2: unsigned(9 downto 0) := to_unsigned(80, 10);
+	signal y0_3: unsigned(9 downto 0) := to_unsigned(300, 10);
+	signal x0_3: unsigned(9 downto 0) := to_unsigned(80, 10);
+	signal w, h: unsigned(9 downto 0) := to_unsigned(32, 10);
 	
 	signal text_vector: textengine_vector := (others => init_textengine_row);
 	signal txt_r : unsigned(3 downto 0) := "0000";
@@ -45,17 +51,22 @@ architecture x of main is
 	
 	signal sec : natural range 0 to 59 := 0;
 	
-	signal rom_addr: std_logic_vector(15 downto 0) := x"0000";
-	signal rom_data: std_logic_vector(15 downto 0) := x"0000";
-	signal rom_base_addr: std_logic_vector(15 downto 0) := x"0200";
-	-- For some unknown reason (we need to find out) if we want to add to the 
-	-- address we use to accsess rom, we cant have the signal/variable 
-	-- be larger then 14 bits. With 14 bits we can only accsess ~ 77% of the logic elements
-	--signal rom_addr_offset: natural range 0 to 7 := 0;
-	signal rom_addr_offset: unsigned(13 downto 0) := to_unsigned(0, 14);
+	signal rom_addr0: std_logic_vector(9 downto 0) := std_logic_vector(to_unsigned(0, 10));
+	signal rom_data0: std_logic_vector(15 downto 0) := x"0000";
+	signal rom_addr1: std_logic_vector(9 downto 0) := std_logic_vector(to_unsigned(0, 10));
+	signal rom_data1: std_logic_vector(15 downto 0) := x"0000";
+	signal rom_addr2: std_logic_vector(9 downto 0) := std_logic_vector(to_unsigned(0, 10));
+	signal rom_data2: std_logic_vector(15 downto 0) := x"0000";
+	signal rom_addr3: std_logic_vector(9 downto 0) := std_logic_vector(to_unsigned(0, 10));
+	signal rom_data3: std_logic_vector(15 downto 0) := x"0000";
+	
 begin
+	
+	sprite0: rom_ctrl generic map ("../src/transparancy0.mif") port map (rom_addr0, clk, rom_data0);
+	sprite1: rom_ctrl generic map ("../src/transparancy1.mif") port map (rom_addr1, clk, rom_data1);
+	sprite2: rom_ctrl generic map ("../src/test.mif") port map (rom_addr2, clk, rom_data2);
+	sprite3: rom_ctrl generic map ("../src/htest.mif") port map (rom_addr3, clk, rom_data3);
 	textengine0: textengine port map(clk, text_vector, vga_row, vga_col, txt_r, txt_g, txt_b, txt_not_a);
-	rom0: rom port map(rom_addr, clk, rom_data);
 	
 	str2text(text_vector, 0, 0, 1, '1' & red_in, '0' & green_in, '1' & blue_in, " __  __           _      _     _            __  __       _         _");
 	str2text(text_vector, 1, 0, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|  \/  |         | |    | |   (_)          |  \/  |     | |       | |");
@@ -72,6 +83,30 @@ begin
 	str2text(text_vector, 15, 20, 1, "0011", "1100", "1001", "SW9 Down shows Mouse Y pos, SW0 Up shows Mouse X pos");
 	str2text(text_vector, 16, 20, 1, "0011", "1100", "1001", "SW0 to SW8 control the colours");
 	
+	rom_addr0 <= std_logic_vector(resize(shift_left((vga_row - y0_0), 5) + (vga_col + 1 - x0_0), 10));
+	rom_addr1 <= std_logic_vector(resize(shift_left((vga_row - y0_1), 5) + (vga_col + 1 - x0_1), 10));
+	rom_addr2 <= std_logic_vector(resize(shift_left((vga_row - y0_2), 5) + (vga_col + 1 - x0_2), 10));
+	rom_addr3 <= std_logic_vector(resize(shift_left((vga_row - y0_3), 5) + (vga_col + 1 - x0_3), 10));
+	
+	red_out <=		txt_r when txt_not_a = "1111" else
+					unsigned(rom_data0(3 downto 0)) when (vga_row < y0_0 + h and vga_row >= y0_0 and vga_col < x0_0 + w and vga_col >= x0_0 and rom_data0(15 downto 12) /= "1111") else
+					unsigned(rom_data1(3 downto 0)) when (vga_row < y0_1 + h and vga_row >= y0_1 and vga_col < x0_1 + w and vga_col >= x0_1 and rom_data1(15 downto 12) /= "1111") else
+					unsigned(rom_data2(3 downto 0)) when (vga_row < y0_2 + h and vga_row >= y0_2 and vga_col < x0_2 + w and vga_col >= x0_2 and rom_data2(15 downto 12) /= "1111") else
+					unsigned(rom_data3(3 downto 0)) when (vga_row < y0_3 + h and vga_row >= y0_3 and vga_col < x0_3 + w and vga_col >= x0_3 and rom_data3(15 downto 12) /= "1111") else
+					"0101";
+	green_out <=	txt_g when txt_not_a = "1111" else
+					unsigned(rom_data0(7 downto 4)) when (vga_row < y0_0 + h and vga_row >= y0_0 and vga_col < x0_0 + w and vga_col >= x0_0 and rom_data0(15 downto 12) /= "1111") else
+					unsigned(rom_data1(7 downto 4)) when (vga_row < y0_1 + h and vga_row >= y0_1 and vga_col < x0_1 + w and vga_col >= x0_1 and rom_data1(15 downto 12) /= "1111") else
+					unsigned(rom_data2(7 downto 4)) when (vga_row < y0_2 + h and vga_row >= y0_2 and vga_col < x0_2 + w and vga_col >= x0_2 and rom_data2(15 downto 12) /= "1111") else
+					unsigned(rom_data3(7 downto 4)) when (vga_row < y0_3 + h and vga_row >= y0_3 and vga_col < x0_3 + w and vga_col >= x0_3 and rom_data3(15 downto 12) /= "1111") else
+					"0101";
+	blue_out <=		txt_b when txt_not_a = "1111" else
+					unsigned(rom_data0(11 downto 8)) when (vga_row < y0_0 + h and vga_row >= y0_0 and vga_col < x0_0 + w and vga_col >= x0_0 and rom_data0(15 downto 12) /= "1111") else
+					unsigned(rom_data1(11 downto 8)) when (vga_row < y0_1 + h and vga_row >= y0_1 and vga_col < x0_1 + w and vga_col >= x0_1 and rom_data1(15 downto 12) /= "1111") else
+					unsigned(rom_data2(11 downto 8)) when (vga_row < y0_2 + h and vga_row >= y0_2 and vga_col < x0_2 + w and vga_col >= x0_2 and rom_data2(15 downto 12) /= "1111") else
+					unsigned(rom_data3(11 downto 8)) when (vga_row < y0_3 + h and vga_row >= y0_3 and vga_col < x0_3 + w and vga_col >= x0_3 and rom_data3(15 downto 12) /= "1111") else
+					"0101";
+					
 	process(clk)
 		variable ticks : integer := 0;
 	begin
@@ -80,56 +115,15 @@ begin
 			if (ticks >= 25000000) then
 				-- things to happen every second
 				sec <= sec + 1;
-			
-				rom_addr_offset <= rom_addr_offset + 1;
-				-- cycle through square colours in the ROM 
-				if (rom_addr_offset > 1) then
-					rom_addr_offset <= to_unsigned(0, rom_addr_offset'length);
-				end if;
-				--rom_addr <= std_logic_vector(unsigned(rom_base_addr) + 2);
-				rom_addr <= std_logic_vector(unsigned(rom_base_addr) + rom_addr_offset);
-				
-				
-				-- make the red square move in a square
-				if (not (y0 < 1) and pb_0 = '1') then
-					y0 <= y0 - 25;
-				elsif(not (y0 > 375) and pb_1 = '1') then
-					y0 <= y0 + 25;
-				end if;
-				
 				ticks := 0;
 			end if;
 			
-			-- change background colour
 			if (mouse_lbtn = '1') then
-				colour <= "0101";
 				mouse_btn <= var_len_str("Left Mouse button Pressed", mouse_btn'length);
 			elsif (mouse_rbtn = '1') then
-				colour <= "1010";
 				mouse_btn <= var_len_str("Right Mouse button Pressed", mouse_btn'length);
 			else
-				colour <= "1111";
 				mouse_btn <= var_len_str("No Mouse button Pressed", mouse_btn'length);
-			end if;
-			
-			-- draw text
-			if (txt_not_a = "1111") then
-				red_out <= txt_r;
-				green_out <= txt_g;
-				blue_out <= txt_b;
-			-- draw red square
-			elsif (vga_row < y0 + h and vga_row > y0 and 
-					vga_col < x0 + w and vga_col > x0) then
-				--red_out <= red_in & '0';
-				--green_out <= green_in & '0';
-				--blue_out <= blue_in & '0';
-				red_out <= unsigned(rom_data(3 downto 0));
-				green_out <= unsigned(rom_data(7 downto 4));
-				blue_out <= unsigned(rom_data(11 downto 8));
-			else
-				red_out <= "0000";
-				green_out <= "0000";
-				blue_out <= "0000";
 			end if;
 		end if;
 	end process;
