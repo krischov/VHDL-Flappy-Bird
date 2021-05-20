@@ -25,7 +25,8 @@ architecture x of main is
 			clk			: in std_ulogic;
 			vga_row		: in unsigned(9 downto 0);
 			vga_col		: in unsigned(9 downto 0);
-			sprites		: inout all_sprites
+			sprite_addrs	: in sprite_addr_array;
+			sprites_out : out sprite_output_array
 			);
 	end component spriteengine;
 	-- signals -- 
@@ -48,23 +49,17 @@ architecture x of main is
 	signal sprites : all_sprites := (
 		(64, to_unsigned(200, 10), to_unsigned(200,10), "000000000000", crackpipe, "0000000000000000", false),
 		(64, to_unsigned(200, 10), to_unsigned(200,10), "000000000000", crackpipe, "0000000000000000", false)
-
-		
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	);
+	signal sprites_addrs : sprite_addr_array;
+	signal sprites_out : sprite_output_array;
 	
 begin
-	spriteengine0 : spriteengine port map (clk, vga_row, vga_col, sprites);
-	textengine0: textengine port map(clk, text_vector, vga_row, vga_col, txt_r, txt_g, txt_b, txt_not_a);
 	
+	sprites_addrs(crackpipe) <= sprites(crackpipe).address;
+
+	spriteengine0 : spriteengine port map (clk, vga_row, vga_col, sprites_addrs, sprites_out);
+	textengine0: textengine port map(clk, text_vector, vga_row, vga_col, txt_r, txt_g, txt_b, txt_not_a);
+		
 	str2text(text_vector, 0, 0, 1, '1' & red_in, '0' & green_in, '1' & blue_in, " __  __           _      _     _            __  __       _         _");
 	str2text(text_vector, 1, 0, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|  \/  |         | |    | |   (_)          |  \/  |     | |       | |");
 	str2text(text_vector, 2, 0, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| \  / | ___   __| | ___| |___ _ _ __ ___  | \  / | ___ | |__  ___| |_ ___ _ __");
@@ -82,18 +77,21 @@ begin
 	
 	--Sprites
 	
-	calc_in_range(sprites(crackpipe), vga_row, vga_col);
+	
 	sprites(crackpipe).address <= STD_LOGIC_VECTOR(resize(shift_left ((vga_row - sprites(crackpipe).y0), 6) + (vga_col + 1 - sprites(crackpipe).x0), 12));
+
+	calc_in_range(sprites(crackpipe), vga_row, vga_col);
+	sprites(crackpipe).colours <= sprites_out(crackpipe);
 	sprite_r <= unsigned(sprites(crackpipe).colours(3 downto 0));
 	sprite_g <= unsigned(sprites(crackpipe).colours(7 downto 4));
 	sprite_b <= unsigned(sprites(crackpipe).colours(11 downto 8));
-	sprite_z <= unsigned(sprites(crackpipe).colours(15 downto 12)) when sprites(crackpipe).in_range else "1111";
+	sprite_z <= "0000" when sprites(crackpipe).in_range else "1111";
 	
 	red_out <=		txt_r when txt_not_a = "1111" else sprite_r when sprite_z = "0000" else "0000";
 	green_out <=	txt_g when txt_not_a = "1111" else sprite_g when sprite_z = "0000" else "0000";
 	blue_out <=		txt_b when txt_not_a = "1111" else sprite_b when sprite_z = "0000" else "0000";
 
-					
+	
 	process(clk)
 		variable ticks : integer := 0;
 	begin
