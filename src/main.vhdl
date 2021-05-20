@@ -4,6 +4,7 @@ use ieee.numeric_std.all;
 
 library lib;
 use lib.textengine_package.all;
+use lib.spriteengine_package.all;
 
 entity main is
 	port (clk : in std_ulogic;
@@ -24,10 +25,7 @@ architecture x of main is
 			clk			: in std_ulogic;
 			vga_row		: in unsigned(9 downto 0);
 			vga_col		: in unsigned(9 downto 0);
-			R				: out unsigned(3 downto 0);
-			G				: out unsigned(3 downto 0);
-			B				: out unsigned(3 downto 0);
-			Z				: out unsigned(3 downto 0)
+			sprites		: inout all_sprites
 			);
 	end component spriteengine;
 	-- signals -- 
@@ -47,9 +45,24 @@ architecture x of main is
 	
 	signal sec : natural range 0 to 59 := 0;
 	
+	signal sprites : all_sprites := (
+		(64, to_unsigned(200, 10), to_unsigned(200,10), "000000000000", crackpipe, "0000000000000000", false),
+		(64, to_unsigned(200, 10), to_unsigned(200,10), "000000000000", crackpipe, "0000000000000000", false)
+
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	);
 	
 begin
-	spriteengine0 : spriteengine port map (clk, vga_row, vga_col, sprite_r, sprite_g, sprite_b, sprite_z);
+	spriteengine0 : spriteengine port map (clk, vga_row, vga_col, sprites);
 	textengine0: textengine port map(clk, text_vector, vga_row, vga_col, txt_r, txt_g, txt_b, txt_not_a);
 	
 	str2text(text_vector, 0, 0, 1, '1' & red_in, '0' & green_in, '1' & blue_in, " __  __           _      _     _            __  __       _         _");
@@ -67,6 +80,14 @@ begin
 	str2text(text_vector, 15, 20, 1, "0011", "1100", "1001", "SW9 Down shows Mouse Y pos, SW0 Up shows Mouse X pos");
 	str2text(text_vector, 16, 20, 1, "0011", "1100", "1001", "SW0 to SW8 control the colours");
 	
+	--Sprites
+	
+	calc_in_range(sprites(crackpipe), vga_row, vga_col);
+	sprites(crackpipe).address <= STD_LOGIC_VECTOR(resize(shift_left ((vga_row - sprites(crackpipe).y0), 6) + (vga_col + 1 - sprites(crackpipe).x0), 12));
+	sprite_r <= unsigned(sprites(crackpipe).colours(3 downto 0));
+	sprite_g <= unsigned(sprites(crackpipe).colours(7 downto 4));
+	sprite_b <= unsigned(sprites(crackpipe).colours(11 downto 8));
+	sprite_z <= unsigned(sprites(crackpipe).colours(15 downto 12)) when sprites(crackpipe).in_range else "1111";
 	
 	red_out <=		txt_r when txt_not_a = "1111" else sprite_r when sprite_z = "0000" else "0000";
 	green_out <=	txt_g when txt_not_a = "1111" else sprite_g when sprite_z = "0000" else "0000";
