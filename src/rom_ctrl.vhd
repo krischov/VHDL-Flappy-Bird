@@ -40,7 +40,7 @@ LIBRARY altera_mf;
 USE altera_mf.all;
 
 ENTITY rom_ctrl IS
-	GENERIC (mif_file : STRING; address_size: NATURAL range 0 to 13; words : NATURAL range 0 to 1024);
+	GENERIC (mif_file : STRING; address_size: NATURAL range 0 to 13; words : NATURAL range 0 to 4096);
 	PORT
 	(
 		address	: IN STD_LOGIC_VECTOR((address_size-1) downto 0);
@@ -69,13 +69,13 @@ ARCHITECTURE SYN OF rom_ctrl IS
 		width_byteena_a		: NATURAL
 	);
 	PORT (
-			address_a	: IN STD_LOGIC_VECTOR (9 DOWNTO 0);
+			address_a	: IN STD_LOGIC_VECTOR ((address_size - 1) DOWNTO 0);
 			clock0	: IN STD_LOGIC ;
 			q_a	: OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
 	);
 	END COMPONENT;
 	
-	signal rom_addr: std_logic_vector(9 downto 0);
+	signal rom_addr: std_logic_vector((address_size - 1) downto 0);
 	signal rom_out: std_logic_vector(15 downto 0);
 	
 BEGIN
@@ -94,7 +94,7 @@ BEGIN
 		outdata_aclr_a => "NONE",
 		outdata_reg_a => "UNREGISTERED",
 		ram_block_type => "M9K",
-		widthad_a => 10,
+		widthad_a => address_size,
 		width_a => 16,
 		width_byteena_a => 1
 	)
