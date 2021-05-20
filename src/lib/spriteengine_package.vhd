@@ -38,7 +38,7 @@ package body spriteengine_package is
 	
 	procedure calc_in_range (signal s: inout sprite; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0)) is
 	begin
-		s.in_range <= unsigned(vga_row) < s.y0 + s.size and unsigned(vga_row) >= s.y0 and unsigned(vga_col) < s.x0 + s.size and unsigned(vga_col) >= s.x0;
+		s.in_range <= unsigned(vga_row) < s.y0 + (s.size * s.scaling_factor_y) and unsigned(vga_row) >= s.y0 and unsigned(vga_col) < s.x0 + (s.size * s.scaling_factor_x) and unsigned(vga_col) >= s.x0;
 	end procedure;
 	
 end package body;	
