@@ -43,14 +43,14 @@ begin
 	rom0: rom_ctrl generic map("../src/bird0.MIF", 10, 1024) port map (address0, clk, q0);
 	rom1: rom_ctrl generic map("../src/crackpipe.MIF", 12, 4096) port map (address1, clk, q1);
 	address0 <= STD_LOGIC_VECTOR(resize(shift_left ((vga_row - bird.y0), 5) + (vga_col + 1 - bird.x0), 10));
-	address1 <= STD_LOGIC_VECTOR(resize(shift_left ((vga_row - pipe.y0), 5) + (vga_col + 1 - pipe.x0), 12));
+	address1 <= STD_LOGIC_VECTOR(resize(shift_left ((vga_row - pipe.y0), 6) + (vga_col + 1 - pipe.x0), 12));
 	
 	in_range0 <= unsigned(vga_row) < bird.y0 + bird.size and unsigned(vga_row) >= bird.y0 and unsigned(vga_col) < bird.x0 + bird.size and unsigned(vga_col) >= bird.x0 and q0(15 downto 12) /= "1111";
 	in_range1 <= unsigned(vga_row) < pipe.y0 + pipe.size and unsigned(vga_row) >= pipe.y0 and unsigned(vga_col) < pipe.x0 + pipe.size and unsigned(vga_col) >= pipe.x0 and q1(15 downto 12) /= "1111";
 
-	R <= unsigned(q1(3 downto 0)) when in_range1;
-	G <= unsigned(q1(7 downto 4)) when in_range1;
-	B <= unsigned(q1(11 downto 8)) when in_range1;
+	R <= unsigned(q0(3 downto 0)) when in_range0 else unsigned(q1(3 downto 0)) when in_range1;
+	G <= unsigned(q0(7 downto 4)) when in_range0 else unsigned(q1(7 downto 4)) when in_range1;
+	B <= unsigned(q0(11 downto 8)) when in_range0 else unsigned(q1(11 downto 8)) when in_range1;
 	Z <= "0000" when q1(15 downto 12)  = "0000" and in_range1 else "1111";
 	
 end architecture a;
