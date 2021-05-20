@@ -40,10 +40,10 @@ LIBRARY altera_mf;
 USE altera_mf.all;
 
 ENTITY rom_ctrl IS
-	GENERIC (mif_file : STRING);
+	GENERIC (mif_file : STRING; address_size: NATURAL range 0 to 13; words : NATURAL range 0 to 1024);
 	PORT
 	(
-		address		: IN STD_LOGIC_VECTOR (9 DOWNTO 0);
+		address	: IN STD_LOGIC_VECTOR((address_size-1) downto 0);
 		clock		: IN STD_LOGIC  := '1';
 		q			: OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
 	);
@@ -89,7 +89,7 @@ BEGIN
 		intended_device_family => "Cyclone III",
 		lpm_hint => "ENABLE_RUNTIME_MOD=NO",
 		lpm_type => "altsyncram",
-		numwords_a => 1024,
+		numwords_a => words,
 		operation_mode => "ROM",
 		outdata_aclr_a => "NONE",
 		outdata_reg_a => "UNREGISTERED",
