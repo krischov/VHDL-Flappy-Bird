@@ -47,8 +47,8 @@ architecture x of main is
 	signal sec : natural range 0 to 59 := 0;
 	
 	signal sprites : all_sprites := (
-		(64, to_unsigned(200, 10), to_unsigned(200,10), "000000000000", crackpipe, "0000000000000000", false),
-		(64, to_unsigned(200, 10), to_unsigned(200,10), "000000000000", crackpipe, "0000000000000000", false)
+		(64, to_unsigned(200, 10), to_unsigned(200,10), "000000000000", crackpipe, "0000000000000000", false, 2, 2),
+		(64, to_unsigned(200, 10), to_unsigned(200,10), "000000000000", crackpipe, "0000000000000000", false, 2, 2)
 	);
 	signal sprites_addrs : sprite_addr_array;
 	signal sprites_out : sprite_output_array;
@@ -78,7 +78,7 @@ begin
 	--Sprites
 	
 	
-	sprites(crackpipe).address <= STD_LOGIC_VECTOR(resize(shift_left ((vga_row - sprites(crackpipe).y0), 6) + (vga_col + 1 - sprites(crackpipe).x0), 12));
+	sprites(crackpipe).address <= STD_LOGIC_VECTOR(resize(shift_right(shift_left ((vga_row - sprites(crackpipe).y0), 6), sprites(crackpipe).scaling_factor_y) + shift_right((vga_col + 1 - sprites(crackpipe).x0), sprites(crackpipe).scaling_factor_x), 12));
 
 	calc_in_range(sprites(crackpipe), vga_row, vga_col);
 	sprites(crackpipe).colours <= sprites_out(crackpipe);

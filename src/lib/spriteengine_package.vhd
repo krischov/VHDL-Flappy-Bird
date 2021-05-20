@@ -24,6 +24,8 @@ package spriteengine_package is
 		index 				: natural range 0 to 31;
 		colours				: std_logic_vector(15 downto 0);
 		in_range				: boolean;
+		scaling_factor_x 	: natural range 0 to 16;
+		scaling_factor_y 	: natural range 0 to 16;
 	end record sprite;
 	
 	type all_sprites is array(1 downto 0) of sprite;
@@ -39,5 +41,4 @@ package body spriteengine_package is
 		s.in_range <= unsigned(vga_row) < s.y0 + s.size and unsigned(vga_row) >= s.y0 and unsigned(vga_col) < s.x0 + s.size and unsigned(vga_col) >= s.x0;
 	end procedure;
 	
-end package body;
-	
+end package body;	
