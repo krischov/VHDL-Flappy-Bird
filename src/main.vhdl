@@ -157,6 +157,7 @@ begin
 			if (ticks >= 416666) then
 				-- things to happen every second
 				bottompipe(0).x0 <= bottompipe(0).x0 - 1;
+				bottompipe(1).x0 <= bottompipe(1).x0 - 1;
 				sec <= sec + 1;
 				ticks := 0;
 			end if;
