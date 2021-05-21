@@ -170,7 +170,7 @@ begin
 	
 	HYSYNC: process(h_sync)
 	begin
-		if (rising_edge(h_sync)) then
+		if (h_sync = '1' and v_sync = '1') then
 				if (bottompipe(0).x0 <= 640) then
 					bottompipe(0).x0 <= bottompipe(0).x0 - 2;
 					bottompipe(1).x0 <= bottompipe(1).x0 - 2;--static speed for now but should be a variable as speed increases over time
