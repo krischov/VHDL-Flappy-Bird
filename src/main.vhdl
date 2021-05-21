@@ -78,12 +78,9 @@ begin
 	
 	--Sprites
 	
+	calc_addr(sprites(bird0), vga_row, vga_col);
+	calc_addr(sprites(crackpipe), vga_row, vga_col);
 	
---	sprites(crackpipe).address <= STD_LOGIC_VECTOR(resize(shift_right (shift_left ((vga_row - sprites(crackpipe).y0), 6 + sprites(crackpipe).scaling_factor_x) - 1, sprites(crackpipe).scaling_factor_y) + shift_right((vga_col + 1 - sprites(crackpipe).x0), sprites(crackpipe).scaling_factor_x), 12));
-
-	sprites(bird0).address <= STD_LOGIC_VECTOR(resize((shift_left ((vga_row - sprites(bird0).y0), 5 - 1 + sprites(bird0).scaling_factor_x) / sprites(bird0).scaling_factor_y) + ((vga_col + 1 - sprites(bird0).x0) / (sprites(bird0).scaling_factor_x)), 12));
-	sprites(crackpipe).address <= STD_LOGIC_VECTOR(resize((shift_left ((vga_row - sprites(crackpipe).y0), 6 - 1 + sprites(crackpipe).scaling_factor_x) / sprites(crackpipe).scaling_factor_y) + ((vga_col + 1 - sprites(crackpipe).x0) / (sprites(crackpipe).scaling_factor_x)), 12));
-
 	calc_in_range(sprites(bird0), vga_row, vga_col);
 	calc_in_range(sprites(crackpipe), vga_row, vga_col);
 	
