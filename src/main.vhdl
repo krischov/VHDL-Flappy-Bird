@@ -94,7 +94,7 @@ begin
 				unsigned(sprites(bird0).colours(7 downto 4))		when sprites(bird0).colours(15 downto 12) /= "1111" and sprites(bird0).in_range;
 	
 	sprite_b <= unsigned(sprites(crackpipe).colours(11 downto 8))	when sprites(crackpipe).colours(15 downto 12) /= "1111" and sprites(crackpipe).in_range else
-				unsigned(sprites(bird0).colours(11 downto 8)) 		when sprites(bird0).in_range;
+				unsigned(sprites(bird0).colours(11 downto 8)) 		when sprites(crackpipe).colours(15 downto 12) /= "1111" and sprites(bird0).in_range;
 	
 	sprite_z <= "0000" when sprites(crackpipe).in_range else
 				"0000" when sprites(bird0).in_range and sprites(bird0).colours(15 downto 12) /= "1111" else
@@ -111,6 +111,9 @@ begin
 			ticks := ticks + 1;
 			if (ticks >= 25000000) then
 				-- things to happen every second
+				sprites(bird0).x0 <= sprites(bird0).x0 + 1;
+				sprites(bird0).y0 <= sprites(bird0).y0 + 1;
+				
 				sec <= sec + 1;
 				ticks := 0;
 			end if;

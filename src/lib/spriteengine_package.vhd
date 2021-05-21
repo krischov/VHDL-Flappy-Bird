@@ -11,19 +11,18 @@ package spriteengine_package is
 	constant tree1 	: natural range 0 to 31 := 3;
 	constant grass 	: natural range 0 to 31 := 4;
 	
-
 	
 	type sprite_output_array is array(0 to 4) of std_logic_vector(15 downto 0);
 	type sprite_addr_array is array (0 to 4) of std_logic_vector(11 downto 0);
 	
 	type sprite is record
-		size 					: natural range 0 to 64;
-		y0						: unsigned(9 downto 0);
-		x0						: unsigned(9 downto 0);
+		size 				: natural range 0 to 64;
+		y0					: unsigned(9 downto 0);
+		x0					: unsigned(9 downto 0);
 		address				: std_logic_vector(11 downto 0);
 		index 				: natural range 0 to 31;
 		colours				: std_logic_vector(15 downto 0);
-		in_range				: boolean;
+		in_range			: boolean;
 		scaling_factor_x 	: natural range 0 to 16;
 		scaling_factor_y 	: natural range 0 to 16;
 	end record sprite;
