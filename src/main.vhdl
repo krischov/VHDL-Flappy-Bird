@@ -66,8 +66,8 @@ architecture x of main is
 	
 	
 	signal bottompipe : all_sprites(0 to 1) := (
-		(64, to_unsigned(0, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 4, TRUE),
-		(64, to_unsigned(224, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 4,TRUE)
+		(64, to_unsigned(0, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE),
+		(64, to_unsigned(288, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3,TRUE)
 	);
 
 	
@@ -127,17 +127,18 @@ begin
 
 
 	
-	sprite_r <= unsigned(bottompipe(bottompipe_idx).colours(3 downto 0))		when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else 
-				unsigned(bird(bird_idx).colours(3 downto 0))			when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
-				unsigned(grassplane(grass_idx).colours(3 downto 0))		when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range;
+	sprite_r <= unsigned(bird(bird_idx).colours(3 downto 0))			when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
+				unsigned(grassplane(grass_idx).colours(3 downto 0))		when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range else
+				unsigned(bottompipe(bottompipe_idx).colours(3 downto 0))		when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range;
 	
-	sprite_g <= unsigned(bottompipe(bottompipe_idx).colours(7 downto 4))		when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
-				unsigned(bird(bird_idx).colours(7 downto 4))			when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
-				unsigned(grassplane(grass_idx).colours(7 downto 4))		when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range;
+	sprite_g <= unsigned(bird(bird_idx).colours(7 downto 4))			when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
+				unsigned(grassplane(grass_idx).colours(7 downto 4))		when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range else
+				unsigned(bottompipe(bottompipe_idx).colours(7 downto 4))		when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range;
 	
-	sprite_b <= unsigned(bottompipe(bottompipe_idx).colours(11 downto 8))		when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
+	sprite_b <=  
 				unsigned(bird(bird_idx).colours(11 downto 8)) 			when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
-				unsigned(grassplane(grass_idx).colours(11 downto 8))	when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range;
+				unsigned(grassplane(grass_idx).colours(11 downto 8))	when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range else
+				unsigned(bottompipe(bottompipe_idx).colours(11 downto 8))		when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range;
 
 	sprite_z <= "0000" when bottompipe(bottompipe_idx).in_range and bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" else
 				"0000" when bird(bird_idx).in_range and bird(bird_idx).colours(15 downto 12) /= "1111" else
