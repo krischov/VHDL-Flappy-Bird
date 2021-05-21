@@ -48,7 +48,7 @@ architecture x of main is
 	
 	signal sprites : all_sprites(0 to 1) := (
 		(32, to_unsigned(50, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1),
-		(64, to_unsigned(80, 10), to_unsigned(50,10), "000000000000", crackpipe, "0000000000000000", false, 1, 1)
+		(64, to_unsigned(80, 10), to_unsigned(50,10), "000000000000", crackpipe, "0000000000000000", false, 1, 2)
 	);
 	
 	signal grassplane : all_sprites(0 to 9) := (
@@ -56,8 +56,8 @@ architecture x of main is
 		(32, to_unsigned(416, 10), to_unsigned(64,10), "000000000000", grass, "0000000000000000", false, 1, 1),
 		(32, to_unsigned(416, 10), to_unsigned(128,10), "000000000000", grass, "0000000000000000", false, 1, 1),
 		(32, to_unsigned(416, 10), to_unsigned(192,10), "000000000000", grass, "0000000000000000", false, 1, 1),
-		(32, to_unsigned(416, 10), to_unsigned(256,10), "000000000000", grass, "0000000000000000", false, 2, 2),
-		(32, to_unsigned(416, 10), to_unsigned(320,10), "000000000000", grass, "0000000000000000", false, 2, 2),
+		(32, to_unsigned(416, 10), to_unsigned(256,10), "000000000000", grass, "0000000000000000", false, 2, 1),
+		(32, to_unsigned(416, 10), to_unsigned(320,10), "000000000000", grass, "0000000000000000", false, 2, 1),
 		(32, to_unsigned(416, 10), to_unsigned(384,10), "000000000000", grass, "0000000000000000", false, 2, 2),
 		(32, to_unsigned(416, 10), to_unsigned(448,10), "000000000000", grass, "0000000000000000", false, 2, 2),
 		(32, to_unsigned(416, 10), to_unsigned(512,10), "000000000000", grass, "0000000000000000", false, 2, 2),

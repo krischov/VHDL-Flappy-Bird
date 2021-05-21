@@ -52,14 +52,14 @@ package body spriteengine_package is
 	begin
 		if (s.size = 32) then
 			return STD_LOGIC_VECTOR(resize(
-							(shift_left ((vga_row - s.y0), 5 - 1 + s.scaling_factor_x) / s.scaling_factor_y) +
-							((vga_col + 1 - s.x0) / (s.scaling_factor_x)),
+							(shift_left ((vga_row - s.y0) / s.scaling_factor_y, 5)) + -- Find linear offset of row (pixels per row * row number)
+							((vga_col + 1 - s.x0) / (s.scaling_factor_x)), -- Pixel to draw in the current row (row found in above line)
 						12));
 		else -- size is 64
 			return STD_LOGIC_VECTOR(resize(
-					(shift_left ((vga_row - s.y0), 6 - 1 + s.scaling_factor_x) / s.scaling_factor_y) + 
-					((vga_col + 1 - s.x0) / (s.scaling_factor_x)),
-				12));
+							(shift_left ((vga_row - s.y0) / s.scaling_factor_y, 6)) +
+							((vga_col + 1 - s.x0) / (s.scaling_factor_x)),
+						12));
 		end if;
 	end function;
 	
@@ -67,14 +67,14 @@ package body spriteengine_package is
 	begin
 		if (s.size = 32) then
 			s.address <= STD_LOGIC_VECTOR(resize(
-							(shift_left ((vga_row - s.y0), 5 - 1 + s.scaling_factor_x) / s.scaling_factor_y) +
+							(shift_left ((vga_row - s.y0) / s.scaling_factor_y, 5)) +
 							((vga_col + 1 - s.x0) / (s.scaling_factor_x)),
 						12));
 		elsif (s.size = 64) then
 			s.address <= STD_LOGIC_VECTOR(resize(
-					(shift_left ((vga_row - s.y0), 6 - 1 + s.scaling_factor_x) / s.scaling_factor_y) + 
-					((vga_col + 1 - s.x0) / (s.scaling_factor_x)),
-				12));
+							(shift_left ((vga_row - s.y0) / s.scaling_factor_y, 6)) +
+							((vga_col + 1 - s.x0) / (s.scaling_factor_x)),
+						12));
 		end if;
 	end procedure;
 	
