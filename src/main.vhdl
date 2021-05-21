@@ -168,7 +168,7 @@ begin
 			end if;
 	end process;
 	
-	VYSYNC: process(v_sync)
+	VSYNC: process(v_sync)
 	begin
 		if (v_sync = '1') then
 				if (bottompipe(0).x0 <= 640) then
@@ -180,10 +180,10 @@ begin
 				end if;
 				if (mouse_lbtn = '1') then
 					if (bird(0).y0 >= 0) then
-						bird(0).y0 <= bird(0).y0 + 10;
+						bird(0).y0 <= bird(0).y0 - 10;
 					end if;
 				elsif (bird(0).y0 <= 480) then
-					bird(0).y0 <= bird(0).y0 - 10;
+					bird(0).y0 <= bird(0).y0 + 10;
 				end if;
 			end if;
 		end process;
