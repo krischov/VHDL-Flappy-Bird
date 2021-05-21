@@ -169,6 +169,7 @@ begin
 	end process;
 	
 	VSYNC: process(v_sync)
+	variable mouse_flag : std_logic := '0';
 	begin
 		if (v_sync = '1') then
 				if (bottompipe(0).x0 <= 640) then
@@ -178,13 +179,17 @@ begin
 					bottompipe(0).x0 <= to_unsigned(640, 10); 
 					bottompipe(1).x0 <= to_unsigned(640, 10);
 				end if;
-				if (mouse_lbtn = '1') then
+				if (mouse_lbtn = '1' and mouse_flag = '0') then
+					mouse_flag := '1';
 					if (bird(0).y0 >= 0) then
 						bird(0).y0 <= bird(0).y0 - 10;
 					end if;
 				elsif (bird(0).y0 <= 480) then
 					bird(0).y0 <= bird(0).y0 + 10;
 				end if;
+			end if;
+		if (mouse_lbtn = '0' and mouse_flag = '1') then
+			mouse_flag := '0';
 			end if;
 		end process;
 end architecture;
