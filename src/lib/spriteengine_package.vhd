@@ -27,11 +27,13 @@ package spriteengine_package is
 		scaling_factor_y 	: natural range 0 to 16;
 	end record sprite;
 	
-	type all_sprites is array(0 to 1) of sprite;
+	type all_sprites is array(natural range <>) of sprite;
 	
 	procedure calc_in_range (signal s: inout sprite; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0));
 	procedure calc_addr (signal s: inout sprite; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0));
-	
+	function get_active_idx (signal sprites: in all_sprites; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0)) return natural;
+	function return_in_range (signal s: in sprite; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0)) return boolean;
+	function calc_addr_f (signal s: in sprite; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0)) return std_logic_vector;
 end package spriteengine_package;
 
 package body spriteengine_package is
@@ -40,6 +42,26 @@ package body spriteengine_package is
 	begin
 		s.in_range <= unsigned(vga_row) < s.y0 + (s.size * s.scaling_factor_y) and unsigned(vga_row) >= s.y0 and unsigned(vga_col) < s.x0 + (s.size * s.scaling_factor_x) and unsigned(vga_col) >= s.x0;
 	end procedure;
+	
+	function return_in_range (signal s: in sprite; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0)) return boolean is
+	begin
+		return vga_row < s.y0 + (s.size * s.scaling_factor_y) and vga_row >= s.y0 and vga_col < s.x0 + (s.size * s.scaling_factor_x) and vga_col >= s.x0;
+	end function;
+
+	function calc_addr_f (signal s: in sprite; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0)) return std_logic_vector is
+	begin
+		if (s.size = 32) then
+			return STD_LOGIC_VECTOR(resize(
+							(shift_left ((vga_row - s.y0), 5 - 1 + s.scaling_factor_x) / s.scaling_factor_y) +
+							((vga_col + 1 - s.x0) / (s.scaling_factor_x)),
+						12));
+		else -- size is 64
+			return STD_LOGIC_VECTOR(resize(
+					(shift_left ((vga_row - s.y0), 6 - 1 + s.scaling_factor_x) / s.scaling_factor_y) + 
+					((vga_col + 1 - s.x0) / (s.scaling_factor_x)),
+				12));
+		end if;
+	end function;
 	
 	procedure calc_addr (signal s: inout sprite; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0)) is
 	begin
@@ -55,5 +77,16 @@ package body spriteengine_package is
 				12));
 		end if;
 	end procedure;
+	
+	function get_active_idx (signal sprites: in all_sprites; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0)) return natural is
+	begin
+		for i in 0 to sprites'length - 1 loop
+			if (unsigned(vga_row) < sprites(i).y0 + (sprites(i).size * sprites(i).scaling_factor_y) and unsigned(vga_row) >= sprites(i).y0 and unsigned(vga_col) < sprites(i).x0 + (sprites(i).size * sprites(i).scaling_factor_x) and unsigned(vga_col) >= sprites(i).x0) then
+				return i;
+			end if;
+		end loop;
+		
+		return 0;
+	end function;
 	
 end package body;	

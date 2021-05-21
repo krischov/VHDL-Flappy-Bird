@@ -46,17 +46,31 @@ architecture x of main is
 	
 	signal sec : natural range 0 to 59 := 0;
 	
-	signal sprites : all_sprites := (
-		(32, to_unsigned(50, 10), to_unsigned(50,10), "000000000000", crackpipe, "0000000000000000", false, 1, 1),
+	signal sprites : all_sprites(0 to 1) := (
+		(32, to_unsigned(50, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1),
 		(64, to_unsigned(80, 10), to_unsigned(50,10), "000000000000", crackpipe, "0000000000000000", false, 1, 1)
 	);
+	
+	signal grassplane : all_sprites(0 to 9) := (
+		(32, to_unsigned(416, 10), to_unsigned(0,10), "000000000000", grass, "0000000000000000", false, 1, 1),
+		(32, to_unsigned(416, 10), to_unsigned(64,10), "000000000000", grass, "0000000000000000", false, 1, 1),
+		(32, to_unsigned(416, 10), to_unsigned(128,10), "000000000000", grass, "0000000000000000", false, 1, 1),
+		(32, to_unsigned(416, 10), to_unsigned(192,10), "000000000000", grass, "0000000000000000", false, 1, 1),
+		(32, to_unsigned(416, 10), to_unsigned(256,10), "000000000000", grass, "0000000000000000", false, 2, 2),
+		(32, to_unsigned(416, 10), to_unsigned(320,10), "000000000000", grass, "0000000000000000", false, 2, 2),
+		(32, to_unsigned(416, 10), to_unsigned(384,10), "000000000000", grass, "0000000000000000", false, 2, 2),
+		(32, to_unsigned(416, 10), to_unsigned(448,10), "000000000000", grass, "0000000000000000", false, 2, 2),
+		(32, to_unsigned(416, 10), to_unsigned(512,10), "000000000000", grass, "0000000000000000", false, 2, 2),
+		(32, to_unsigned(416, 10), to_unsigned(576,10), "000000000000", grass, "0000000000000000", false, 2, 2)
+	);
+	
+	
 	signal sprites_addrs : sprite_addr_array;
 	signal sprites_out : sprite_output_array;
 	
-begin
+	signal grass_idx : natural range 0 to 15;
 	
-	sprites_addrs(bird0) <= sprites(bird0).address;
-	sprites_addrs(crackpipe) <= sprites(crackpipe).address;
+begin
 
 	spriteengine0 : spriteengine port map (clk, vga_row, vga_col, sprites_addrs, sprites_out);
 	textengine0: textengine port map(clk, text_vector, vga_row, vga_col, txt_r, txt_g, txt_b, txt_not_a);
@@ -77,32 +91,50 @@ begin
 	str2text(text_vector, 16, 20, 1, "0011", "1100", "1001", "SW0 to SW8 control the colours");
 	
 	--Sprites
+
+	grass_idx <= get_active_idx(grassplane, vga_row, vga_col);	
+	
+	grassplane(grass_idx).address <= calc_addr_f(grassplane(grass_idx), vga_row, vga_col);
 	
 	calc_addr(sprites(bird0), vga_row, vga_col);
 	calc_addr(sprites(crackpipe), vga_row, vga_col);
 	
+	grassplane(grass_idx).in_range <= return_in_range(grassplane(grass_idx), vga_row, vga_col);
+	
 	calc_in_range(sprites(bird0), vga_row, vga_col);
 	calc_in_range(sprites(crackpipe), vga_row, vga_col);
+	
+	sprites_addrs(grass) <= grassplane(grass_idx).address;
+	
+	sprites_addrs(bird0) <= sprites(bird0).address;
+	sprites_addrs(crackpipe) <= sprites(crackpipe).address;	
+	
+	grassplane(grass_idx).colours <= sprites_out(grass);
 	
 	sprites(bird0).colours <= sprites_out(bird0);
 	sprites(crackpipe).colours <= sprites_out(crackpipe);
 	
-	sprite_r <= unsigned(sprites(crackpipe).colours(3 downto 0))	when sprites(crackpipe).colours(15 downto 12) /= "1111" and sprites(crackpipe).in_range else 
-				unsigned(sprites(bird0).colours(3 downto 0))		when sprites(bird0).colours(15 downto 12) /= "1111" and sprites(bird0).in_range;
 	
-	sprite_g <= unsigned(sprites(crackpipe).colours(7 downto 4))	when sprites(crackpipe).colours(15 downto 12) /= "1111" and sprites(crackpipe).in_range else
-				unsigned(sprites(bird0).colours(7 downto 4))		when sprites(bird0).colours(15 downto 12) /= "1111" and sprites(bird0).in_range;
+	sprite_r <= unsigned(sprites(crackpipe).colours(3 downto 0))		when sprites(crackpipe).colours(15 downto 12) /= "1111" and sprites(crackpipe).in_range else 
+				unsigned(sprites(bird0).colours(3 downto 0))			when sprites(bird0).colours(15 downto 12) /= "1111" and sprites(bird0).in_range else
+				unsigned(grassplane(grass_idx).colours(3 downto 0))		when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range;
 	
-	sprite_b <= unsigned(sprites(crackpipe).colours(11 downto 8))	when sprites(crackpipe).colours(15 downto 12) /= "1111" and sprites(crackpipe).in_range else
-				unsigned(sprites(bird0).colours(11 downto 8)) 		when sprites(crackpipe).colours(15 downto 12) /= "1111" and sprites(bird0).in_range;
+	sprite_g <= unsigned(sprites(crackpipe).colours(7 downto 4))		when sprites(crackpipe).colours(15 downto 12) /= "1111" and sprites(crackpipe).in_range else
+				unsigned(sprites(bird0).colours(7 downto 4))			when sprites(bird0).colours(15 downto 12) /= "1111" and sprites(bird0).in_range else
+				unsigned(grassplane(grass_idx).colours(7 downto 4))		when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range;
 	
-	sprite_z <= "0000" when sprites(crackpipe).in_range else
+	sprite_b <= unsigned(sprites(crackpipe).colours(11 downto 8))		when sprites(crackpipe).colours(15 downto 12) /= "1111" and sprites(crackpipe).in_range else
+				unsigned(sprites(bird0).colours(11 downto 8)) 			when sprites(crackpipe).colours(15 downto 12) /= "1111" and sprites(bird0).in_range else
+				unsigned(grassplane(grass_idx).colours(11 downto 8))	when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range;
+
+	sprite_z <= "0000" when sprites(crackpipe).in_range and sprites(crackpipe).colours(15 downto 12) /= "1111" else
 				"0000" when sprites(bird0).in_range and sprites(bird0).colours(15 downto 12) /= "1111" else
+				"0000" when grassplane(grass_idx).in_range and grassplane(grass_idx).colours(15 downto 12) /= "1111" else
 				"1111";
 	
-	red_out <=		txt_r when txt_not_a = "1111" else sprite_r when sprite_z = "0000" else "0000";
-	green_out <=	txt_g when txt_not_a = "1111" else sprite_g when sprite_z = "0000" else "0000";
-	blue_out <=		txt_b when txt_not_a = "1111" else sprite_b when sprite_z = "0000" else "0000";
+	red_out <=		txt_r when txt_not_a = "1111" else sprite_r when sprite_z = "0000" else "0111";
+	green_out <=	txt_g when txt_not_a = "1111" else sprite_g when sprite_z = "0000" else "1100";
+	blue_out <=		txt_b when txt_not_a = "1111" else sprite_b when sprite_z = "0000" else "1100";
 	
 	process(clk)
 		variable ticks : integer := 0;
