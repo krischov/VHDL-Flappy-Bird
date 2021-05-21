@@ -166,12 +166,11 @@ begin
 			else
 				mouse_btn <= var_len_str("No Mouse button Pressed", mouse_btn'length);
 			end if;
-		end if;
 	end process;
 	
-	HYSYNC process(h_sync)
+	HYSYNC: process(h_sync)
 	begin
-		if (rising_edge'h_sync) then
+		if (rising_edge(h_sync)) then
 				if (bottompipe(0).x0 <= 640) then
 					bottompipe(0).x0 <= bottompipe(0).x0 - 2;
 					bottompipe(1).x0 <= bottompipe(1).x0 - 2;--static speed for now but should be a variable as speed increases over time
@@ -179,5 +178,6 @@ begin
 					bottompipe(0).x0 <= to_unsigned(640, 10); 
 					bottompipe(1).x0 <= to_unsigned(640, 10);
 				end if;
+			end if;
 		end process;
 end architecture;
