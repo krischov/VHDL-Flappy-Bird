@@ -51,6 +51,14 @@ architecture x of main is
 		(64, to_unsigned(80, 10), to_unsigned(50,10), "000000000000", crackpipe, "0000000000000000", false, 1, 2)
 	);
 	
+	signal pipe_0 : all_sprite(0 to 3) := (
+		(64, to_unsigned(0, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 4, 1),
+	);
+	
+	signal pipe_1 : all_sprite(0 to 3) := (
+		(64, to_unsigned(384, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 4, 1),
+	);
+	
 	signal grassplane : all_sprites(0 to 9) := (
 		(32, to_unsigned(448, 10), to_unsigned(0,10), "000000000000", grass, "0000000000000000", false, 2, 1),
 		(32, to_unsigned(448, 10), to_unsigned(64,10), "000000000000", grass, "0000000000000000", false, 2, 1),
@@ -63,6 +71,7 @@ architecture x of main is
 		(32, to_unsigned(448, 10), to_unsigned(512,10), "000000000000", grass, "0000000000000000", false, 2, 1),
 		(32, to_unsigned(448, 10), to_unsigned(576,10), "000000000000", grass, "0000000000000000", false, 2, 1)
 	);
+	
 	
 	
 	signal sprites_addrs : sprite_addr_array;
