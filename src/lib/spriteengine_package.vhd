@@ -26,6 +26,7 @@ package spriteengine_package is
 		scaling_factor_x 	: natural range 0 to 16;
 		scaling_factor_y 	: natural range 0 to 16;
 		visible 				: boolean;
+		underflow			: boolean;
 	end record sprite;
 	
 	type all_sprites is array(natural range <>) of sprite;
@@ -39,7 +40,11 @@ package body spriteengine_package is
 	
 	function return_in_range (signal s: in sprite; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0)) return boolean is
 	begin
-		return s.visible and vga_row < s.y0 + (s.size * s.scaling_factor_y) and vga_row >= s.y0 and vga_col < s.x0 + (s.size * s.scaling_factor_x) and vga_col >= s.x0;
+		if (s.underflow = false) then
+			return s.visible and vga_row < s.y0 + (s.size * s.scaling_factor_y) and vga_row >= s.y0 and vga_col < s.x0 + (s.size * s.scaling_factor_x) and vga_col >= s.x0;
+		else
+			return s.visible and vga_row < s.y0 + (s.size * s.scaling_factor_y) and vga_row >= s.y0 and s.x0 > 959 and vga_col < s.x0 + (s.size * s.scaling_factor_x);
+		end if;
 	end function;
 
 	function calc_addr_f (signal s: in sprite; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0)) return std_logic_vector is
