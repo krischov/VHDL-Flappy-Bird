@@ -154,13 +154,14 @@ begin
 --				sec <= sec + 1;
 --				ticks := 0;
 --			end if;
-			if (ticks >= 416667) then
-				if (bottompipe(0).x0 > to_unsigned(640, 10)) then
+			if (ticks >= 416680) then
+				if (bottompipe(0).x0 <= 640) then
+					bottompipe(0).x0 <= bottompipe(0).x0 - 2;
+					bottompipe(1).x0 <= bottompipe(1).x0 - 2;--static speed for now but should be a variable as speed increases over time
+				else
 					bottompipe(0).x0 <= to_unsigned(640, 10); 
 					bottompipe(1).x0 <= to_unsigned(640, 10);
 				end if;
-				bottompipe(0).x0 <= bottompipe(0).x0 - 2;
-				bottompipe(1).x0 <= bottompipe(1).x0 - 2;--static speed for now but should be a variable as speed increases over time
 				sec <= sec + 1;
 				ticks := 0;
 			end if;
