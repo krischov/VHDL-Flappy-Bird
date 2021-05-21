@@ -172,25 +172,19 @@ begin
 	variable mouse_flag : std_logic := '0';
 	begin
 		if (v_sync = '1') then
-				if (bottompipe(0).x0 <= 640) then
-					bottompipe(0).underflow <= false;
-					bottompipe(1).underflow <= false;
-					bottompipe(0).x0 <= bottompipe(0).x0 - 2;
-					bottompipe(1).x0 <= bottompipe(1).x0 - 2;--static speed for now but should be a variable as speed increases over time
-					
-				elsif (bottompipe(0).x0 >= 959) then
-					bottompipe(0).underflow <= true;
-					bottompipe(1).underflow <= true;
-					bottompipe(0).x0 <= bottompipe(0).x0 - 2;
-					bottompipe(1).x0 <= bottompipe(1).x0 - 2;
-					
-				elsif (bottompipe(0).x0 <= 959) then
-					bottompipe(0).underflow <= false;
-					bottompipe(1).underflow <= false;
-					bottompipe(0).x0 <= to_unsigned(640, 10); 
-					bottompipe(1).x0 <= to_unsigned(640, 10);
-
+			for i in 0 to (bottompipe'length - 1) loop
+				if (bottompipe(i).x0 <= 640) then
+					bottompipe(i).underflow <= false;
+					bottompipe(i).x0 <= bottompipe(0).x0 - 2;
+				elsif (bottompipe(i).x0 >= 959) then
+					bottompipe(i).underflow <= true;
+					bottompipe(i).x0 <= bottompipe(0).x0 - 2;
+				elsif (bottompipe(i).x0 <= 959) then
+					bottompipe(i).underflow <= false;
+					bottompipe(i).x0 <= to_unsigned(640, 10); 
 				end if;
+			end loop;
+				
 				if (mouse_lbtn = '1' and mouse_flag = '0') then
 					mouse_flag := '1';
 					if (bird(0).y0 >= 0) then
