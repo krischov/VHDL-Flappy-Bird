@@ -28,7 +28,7 @@ package spriteengine_package is
 		scaling_factor_y 	: natural range 0 to 16;
 	end record sprite;
 	
-	type all_sprites is array(1 downto 0) of sprite;
+	type all_sprites is array(0 to 1) of sprite;
 	
 	procedure calc_in_range (signal s: inout sprite; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0));
 	

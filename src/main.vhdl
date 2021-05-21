@@ -47,8 +47,8 @@ architecture x of main is
 	signal sec : natural range 0 to 59 := 0;
 	
 	signal sprites : all_sprites := (
-		(64, to_unsigned(200, 10), to_unsigned(200,10), "000000000000", crackpipe, "0000000000000000", false, 8, 8),
-		(64, to_unsigned(200, 10), to_unsigned(200,10), "000000000000", crackpipe, "0000000000000000", false, 8, 8)
+		(64, to_unsigned(5, 10), to_unsigned(5,10), "000000000000", crackpipe, "0000000000000000", false, 2, 2),
+		(64, to_unsigned(200, 10), to_unsigned(200,10), "000000000000", crackpipe, "0000000000000000", false, 2, 2)
 	);
 	signal sprites_addrs : sprite_addr_array;
 	signal sprites_out : sprite_output_array;
