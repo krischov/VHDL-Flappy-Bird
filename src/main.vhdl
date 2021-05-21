@@ -168,7 +168,7 @@ begin
 			end if;
 	end process;
 	
-	HYSYNC: process(h_sync)
+	VYSYNC: process(v_sync)
 	begin
 		if (v_sync = '1') then
 				if (bottompipe(0).x0 <= 640) then
