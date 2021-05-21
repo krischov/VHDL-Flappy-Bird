@@ -154,7 +154,7 @@ begin
 --				sec <= sec + 1;
 --				ticks := 0;
 --			end if;
-			if (ticks >= 416666) then
+			if (ticks >= 416667) then
 				if (bottompipe(0).x0 > to_unsigned(640, 10)) then
 					bottompipe(0).x0 <= to_unsigned(640, 10); 
 					bottompipe(1).x0 <= to_unsigned(640, 10);
