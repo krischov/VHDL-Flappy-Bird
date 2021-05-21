@@ -170,13 +170,20 @@ begin
 	
 	HYSYNC: process(h_sync)
 	begin
-		if (h_sync = '1' and v_sync = '1') then
+		if (v_sync = '1') then
 				if (bottompipe(0).x0 <= 640) then
 					bottompipe(0).x0 <= bottompipe(0).x0 - 2;
 					bottompipe(1).x0 <= bottompipe(1).x0 - 2;--static speed for now but should be a variable as speed increases over time
 				else
 					bottompipe(0).x0 <= to_unsigned(640, 10); 
 					bottompipe(1).x0 <= to_unsigned(640, 10);
+				end if;
+				if (mouse_lbtn = '1') then
+					if (bird(0).y0 >= 0) then
+						bird(0).y0 <= bird(0).y0 + 10;
+					end if;
+				elsif (bird(0).y0 <= 480) then
+					bird(0).y0 <= bird(0).y0 - 10;
 				end if;
 			end if;
 		end process;
