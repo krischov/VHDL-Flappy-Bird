@@ -46,36 +46,38 @@ architecture x of main is
 	
 	signal sec : natural range 0 to 59 := 0;
 	
-	signal sprites : all_sprites(0 to 1) := (
-		(32, to_unsigned(50, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1),
-		(64, to_unsigned(80, 10), to_unsigned(50,10), "000000000000", crackpipe, "0000000000000000", false, 1, 2)
+
+	signal bird : all_sprites(0 to 1)  := (
+		(32, to_unsigned(50, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, TRUE),
+		(32, to_unsigned(50, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, FALSE)
+	);
+	signal grassplane : all_sprites(0 to 9) := (
+		(32, to_unsigned(448, 10), to_unsigned(0,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE),
+		(32, to_unsigned(448, 10), to_unsigned(64,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE),
+		(32, to_unsigned(448, 10), to_unsigned(128,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE),
+		(32, to_unsigned(448, 10), to_unsigned(192,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE),
+		(32, to_unsigned(448, 10), to_unsigned(256,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE),
+		(32, to_unsigned(448, 10), to_unsigned(320,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE),
+		(32, to_unsigned(448, 10), to_unsigned(384,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE),
+		(32, to_unsigned(448, 10), to_unsigned(448,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE),
+		(32, to_unsigned(448, 10), to_unsigned(512,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE),
+		(32, to_unsigned(448, 10), to_unsigned(576,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE)
 	);
 	
+	
 	signal bottompipe : all_sprites(0 to 1) := (
-		(64, to_unsigned(0, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 4),
-		(64, to_unsigned(224, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 4)
+		(64, to_unsigned(0, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 4, TRUE),
+		(64, to_unsigned(224, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 4,TRUE)
 	);
 
 	
-	signal grassplane : all_sprites(0 to 9) := (
-		(32, to_unsigned(448, 10), to_unsigned(0,10), "000000000000", grass, "0000000000000000", false, 2, 1),
-		(32, to_unsigned(448, 10), to_unsigned(64,10), "000000000000", grass, "0000000000000000", false, 2, 1),
-		(32, to_unsigned(448, 10), to_unsigned(128,10), "000000000000", grass, "0000000000000000", false, 2, 1),
-		(32, to_unsigned(448, 10), to_unsigned(192,10), "000000000000", grass, "0000000000000000", false, 2, 1),
-		(32, to_unsigned(448, 10), to_unsigned(256,10), "000000000000", grass, "0000000000000000", false, 2, 1),
-		(32, to_unsigned(448, 10), to_unsigned(320,10), "000000000000", grass, "0000000000000000", false, 2, 1),
-		(32, to_unsigned(448, 10), to_unsigned(384,10), "000000000000", grass, "0000000000000000", false, 2, 1),
-		(32, to_unsigned(448, 10), to_unsigned(448,10), "000000000000", grass, "0000000000000000", false, 2, 1),
-		(32, to_unsigned(448, 10), to_unsigned(512,10), "000000000000", grass, "0000000000000000", false, 2, 1),
-		(32, to_unsigned(448, 10), to_unsigned(576,10), "000000000000", grass, "0000000000000000", false, 2, 1)
-	);
-	
+
 	
 	
 	signal sprites_addrs : sprite_addr_array;
 	signal sprites_out : sprite_output_array;
 	
-	signal grass_idx, bottompipe_idx : natural range 0 to 15;
+	signal grass_idx, bottompipe_idx, bird_idx : natural range 0 to 15;
 	
 begin
 
@@ -105,44 +107,40 @@ begin
 	bottompipe_idx <= get_active_idx(bottompipe, vga_row, vga_col);
 	bottompipe(bottompipe_idx).address <= calc_addr_f(bottompipe(bottompipe_idx), vga_row, vga_col);
 	
+	bird_idx <= get_active_idx(bird, vga_row, vga_col);	
+	bird(bird_idx).address <= calc_addr_f(bird(bird_idx), vga_row, vga_col);
 	
-	calc_addr(sprites(bird0), vga_row, vga_col);
-	calc_addr(sprites(crackpipe), vga_row, vga_col);
 	
+	bird(bird_idx).in_range <= return_in_range(bird(bird_idx), vga_row, vga_col);
 	grassplane(grass_idx).in_range <= return_in_range(grassplane(grass_idx), vga_row, vga_col);
 	bottompipe(bottompipe_idx).in_range <= return_in_range(bottompipe(bottompipe_idx), vga_row, vga_col);
 	
-	calc_in_range(sprites(bird0), vga_row, vga_col);
-	calc_in_range(sprites(crackpipe), vga_row, vga_col);
-	
-	sprites_addrs(grass) <= grassplane(grass_idx).address;
-		
+
+	sprites_addrs(grass) <= grassplane(grass_idx).address;	
 	sprites_addrs(crackpipe) <= bottompipe(bottompipe_idx).address;
+	sprites_addrs(bird0) <= bird(bird_idx).address;
 	
-	sprites_addrs(bird0) <= sprites(bird0).address;
-	
-	
+	bird(bird_idx).colours <= sprites_out(bird0);
 	grassplane(grass_idx).colours <= sprites_out(grass);
 	bottompipe(bottompipe_idx).colours <= sprites_out(crackpipe);
 
-	
-	sprites(bird0).colours <= sprites_out(bird0);
+
 
 	
 	sprite_r <= unsigned(bottompipe(bottompipe_idx).colours(3 downto 0))		when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else 
-				unsigned(sprites(bird0).colours(3 downto 0))			when sprites(bird0).colours(15 downto 12) /= "1111" and sprites(bird0).in_range else
+				unsigned(bird(bird_idx).colours(3 downto 0))			when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
 				unsigned(grassplane(grass_idx).colours(3 downto 0))		when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range;
 	
 	sprite_g <= unsigned(bottompipe(bottompipe_idx).colours(7 downto 4))		when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
-				unsigned(sprites(bird0).colours(7 downto 4))			when sprites(bird0).colours(15 downto 12) /= "1111" and sprites(bird0).in_range else
+				unsigned(bird(bird_idx).colours(7 downto 4))			when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
 				unsigned(grassplane(grass_idx).colours(7 downto 4))		when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range;
 	
 	sprite_b <= unsigned(bottompipe(bottompipe_idx).colours(11 downto 8))		when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
-				unsigned(sprites(bird0).colours(11 downto 8)) 			when sprites(crackpipe).colours(15 downto 12) /= "1111" and sprites(bird0).in_range else
+				unsigned(bird(bird_idx).colours(11 downto 8)) 			when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
 				unsigned(grassplane(grass_idx).colours(11 downto 8))	when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range;
 
 	sprite_z <= "0000" when bottompipe(bottompipe_idx).in_range and bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" else
-				"0000" when sprites(bird0).in_range and sprites(bird0).colours(15 downto 12) /= "1111" else
+				"0000" when bird(bird_idx).in_range and bird(bird_idx).colours(15 downto 12) /= "1111" else
 				"0000" when grassplane(grass_idx).in_range and grassplane(grass_idx).colours(15 downto 12) /= "1111" else
 				"1111";
 	
@@ -157,8 +155,7 @@ begin
 			ticks := ticks + 1;
 			if (ticks >= 25000000) then
 				-- things to happen every second
-				sprites(bird0).x0 <= sprites(bird0).x0 + 1;
-				sprites(bird0).y0 <= sprites(bird0).y0 + 1;
+	
 				
 				sec <= sec + 1;
 				ticks := 0;
