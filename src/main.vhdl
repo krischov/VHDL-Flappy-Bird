@@ -47,14 +47,15 @@ architecture x of main is
 	signal sec : natural range 0 to 59 := 0;
 	
 	signal sprites : all_sprites := (
-		(64, to_unsigned(5, 10), to_unsigned(5,10), "000000000000", crackpipe, "0000000000000000", false, 2, 2),
-		(64, to_unsigned(200, 10), to_unsigned(200,10), "000000000000", crackpipe, "0000000000000000", false, 2, 2)
+		(32, to_unsigned(50, 10), to_unsigned(50,10), "000000000000", crackpipe, "0000000000000000", false, 1, 1),
+		(64, to_unsigned(80, 10), to_unsigned(50,10), "000000000000", crackpipe, "0000000000000000", false, 1, 1)
 	);
 	signal sprites_addrs : sprite_addr_array;
 	signal sprites_out : sprite_output_array;
 	
 begin
 	
+	sprites_addrs(bird0) <= sprites(bird0).address;
 	sprites_addrs(crackpipe) <= sprites(crackpipe).address;
 
 	spriteengine0 : spriteengine port map (clk, vga_row, vga_col, sprites_addrs, sprites_out);
@@ -80,19 +81,31 @@ begin
 	
 --	sprites(crackpipe).address <= STD_LOGIC_VECTOR(resize(shift_right (shift_left ((vga_row - sprites(crackpipe).y0), 6 + sprites(crackpipe).scaling_factor_x) - 1, sprites(crackpipe).scaling_factor_y) + shift_right((vga_col + 1 - sprites(crackpipe).x0), sprites(crackpipe).scaling_factor_x), 12));
 
+	sprites(bird0).address <= STD_LOGIC_VECTOR(resize((shift_left ((vga_row - sprites(bird0).y0), 5 - 1 + sprites(bird0).scaling_factor_x) / sprites(bird0).scaling_factor_y) + ((vga_col + 1 - sprites(bird0).x0) / (sprites(bird0).scaling_factor_x)), 12));
 	sprites(crackpipe).address <= STD_LOGIC_VECTOR(resize((shift_left ((vga_row - sprites(crackpipe).y0), 6 - 1 + sprites(crackpipe).scaling_factor_x) / sprites(crackpipe).scaling_factor_y) + ((vga_col + 1 - sprites(crackpipe).x0) / (sprites(crackpipe).scaling_factor_x)), 12));
 
+	calc_in_range(sprites(bird0), vga_row, vga_col);
 	calc_in_range(sprites(crackpipe), vga_row, vga_col);
+	
+	sprites(bird0).colours <= sprites_out(bird0);
 	sprites(crackpipe).colours <= sprites_out(crackpipe);
-	sprite_r <= unsigned(sprites(crackpipe).colours(3 downto 0));
-	sprite_g <= unsigned(sprites(crackpipe).colours(7 downto 4));
-	sprite_b <= unsigned(sprites(crackpipe).colours(11 downto 8));
-	sprite_z <= "0000" when sprites(crackpipe).in_range else "1111";
+	
+	sprite_r <= unsigned(sprites(crackpipe).colours(3 downto 0))	when sprites(crackpipe).colours(15 downto 12) /= "1111" and sprites(crackpipe).in_range else 
+				unsigned(sprites(bird0).colours(3 downto 0))		when sprites(bird0).colours(15 downto 12) /= "1111" and sprites(bird0).in_range;
+	
+	sprite_g <= unsigned(sprites(crackpipe).colours(7 downto 4))	when sprites(crackpipe).colours(15 downto 12) /= "1111" and sprites(crackpipe).in_range else
+				unsigned(sprites(bird0).colours(7 downto 4))		when sprites(bird0).colours(15 downto 12) /= "1111" and sprites(bird0).in_range;
+	
+	sprite_b <= unsigned(sprites(crackpipe).colours(11 downto 8))	when sprites(crackpipe).colours(15 downto 12) /= "1111" and sprites(crackpipe).in_range else
+				unsigned(sprites(bird0).colours(11 downto 8)) 		when sprites(bird0).in_range;
+	
+	sprite_z <= "0000" when sprites(crackpipe).in_range else
+				"0000" when sprites(bird0).in_range and sprites(bird0).colours(15 downto 12) /= "1111" else
+				"1111";
 	
 	red_out <=		txt_r when txt_not_a = "1111" else sprite_r when sprite_z = "0000" else "0000";
 	green_out <=	txt_g when txt_not_a = "1111" else sprite_g when sprite_z = "0000" else "0000";
 	blue_out <=		txt_b when txt_not_a = "1111" else sprite_b when sprite_z = "0000" else "0000";
-
 	
 	process(clk)
 		variable ticks : integer := 0;

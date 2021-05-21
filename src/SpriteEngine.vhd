@@ -38,7 +38,7 @@ architecture a of spriteengine is
 	--signal pipe: sprite := (64, to_unsigned(200, 10), to_unsigned(200,10), crackpipe);
 	
 begin
-	--rom0: rom_ctrl generic map("../src/bird0.MIF", 10, 1024) port map (sprite_addr(bird0)(9 downto 0), clk, sprite_outputs(bird0));
+	rom0: rom_ctrl generic map("../src/bird0.MIF", 10, 1024) port map (sprite_addrs(bird0)(9 downto 0), clk, sprites_out(bird0));
 	rom1: rom_ctrl generic map("../src/crackpipe.MIF", 12, 4096) port map (sprite_addrs(crackpipe), clk, sprites_out(crackpipe));
 	
 	--address0 <= STD_LOGIC_VECTOR(resize(shift_left ((vga_row - bird.y0), 5) + (vga_col + 1 - bird.x0), 10));

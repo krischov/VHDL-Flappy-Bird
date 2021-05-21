@@ -13,8 +13,8 @@ package spriteengine_package is
 	
 
 	
-	type sprite_output_array is array(4 downto 0) of std_logic_vector(15 downto 0);
-	type sprite_addr_array is array (4 downto 0) of std_logic_vector(11 downto 0);
+	type sprite_output_array is array(0 to 4) of std_logic_vector(15 downto 0);
+	type sprite_addr_array is array (0 to 4) of std_logic_vector(11 downto 0);
 	
 	type sprite is record
 		size 					: natural range 0 to 64;
