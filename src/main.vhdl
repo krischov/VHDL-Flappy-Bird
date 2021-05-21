@@ -13,6 +13,7 @@ entity main is
 		 mouse_row 			: in unsigned(9 DOWNTO 0); 
 		 mouse_col 		: in unsigned(9 DOWNTO 0);
 		 pb_0, pb_1 : in std_logic;
+		 h_sync, v_sync : in  std_logic;
 		 red_in, green_in, blue_in : in unsigned (2 downto 0);
 		 red_out, green_out, blue_out : OUT unsigned(3 downto 0));
 end entity;
@@ -154,19 +155,9 @@ begin
 --				sec <= sec + 1;
 --				ticks := 0;
 --			end if;
-			if (ticks >= 400000) then
-				if (bottompipe(0).x0 <= 640) then
-					bottompipe(0).x0 <= bottompipe(0).x0 - 2;
-					bottompipe(1).x0 <= bottompipe(1).x0 - 2;--static speed for now but should be a variable as speed increases over time
-				else
-					bottompipe(0).x0 <= to_unsigned(640, 10); 
-					bottompipe(1).x0 <= to_unsigned(640, 10);
-				end if;
-				sec <= sec + 1;
+				--sec <= sec + 1;
 				ticks := 0;
 			end if;
-			
-					
 			
 			if (mouse_lbtn = '1') then
 				mouse_btn <= var_len_str("Left Mouse button Pressed", mouse_btn'length);
@@ -177,4 +168,16 @@ begin
 			end if;
 		end if;
 	end process;
+	
+	HYSYNC process(h_sync)
+	begin
+		if (rising_edge'h_sync) then
+				if (bottompipe(0).x0 <= 640) then
+					bottompipe(0).x0 <= bottompipe(0).x0 - 2;
+					bottompipe(1).x0 <= bottompipe(1).x0 - 2;--static speed for now but should be a variable as speed increases over time
+				else
+					bottompipe(0).x0 <= to_unsigned(640, 10); 
+					bottompipe(1).x0 <= to_unsigned(640, 10);
+				end if;
+		end process;
 end architecture;
