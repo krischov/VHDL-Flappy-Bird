@@ -51,9 +51,9 @@ architecture x of main is
 		(64, to_unsigned(80, 10), to_unsigned(50,10), "000000000000", crackpipe, "0000000000000000", false, 1, 2)
 	);
 	
-	signal bottompipe : all_sprite(0 to 3) := (
+	signal bottompipe : all_sprites(0 to 1) := (
 		(64, to_unsigned(0, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 4, 1),
-		(64, to_unsigned(384, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 4, 1),
+		(64, to_unsigned(224, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 4, 1)
 	);
 
 	
