@@ -188,10 +188,10 @@ begin
 				if (mouse_lbtn = '1' and mouse_flag = '0') then
 					mouse_flag := '1';
 					if (bird(0).y0 >= 0) then
-						bird(0).y0 <= bird(0).y0 - 10;
+						bird(0).y0 <= bird(0).y0 - 50;
 					end if;
 				elsif (bird(0).y0 <= 480) then
-					bird(0).y0 <= bird(0).y0 + 10;
+					bird(0).y0 <= bird(0).y0 + 2;
 				end if;
 			end if;
 		if (mouse_lbtn = '0' and mouse_flag = '1') then
