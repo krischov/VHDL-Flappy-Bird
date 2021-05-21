@@ -176,13 +176,19 @@ begin
 					bottompipe(1).underflow <= false;
 					bottompipe(0).x0 <= bottompipe(0).x0 - 2;
 					bottompipe(1).x0 <= bottompipe(1).x0 - 2;--static speed for now but should be a variable as speed increases over time
-				else
-				
+					
+				elsif (bottompipe(0).x0 > 959) then
 					bottompipe(0).underflow <= true;
 					bottompipe(1).underflow <= true;
+					
+				elsif (bottompipe(0).x0 = 959) then
 					bottompipe(0).x0 <= to_unsigned(640, 10); 
 					bottompipe(1).x0 <= to_unsigned(640, 10);
+					bottompipe(0).underflow <= false;
+					bottompipe(1).underflow <= false;
+
 				end if;
+				
 				if (mouse_lbtn = '1') then
 					if (bird(0).y0 >= 0) then
 						bird(0).y0 <= bird(0).y0 - 10;
