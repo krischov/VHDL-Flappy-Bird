@@ -63,20 +63,14 @@ architecture x of main is
 		(32, to_unsigned(448, 10), to_unsigned(512,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE),
 		(32, to_unsigned(448, 10), to_unsigned(576,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE)
 	);
-	
-	
+
 	signal bottompipe : all_sprites(0 to 1) := (
 		(64, to_unsigned(0, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE),
 		(64, to_unsigned(288, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3,TRUE)
 	);
 
-	
-
-	
-	
 	signal sprites_addrs : sprite_addr_array;
 	signal sprites_out : sprite_output_array;
-	
 	signal grass_idx, bottompipe_idx, bird_idx : natural range 0 to 15;
 	
 begin
@@ -154,13 +148,20 @@ begin
 	begin
 		if (rising_edge(clk)) then
 			ticks := ticks + 1;
-			if (ticks >= 25000000) then
+--			if (ticks >= 25000000) then
+--				-- things to happen every second
+--	
+--				sec <= sec + 1;
+--				ticks := 0;
+--			end if;
+			if (ticks >= 416666) then
 				-- things to happen every second
-	
-				
+				bottompipe(0).x0 <= bottompipe(0).x0 - 1;
 				sec <= sec + 1;
 				ticks := 0;
 			end if;
+			
+					
 			
 			if (mouse_lbtn = '1') then
 				mouse_btn <= var_len_str("Left Mouse button Pressed", mouse_btn'length);
