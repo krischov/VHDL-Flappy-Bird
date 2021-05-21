@@ -178,19 +178,17 @@ begin
 					bottompipe(0).x0 <= bottompipe(0).x0 - 2;
 					bottompipe(1).x0 <= bottompipe(1).x0 - 2;--static speed for now but should be a variable as speed increases over time
 					
-				elsif (bottompipe(0).x0 > 959) then
+				elsif (bottompipe(0).x0 >= 959) then
 					bottompipe(0).underflow <= true;
 					bottompipe(1).underflow <= true;
 					bottompipe(0).x0 <= bottompipe(0).x0 - 2;
 					bottompipe(1).x0 <= bottompipe(1).x0 - 2;
 					
 				elsif (bottompipe(0).x0 <= 959) then
-					bottompipe(0).x0 <= to_unsigned(640, 10); 
-					bottompipe(1).x0 <= to_unsigned(640, 10);
 					bottompipe(0).underflow <= false;
 					bottompipe(1).underflow <= false;
-					bottompipe(0).x0 <= bottompipe(0).x0 - 2;
-					bottompipe(1).x0 <= bottompipe(1).x0 - 2;
+					bottompipe(0).x0 <= to_unsigned(640, 10); 
+					bottompipe(1).x0 <= to_unsigned(640, 10);
 
 				end if;
 				if (mouse_lbtn = '1' and mouse_flag = '0') then
