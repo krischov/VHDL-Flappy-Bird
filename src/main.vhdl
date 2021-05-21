@@ -51,13 +51,11 @@ architecture x of main is
 		(64, to_unsigned(80, 10), to_unsigned(50,10), "000000000000", crackpipe, "0000000000000000", false, 1, 2)
 	);
 	
-	signal pipe_0 : all_sprite(0 to 3) := (
+	signal bottompipe : all_sprite(0 to 3) := (
 		(64, to_unsigned(0, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 4, 1),
-	);
-	
-	signal pipe_1 : all_sprite(0 to 3) := (
 		(64, to_unsigned(384, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 4, 1),
 	);
+
 	
 	signal grassplane : all_sprites(0 to 9) := (
 		(32, to_unsigned(448, 10), to_unsigned(0,10), "000000000000", grass, "0000000000000000", false, 2, 1),
@@ -77,7 +75,7 @@ architecture x of main is
 	signal sprites_addrs : sprite_addr_array;
 	signal sprites_out : sprite_output_array;
 	
-	signal grass_idx : natural range 0 to 15;
+	signal grass_idx, bottompipe_idx : natural range 0 to 15;
 	
 begin
 
@@ -102,41 +100,48 @@ begin
 	--Sprites
 
 	grass_idx <= get_active_idx(grassplane, vga_row, vga_col);	
-	
 	grassplane(grass_idx).address <= calc_addr_f(grassplane(grass_idx), vga_row, vga_col);
+	
+	bottompipe_idx <= get_active_idx(bottompipe, vga_row, vga_col);
+	bottompipe(bottompipe_idx).address <= calc_addr_f(bottompipe(bottompipe_idx), vga_row, vga_col);
+	
 	
 	calc_addr(sprites(bird0), vga_row, vga_col);
 	calc_addr(sprites(crackpipe), vga_row, vga_col);
 	
 	grassplane(grass_idx).in_range <= return_in_range(grassplane(grass_idx), vga_row, vga_col);
+	bottompipe(bottompipe_idx).in_range <= return_in_range(bottompipe(bottompipe_idx), vga_row, vga_col);
 	
 	calc_in_range(sprites(bird0), vga_row, vga_col);
 	calc_in_range(sprites(crackpipe), vga_row, vga_col);
 	
 	sprites_addrs(grass) <= grassplane(grass_idx).address;
+		
+	sprites_addrs(crackpipe) <= bottompipe(bottompipe_idx).address;
 	
 	sprites_addrs(bird0) <= sprites(bird0).address;
-	sprites_addrs(crackpipe) <= sprites(crackpipe).address;	
+	
 	
 	grassplane(grass_idx).colours <= sprites_out(grass);
+	bottompipe(bottompipe_idx).colours <= sprites_out(crackpipe);
+
 	
 	sprites(bird0).colours <= sprites_out(bird0);
-	sprites(crackpipe).colours <= sprites_out(crackpipe);
+
 	
-	
-	sprite_r <= unsigned(sprites(crackpipe).colours(3 downto 0))		when sprites(crackpipe).colours(15 downto 12) /= "1111" and sprites(crackpipe).in_range else 
+	sprite_r <= unsigned(bottompipe(bottompipe_idx).colours(3 downto 0))		when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else 
 				unsigned(sprites(bird0).colours(3 downto 0))			when sprites(bird0).colours(15 downto 12) /= "1111" and sprites(bird0).in_range else
 				unsigned(grassplane(grass_idx).colours(3 downto 0))		when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range;
 	
-	sprite_g <= unsigned(sprites(crackpipe).colours(7 downto 4))		when sprites(crackpipe).colours(15 downto 12) /= "1111" and sprites(crackpipe).in_range else
+	sprite_g <= unsigned(bottompipe(bottompipe_idx).colours(7 downto 4))		when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
 				unsigned(sprites(bird0).colours(7 downto 4))			when sprites(bird0).colours(15 downto 12) /= "1111" and sprites(bird0).in_range else
 				unsigned(grassplane(grass_idx).colours(7 downto 4))		when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range;
 	
-	sprite_b <= unsigned(sprites(crackpipe).colours(11 downto 8))		when sprites(crackpipe).colours(15 downto 12) /= "1111" and sprites(crackpipe).in_range else
+	sprite_b <= unsigned(bottompipe(bottompipe_idx).colours(11 downto 8))		when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
 				unsigned(sprites(bird0).colours(11 downto 8)) 			when sprites(crackpipe).colours(15 downto 12) /= "1111" and sprites(bird0).in_range else
 				unsigned(grassplane(grass_idx).colours(11 downto 8))	when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range;
 
-	sprite_z <= "0000" when sprites(crackpipe).in_range and sprites(crackpipe).colours(15 downto 12) /= "1111" else
+	sprite_z <= "0000" when bottompipe(bottompipe_idx).in_range and bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" else
 				"0000" when sprites(bird0).in_range and sprites(bird0).colours(15 downto 12) /= "1111" else
 				"0000" when grassplane(grass_idx).in_range and grassplane(grass_idx).colours(15 downto 12) /= "1111" else
 				"1111";
