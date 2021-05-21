@@ -154,7 +154,7 @@ begin
 --				sec <= sec + 1;
 --				ticks := 0;
 --			end if;
-			if (ticks >= 416680) then
+			if (ticks >= 450000) then
 				if (bottompipe(0).x0 <= 640) then
 					bottompipe(0).x0 <= bottompipe(0).x0 - 2;
 					bottompipe(1).x0 <= bottompipe(1).x0 - 2;--static speed for now but should be a variable as speed increases over time
