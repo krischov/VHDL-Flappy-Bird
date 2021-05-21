@@ -184,7 +184,7 @@ begin
 					bottompipe(0).x0 <= bottompipe(0).x0 - 2;
 					bottompipe(1).x0 <= bottompipe(1).x0 - 2;
 					
-				elsif (bottompipe(0).x0 = 959) then
+				elsif (bottompipe(0).x0 <= 959) then
 					bottompipe(0).x0 <= to_unsigned(640, 10); 
 					bottompipe(1).x0 <= to_unsigned(640, 10);
 					bottompipe(0).underflow <= false;
