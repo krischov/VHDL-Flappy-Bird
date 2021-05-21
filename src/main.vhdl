@@ -175,10 +175,10 @@ begin
 			for i in 0 to (bottompipe'length - 1) loop
 				if (bottompipe(i).x0 <= 640) then
 					bottompipe(i).underflow <= false;
-					bottompipe(i).x0 <= bottompipe(0).x0 - 2;
+					bottompipe(i).x0 <= bottompipe(i).x0 - 2;
 				elsif (bottompipe(i).x0 >= 959) then
 					bottompipe(i).underflow <= true;
-					bottompipe(i).x0 <= bottompipe(0).x0 - 2;
+					bottompipe(i).x0 <= bottompipe(i).x0 - 2;
 				elsif (bottompipe(i).x0 <= 959) then
 					bottompipe(i).underflow <= false;
 					bottompipe(i).x0 <= to_unsigned(640, 10); 

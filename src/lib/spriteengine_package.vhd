@@ -66,7 +66,7 @@ package body spriteengine_package is
 	function get_active_idx (signal sprites: in all_sprites; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0)) return natural is
 	begin
 		for i in 0 to sprites'length - 1 loop
-			if (unsigned(vga_row) < sprites(i).y0 + (sprites(i).size * sprites(i).scaling_factor_y) and unsigned(vga_row) >= sprites(i).y0 and unsigned(vga_col) < sprites(i).x0 + (sprites(i).size * sprites(i).scaling_factor_x) and unsigned(vga_col) >= sprites(i).x0) then
+			if (return_in_range(sprites(i), vga_row, vga_col)) then
 				return i;
 			end if;
 		end loop;
