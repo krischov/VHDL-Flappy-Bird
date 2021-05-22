@@ -52,12 +52,12 @@ package body spriteengine_package is
 	begin
 		if (s.size = 32) then
 			return STD_LOGIC_VECTOR(resize(
-							(shift_left ((vga_row - s.y0) / s.scaling_factor_y, 5)) + -- Find linear offset of row (pixels per row * row number)
+							(shift_left (resize(vga_row - s.y0, 12) / s.scaling_factor_y, 5)) + -- Find linear offset of row (pixels per row * row number)
 							((vga_col + 1 - s.x0) / (s.scaling_factor_x)), -- Pixel to draw in the current row (row found in above line)
 						12));
 		else -- size is 64
 			return STD_LOGIC_VECTOR(resize(
-							(shift_left ((vga_row - s.y0) / s.scaling_factor_y, 6)) +
+							(shift_left (resize(vga_row - s.y0, 12) / s.scaling_factor_y, 6)) +
 							((vga_col + 1 - s.x0) / (s.scaling_factor_x)),
 						12));
 		end if;

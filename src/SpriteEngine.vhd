@@ -31,6 +31,8 @@ architecture a of spriteengine is
 begin
 	rom0: rom_ctrl generic map("../src/bird0.MIF", 10, 1024) port map (sprite_addrs(bird0)(9 downto 0), clk, sprites_out(bird0));
 	rom1: rom_ctrl generic map("../src/crackpipe.MIF", 12, 4096) port map (sprite_addrs(crackpipe), clk, sprites_out(crackpipe));
+	rom2: rom_ctrl generic map("tree0.mif", 12, 4096) port map (sprite_addrs(tree0), clk, sprites_out(tree0));
 	rom4: rom_ctrl generic map("grass.MIF", 10, 1024) port map (sprite_addrs(grass)(9 downto 0), clk, sprites_out(grass));
+	
 	
 end architecture a;

@@ -121,11 +121,6 @@ set_location_assignment PIN_G4 -to switches[3]
 set_location_assignment PIN_H6 -to switches[2]
 set_location_assignment PIN_H5 -to switches[1]
 set_location_assignment PIN_J6 -to switches[0]
-set_global_assignment -name MIF_FILE ../src/test.mif
-set_global_assignment -name MIF_FILE ../src/htest.mif
-set_global_assignment -name MIF_FILE ../src/checker.mif
-set_global_assignment -name MIF_FILE ../src/transparancy1.mif
-set_global_assignment -name MIF_FILE ../src/transparancy0.mif
 set_global_assignment -name MIF_FILE TCGROM.MIF
 set_global_assignment -name VHDL_FILE ../src/lib/textengine_package.vhd -library lib
 set_global_assignment -name VHDL_FILE ../src/bcd27seg.vhdl
