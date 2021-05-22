@@ -25,8 +25,9 @@ package spriteengine_package is
 		in_range			: boolean;
 		scaling_factor_x 	: natural range 0 to 16;
 		scaling_factor_y 	: natural range 0 to 16;
-		visible 				: boolean;
+		visible 			: boolean;
 		underflow			: boolean;
+		passed_pipe			: boolean;
 	end record sprite;
 	
 	type all_sprites is array(natural range <>) of sprite;

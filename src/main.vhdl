@@ -49,30 +49,33 @@ architecture x of main is
 	
 
 	signal bird : all_sprites(0 to 1)  := (
-		(32, to_unsigned(50, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, TRUE, FALSE),
-		(32, to_unsigned(50, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, FALSE, FALSE)
+		(32, to_unsigned(50, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(50, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE)
 	);
 	signal grassplane : all_sprites(0 to 9) := (
-		(32, to_unsigned(448, 10), to_unsigned(0,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(64,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(128,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(192,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(256,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(320,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(384,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(448,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(512,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(576,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE)
+		(32, to_unsigned(448, 10), to_unsigned(0,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(64,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(128,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(192,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(256,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(320,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(384,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(448,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(512,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(576,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE)
 	);
 
 	signal bottompipe : all_sprites(0 to 1) := (
-		(64, to_unsigned(0, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE),
-		(64, to_unsigned(288, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE)
+		(64, to_unsigned(0, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
+		(64, to_unsigned(288, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE)
 	);
 
 	signal sprites_addrs : sprite_addr_array;
 	signal sprites_out : sprite_output_array;
 	signal grass_idx, bottompipe_idx, bird_idx : natural range 0 to 15;
+	
+	
+	signal pipe_points: natural range 0 to 8000 := 0;
 	
 begin
 
@@ -87,12 +90,7 @@ begin
 	str2text(text_vector, 5, 0, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|_|  |_|\___/ \__,_|\___|_|___/_|_| |_| |_||_|  |_|\___/|_.__/|___/\__\___|_|");
 	
 	--str2text(text_vector, 2, 20, 1, "1111", "1111", "1111", "The Modelsim Mobsters:");
-	str2text(text_vector, 8, 30, 1, "1010", "0101", "1100", " Project Demo ");
-	str2text(text_vector, 10, 20, 1, "0011", "1100", "1001", mouse_btn);
-	str2text(text_vector, 13, 20, 1, "0011", "1100", "1001", "HOLD DOWN BUTTON0 and BUTTON1 to move the square up or down");
-	str2text(text_vector, 14, 20, 1, "0011", "1100", "1001", "The 7segmment shows the x or y position of the mouse");
-	str2text(text_vector, 15, 20, 1, "0011", "1100", "1001", "SW9 Down shows Mouse Y pos, SW0 Up shows Mouse X pos");
-	str2text(text_vector, 16, 20, 1, "0011", "1100", "1001", "SW0 to SW8 control the colours");
+	str2text(text_vector, 7, 65, 1, "1010", "0101", "1100", "Points " & int2str(pipe_points));
 	
 	--Sprites
 
@@ -120,20 +118,19 @@ begin
 	bottompipe(bottompipe_idx).colours <= sprites_out(crackpipe);
 
 
-
 	
-	sprite_r <= unsigned(bird(bird_idx).colours(3 downto 0))			when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
-				unsigned(grassplane(grass_idx).colours(3 downto 0))		when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range else
-				unsigned(bottompipe(bottompipe_idx).colours(3 downto 0))		when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range;
+	sprite_r <= unsigned(bird(bird_idx).colours(3 downto 0))				when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
+				unsigned(grassplane(grass_idx).colours(3 downto 0))			when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range else
+				unsigned(bottompipe(bottompipe_idx).colours(3 downto 0))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range;
 	
-	sprite_g <= unsigned(bird(bird_idx).colours(7 downto 4))			when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
-				unsigned(grassplane(grass_idx).colours(7 downto 4))		when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range else
-				unsigned(bottompipe(bottompipe_idx).colours(7 downto 4))		when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range;
+	sprite_g <= unsigned(bird(bird_idx).colours(7 downto 4))				when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
+				unsigned(grassplane(grass_idx).colours(7 downto 4))			when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range else
+				unsigned(bottompipe(bottompipe_idx).colours(7 downto 4))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range;
 	
 	sprite_b <=  
-				unsigned(bird(bird_idx).colours(11 downto 8)) 			when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
-				unsigned(grassplane(grass_idx).colours(11 downto 8))	when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range else
-				unsigned(bottompipe(bottompipe_idx).colours(11 downto 8))		when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range;
+				unsigned(bird(bird_idx).colours(11 downto 8)) 				when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
+				unsigned(grassplane(grass_idx).colours(11 downto 8))		when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range else
+				unsigned(bottompipe(bottompipe_idx).colours(11 downto 8))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range;
 
 	sprite_z <= "0000" when bottompipe(bottompipe_idx).in_range and bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" else
 				"0000" when bird(bird_idx).in_range and bird(bird_idx).colours(15 downto 12) /= "1111" else
@@ -172,6 +169,8 @@ begin
 	variable mouse_flag : std_logic := '0';
 	begin
 		if (v_sync = '1') then
+			
+			-- Moby's Movement
 			for i in 0 to (bottompipe'length - 1) loop
 				if (bottompipe(i).x0 <= 640) then
 					bottompipe(i).underflow <= false;
@@ -184,20 +183,32 @@ begin
 				elsif (bottompipe(i).x0 < 959) then
 					bottompipe(i).underflow <= false;
 					bottompipe(i).x0 <= to_unsigned(640, 10); 
+					-- this pipe is being recycled, it should earn points again
+					bottompipe(i).passed_pipe <= false;
 				end if;
-			end loop;
 				
-				if (mouse_lbtn = '1' and mouse_flag = '0') then
-					mouse_flag := '1';
-					if (bird(0).y0 >= 0) then
-						bird(0).y0 <= bird(0).y0 - 50;
-					end if;
-				elsif (bird(0).y0 <= 480) then
+				-- Do collision and point detection here
+				if (bottompipe(i).passed_pipe = false and bird(0).x0 > bottompipe(i).x0 + bottompipe(i).size * bottompipe(i).scaling_factor_x) then
+					-- if the user has just passed through this pipe, give them a point
+					bottompipe(i).passed_pipe <= true;
+					pipe_points <= pipe_points + 1; 
+				end if;
+				
+			end loop;
+			
+			-- Mouse input (make the bird flap)
+			if (mouse_lbtn = '1' and mouse_flag = '0') then
+				mouse_flag := '1';
+				if (bird(0).y0 >= 0) then
+					bird(0).y0 <= bird(0).y0 - 50;
+				end if;
+			elsif (bird(0).y0 <= 480) then
 					bird(0).y0 <= bird(0).y0 + 3;
 				end if;
 			end if;
-		if (mouse_lbtn = '0' and mouse_flag = '1') then
-			mouse_flag := '0';
+			if (mouse_lbtn = '0' and mouse_flag = '1') then
+				mouse_flag := '0';
 			end if;
+		
 		end process;
 end architecture;
