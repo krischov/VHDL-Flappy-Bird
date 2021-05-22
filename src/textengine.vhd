@@ -47,7 +47,7 @@ begin
 	char_row <= resize(row / 8, 6);
 	char_col <= resize(col / 8, 7);
 	
-	txtrow <= txtvec(to_integer(char_row)) when txtvec(to_integer(char_row)).scale_index = -1 else txtvec(txtvec(to_integer(char_row)).scale_index);
+	txtrow <= txtvec(txtvec(to_integer(char_row)).scale_index);
 	char_addr <= char2rom(txtrow.txt(to_integer(char_col) + 1));
 	
 	r <= txtrow.r;
