@@ -52,7 +52,7 @@ architecture x of main is
 
 	signal bird : all_sprites(0 to 1)  := (
 		(32, to_unsigned(50, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
-		(32, to_unsigned(150, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
+		(32, to_unsigned(150, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE)
 	);
 	signal grassplane : all_sprites(0 to 9) := (
 		(32, to_unsigned(448, 10), to_unsigned(0,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
@@ -99,7 +99,7 @@ begin
 	str2text(text_vector, 5, 0, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|_|  |_|\___/ \__,_|\___|_|___/_|_| |_| |_||_|  |_|\___/|_.__/|___/\__\___|_|");
 	
 	--str2text(text_vector, 2, 20, 1, "1111", "1111", "1111", "The Modelsim Mobsters:");
-	str2text(text_vector, 7, 65, 2, "1010", "0101", "1100", "Points " & int2str(pipe_points));
+	str2text(text_vector, 7, 65, 1, "1010", "0101", "1100", "Points " & int2str(pipe_points));
 	
 	--Sprites
 
@@ -235,7 +235,7 @@ begin
 					if (bird_idx /= -1 and bottompipe_idx /= -1) then
 						collision_flag <= '1';
 					end if;
-					
+
 					if (bottompipe(i).passed_pipe = false and bird(0).x0 > bottompipe(i).x0 + bottompipe(i).size * bottompipe(i).scaling_factor_x) then
 						-- if the user has just passed through this pipe, give them a point
 						bottompipe(i).passed_pipe <= true;
@@ -249,7 +249,7 @@ begin
 					if (mouse_lbtn = '1' and mouse_flag = '0') then
 						mouse_flag := '1';
 						if (bird(0).y0 >= 50) then
-							bird(0).y0 <= bird(0).y0 - 50;
+							bird(0).y0 <= bird(0).y0 - 60;
 						end if;	
 					elsif (bird(0).y0 <= 448) then
 						bird(0).y0 <= bird(0).y0 + 3;
