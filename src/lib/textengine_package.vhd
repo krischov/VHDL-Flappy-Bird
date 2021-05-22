@@ -302,12 +302,6 @@ package body textengine_package is
 			
 			txt_vector(to_integer(in_char_row)).txt(start_idx to end_idx) <= s;
 			
---			if (in_scale /= 1) then
---				for i in to_integer(in_char_row) + 1 to to_integer(in_char_row) + to_integer(in_scale) - 1 loop
---					txt_vector(i).scale_index <= to_integer(in_char_row);
---				end loop;
---			end if;
-			
 	end procedure;
 
 	-- wrapper for str2text that converts integer paramaters to unsigned 
