@@ -197,65 +197,65 @@ begin
 	begin
 		if (v_sync = '1') then
 		
-			if (collision_flag = '0') then
+			--if (collision_flag = '0') then
 			-- Moby's Movement
 	
-			for i in 0 to (bottompipe'length - 1) loop
-				if (bottompipe(i).x0 <= 640) then
-					bottompipe(i).underflow <= false;
-					bottompipe(i).x0 <= bottompipe(i).x0 - 2;
-					if (bottompipe(i).x0 < 1) then
-						bottompipe(i).underflow <= true;
+				for i in 0 to (bottompipe'length - 1) loop
+				if (collision_flag = '0') then
+					if (bottompipe(i).x0 <= 640) then
+						bottompipe(i).underflow <= false;
+						bottompipe(i).x0 <= bottompipe(i).x0 - 2;
+						if (bottompipe(i).x0 < 1) then
+							bottompipe(i).underflow <= true;
+						end if;
+					elsif (bottompipe(i).x0 >= 959) then
+						bottompipe(i).x0 <= bottompipe(i).x0 - 2;
+					elsif (bottompipe(i).x0 < 959) then
+						bottompipe(i).underflow <= false;
+						bottompipe(i).x0 <= to_unsigned(640, 10); 
+						-- this pipe is being recycled, it should earn points again
+						bottompipe(i).passed_pipe <= false;
 					end if;
-				elsif (bottompipe(i).x0 >= 959) then
-					bottompipe(i).x0 <= bottompipe(i).x0 - 2;
-				elsif (bottompipe(i).x0 < 959) then
-					bottompipe(i).underflow <= false;
-					bottompipe(i).x0 <= to_unsigned(640, 10); 
-					-- this pipe is being recycled, it should earn points again
-					bottompipe(i).passed_pipe <= false;
-				end if;
-				
-				-- Do collision and point detection here
-				if ((((bird(0).x0 >= bottompipe(0).x0) and (bird(0).x0 <= bottompipe(0).x0 + bird(0).size - 1)) or
-					((bird(0).x0 + 31 >= bottompipe(0).x0) and (bird(0).x0 + bird(0).size - 1 <= bottompipe(0).x0 + 31))) and
-					(((bird(0).y0 >= bottompipe(0).y0) and (bird(0).y0 <= bottompipe(0).y0 + bottompipe(0).size*bottompipe(0).scaling_factor_y - 1)) or
-					((bird(0).y0 + 31 >= bottompipe(0).y0) and (bird(0).y0 + bird(0).size - 1 <= bottompipe(0).y0 + bottompipe(0).size*bottompipe(0).scaling_factor_y - 1)))) then
-					collision_flag <= '1';
-				end if;
-				if ((((bird(0).x0 >= bottompipe(1).x0) and (bird(0).x0 <= bottompipe(1).x0 + bird(0).size - 1)) or
-					  ((bird(0).x0 + 31 >= bottompipe(1).x0) and (bird(0).x0 + bird(0).size - 1 <= bottompipe(1).x0 + bird(0).size - 1))) and
-					  (((bird(0).y0 >= bottompipe(1).y0) and (bird(0).y0 <= bottompipe(1).y0 + bottompipe(1).size*bottompipe(1).scaling_factor_y + 1)) or
-					  ((bird(0).y0 + 31 >= bottompipe(1).y0) and (bird(0).y0 + bird(0).size - 1 <= bottompipe(1).y0 + bottompipe(1).size*bottompipe(1).scaling_factor_y - 1)))) then
-					  collision_flag <= '1';
-				end if;
-					 
-				
-				if (bottompipe(i).passed_pipe = false and bird(0).x0 > bottompipe(i).x0 + bottompipe(i).size * bottompipe(i).scaling_factor_x) then
-					-- if the user has just passed through this pipe, give them a point
-					bottompipe(i).passed_pipe <= true;
-					pipe_points <= pipe_points + 1; 
-				end if;
-				
-			end loop;
-		
-			-- Mouse input (make the bird flap)
-		if (collision_flag = '0') then
-			if (mouse_lbtn = '1' and mouse_flag = '0') then
-				mouse_flag := '1';
- 
-					if (bird(0).y0 >= 50) then
-						bird(0).y0 <= bird(0).y0 - 50;
+				end if;	
+					
+					-- Do collision and point detection here
+					if ((((bird(0).x0 >= bottompipe(0).x0) and (bird(0).x0 <= bottompipe(0).x0 + bird(0).size - 1)) or
+						((bird(0).x0 + 31 >= bottompipe(0).x0) and (bird(0).x0 + bird(0).size - 1 <= bottompipe(0).x0 + 31))) and
+						(((bird(0).y0 >= bottompipe(0).y0) and (bird(0).y0 <= bottompipe(0).y0 + bottompipe(0).size*bottompipe(0).scaling_factor_y - 1)) or
+						((bird(0).y0 + 31 >= bottompipe(0).y0) and (bird(0).y0 + bird(0).size - 1 <= bottompipe(0).y0 + bottompipe(0).size*bottompipe(0).scaling_factor_y - 1)))) then
+						collision_flag <= '1';
+					end if;
+					if ((((bird(0).x0 >= bottompipe(1).x0) and (bird(0).x0 <= bottompipe(1).x0 + bird(0).size - 1)) or
+						  ((bird(0).x0 + 31 >= bottompipe(1).x0) and (bird(0).x0 + bird(0).size - 1 <= bottompipe(1).x0 + bird(0).size - 1))) and
+						  (((bird(0).y0 >= bottompipe(1).y0) and (bird(0).y0 <= bottompipe(1).y0 + bottompipe(1).size*bottompipe(1).scaling_factor_y + 1)) or
+						  ((bird(0).y0 + 31 >= bottompipe(1).y0) and (bird(0).y0 + bird(0).size - 1 <= bottompipe(1).y0 + bottompipe(1).size*bottompipe(1).scaling_factor_y - 1)))) then
+						  collision_flag <= '1';
+					end if;
+						 
+					
+					if (bottompipe(i).passed_pipe = false and bird(0).x0 > bottompipe(i).x0 + bottompipe(i).size * bottompipe(i).scaling_factor_x) then
+						-- if the user has just passed through this pipe, give them a point
+						bottompipe(i).passed_pipe <= true;
+						pipe_points <= pipe_points + 1; 
 					end if;
 					
-			elsif (bird(0).y0 <= 448) then
-					bird(0).y0 <= bird(0).y0 + 3;
-			end if;
-		end if;
-			if (mouse_lbtn = '0' and mouse_flag = '1') then
-				mouse_flag := '0';
-			end if;
-		end if;
+				end loop;
+			
+				-- Mouse input (make the bird flap)
+				if (collision_flag = '0') then
+					if (mouse_lbtn = '1' and mouse_flag = '0') then
+						mouse_flag := '1';
+						if (bird(0).y0 >= 50) then
+							bird(0).y0 <= bird(0).y0 - 50;
+						end if;	
+					elsif (bird(0).y0 <= 448) then
+						bird(0).y0 <= bird(0).y0 + 3;
+					end if;
+				end if;
+				if (mouse_lbtn = '0' and mouse_flag = '1') then
+					mouse_flag := '0';
+				end if;
+			--end if;
 		end if; 
 	end process;
 end architecture;
