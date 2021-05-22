@@ -217,16 +217,16 @@ begin
 				end if;
 				
 				-- Do collision and point detection here
-				if (((bird(0).x0 >= bottompipe(0).x0) and (bird(0).x0 <= bottompipe(0).x0 + 31)) or
-					((bird(0).x0 + 31 >= bottompipe(0).x0) and (bird(0).x0 + 31 <= bottompipe(0).x0 + 31)) or
-					((bird(0).y0 >= bottompipe(0).y0) and (bird(0).y0 <= bottompipe(0).y0 + bottompipe(0).size*bottompipe(0).scaling_factor_y - 1)) or
-					((bird(0).y0 + 31 >= bottompipe(0).y0) and (bird(0).y0 + 31 <= bottompipe(0).y0 + bottompipe(0).size*bottompipe(0).scaling_factor_y - 1))) then
+				if ((((bird(0).x0 >= bottompipe(0).x0) and (bird(0).x0 <= bottompipe(0).x0 + bird(0).size - 1)) or
+					((bird(0).x0 + 31 >= bottompipe(0).x0) and (bird(0).x0 + bird(0).size - 1 <= bottompipe(0).x0 + 31))) and
+					(((bird(0).y0 >= bottompipe(0).y0) and (bird(0).y0 <= bottompipe(0).y0 + bottompipe(0).size*bottompipe(0).scaling_factor_y - 1)) or
+					((bird(0).y0 + 31 >= bottompipe(0).y0) and (bird(0).y0 + bird(0).size - 1 <= bottompipe(0).y0 + bottompipe(0).size*bottompipe(0).scaling_factor_y - 1)))) then
 					collision_flag <= '1';
 				end if;
-				if (((bird(0).x0 >= bottompipe(1).x0) and (bird(0).x0 <= bottompipe(1).x0 + 31)) or
-					  ((bird(0).x0 + 31 >= bottompipe(1).x0) and (bird(0).x0 + 31 <= bottompipe(1).x0 + 31)) or
-					  ((bird(0).y0 >= bottompipe(1).y0) and (bird(0).y0 <= bottompipe(1).y0 + bottompipe(1).size*bottompipe(1).scaling_factor_y + 1)) or
-					  ((bird(0).y0 + 31 >= bottompipe(1).y0) and (bird(0).y0 + 31 <= bottompipe(1).y0 + bottompipe(1).size*bottompipe(1).scaling_factor_y - 1))) then
+				if ((((bird(0).x0 >= bottompipe(1).x0) and (bird(0).x0 <= bottompipe(1).x0 + bird(0).size - 1)) or
+					  ((bird(0).x0 + 31 >= bottompipe(1).x0) and (bird(0).x0 + bird(0).size - 1 <= bottompipe(1).x0 + bird(0).size - 1))) and
+					  (((bird(0).y0 >= bottompipe(1).y0) and (bird(0).y0 <= bottompipe(1).y0 + bottompipe(1).size*bottompipe(1).scaling_factor_y + 1)) or
+					  ((bird(0).y0 + 31 >= bottompipe(1).y0) and (bird(0).y0 + bird(0).size - 1 <= bottompipe(1).y0 + bottompipe(1).size*bottompipe(1).scaling_factor_y - 1)))) then
 					  collision_flag <= '1';
 				end if;
 					 
