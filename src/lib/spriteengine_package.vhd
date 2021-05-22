@@ -32,7 +32,7 @@ package spriteengine_package is
 	
 	type all_sprites is array(natural range <>) of sprite;
 
-	function get_active_idx (signal sprites: in all_sprites; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0)) return natural;
+	function get_active_idx (signal sprites: in all_sprites; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0)) return integer;
 	function return_in_range (signal s: in sprite; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0)) return boolean;
 	function calc_addr_f (signal s: in sprite; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0)) return std_logic_vector;
 end package spriteengine_package;
@@ -40,39 +40,73 @@ end package spriteengine_package;
 package body spriteengine_package is
 	
 	function return_in_range (signal s: in sprite; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0)) return boolean is
+		variable x0: unsigned(11 downto 0) := resize(s.x0, 12);
+		variable y0: unsigned(11 downto 0) := resize(s.y0, 12);
+		
+		variable w: unsigned(11 downto 0) := to_unsigned(s.size * s.scaling_factor_x, 12);
+		variable h: unsigned(11 downto 0) := to_unsigned(s.size * s.scaling_factor_y, 12);
+		
+		variable x1: unsigned(11 downto 0) := x0 + w;
+		variable y1: unsigned(11 downto 0) := y0 + h;
+	
 	begin
 		if (s.underflow = false) then
-			return s.visible and vga_row < s.y0 + (s.size * s.scaling_factor_y) and vga_row >= s.y0 and vga_col < s.x0 + (s.size * s.scaling_factor_x) and vga_col >= s.x0;
+			return s.visible and ((vga_row >= y0) and (vga_row < y1) and (vga_col >= x0) and (vga_col < x1));
 		else
-			return s.visible and vga_row < s.y0 + (s.size * s.scaling_factor_y) and vga_row >= s.y0 and s.x0 >= 959 and vga_col < s.x0 + (s.size * s.scaling_factor_x);
+			return s.visible and ((vga_row < y1) and (vga_row >= y0) and (2**10-1 - w <= x0(9 downto 0)) and (vga_col < x1(9 downto 0)));
 		end if;
 	end function;
 
 	function calc_addr_f (signal s: in sprite; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0)) return std_logic_vector is
+	variable row : unsigned(11 downto 0) := resize(vga_row, 12) - resize(s.y0, 12);
+	variable col : unsigned(11 downto 0) := resize(vga_col, 12) - resize(s.x0, 12);
+	
+	variable scaleY: unsigned(11 downto 0) := to_unsigned(s.scaling_factor_y, 12);
+	variable scaleX: unsigned(11 downto 0) := to_unsigned(s.scaling_factor_x, 12);
+	
+	
 	begin
 		if (s.size = 32) then
-			return STD_LOGIC_VECTOR(resize(
-							(shift_left (resize(vga_row - s.y0, 12) / s.scaling_factor_y, 5)) + -- Find linear offset of row (pixels per row * row number)
-							((vga_col + 1 - s.x0) / (s.scaling_factor_x)), -- Pixel to draw in the current row (row found in above line)
-						12));
+			return STD_LOGIC_VECTOR(shift_left(row / scaleY, 5) + ((col + 1) / scaleX));
 		else -- size is 64
-			return STD_LOGIC_VECTOR(resize(
-							(shift_left (resize(vga_row - s.y0, 12) / s.scaling_factor_y, 6)) +
-							((vga_col + 1 - s.x0) / (s.scaling_factor_x)),
-						12));
+			return STD_LOGIC_VECTOR(shift_left(row / scaleY, 6) + ((col(9 downto 0) + 1) / scaleX));
 		end if;
 	end function;
 	
 	
-	function get_active_idx (signal sprites: in all_sprites; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0)) return natural is
+	function get_active_idx (signal sprites: in all_sprites; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0)) return integer is
+		variable x0: unsigned(11 downto 0);
+		variable y0: unsigned(11 downto 0);
+		
+		variable w: unsigned(11 downto 0);
+		variable h: unsigned(11 downto 0);
+		
+		variable x1: unsigned(11 downto 0);
+		variable y1: unsigned(11 downto 0);
 	begin
 		for i in 0 to sprites'length - 1 loop
-			if (return_in_range(sprites(i), vga_row, vga_col)) then
-				return i;
+			x0 := resize(sprites(i).x0, 12);
+			y0 := resize(sprites(i).y0, 12);
+			
+			w := to_unsigned(sprites(i).size * sprites(i).scaling_factor_x, 12);
+			h := to_unsigned(sprites(i).size * sprites(i).scaling_factor_y, 12);
+			
+			x1 := x0 + w;
+			y1 := y0 + h;
+		
+			if (not sprites(i).underflow) then
+				if (sprites(i).visible and ((vga_row >= y0) and (vga_row < y1) and (vga_col + 1 >= x0) and (vga_col < x1))) then
+					return i;
+				end if;
+			else
+				if (sprites(i).visible and ((vga_row >= y0) and (vga_row < y1) and (2**10-1 - w <= x0(9 downto 0)) and (vga_col < x1(9 downto 0)))) then
+					return i;
+				end if;
 			end if;
 		end loop;
 		
-		return 0;
+		return -1;
+		--return true_count;
 	end function;
 	
 end package body;	

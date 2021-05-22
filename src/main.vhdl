@@ -53,13 +53,13 @@ architecture x of main is
 
 	signal bird : all_sprites(0 to 1)  := (
 		(32, to_unsigned(50, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
-		(32, to_unsigned(50, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE)
+		(32, to_unsigned(150, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
 	);
 	signal grassplane : all_sprites(0 to 9) := (
-		(32, to_unsigned(448, 10), to_unsigned(0,10), "000000000000", grass, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(64,10), "000000000000", grass, "0000000000000000", false, 4, 1, TRUE, FALSE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(128,10), "000000000000", grass, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(192,10), "000000000000", grass, "0000000000000000", false, 2, 1, FALSE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(0,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(64,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(128,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(192,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
 		(32, to_unsigned(448, 10), to_unsigned(256,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
 		(32, to_unsigned(448, 10), to_unsigned(320,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
 		(32, to_unsigned(448, 10), to_unsigned(384,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
@@ -69,20 +69,20 @@ architecture x of main is
 	);
 
 	signal bottompipe : all_sprites(0 to 1) := (
-		(64, to_unsigned(0, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
-		(64, to_unsigned(288, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE)
+		(64, to_unsigned(0, 10), to_unsigned(340, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
+		(64, to_unsigned(288, 10), to_unsigned(340, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE)
 	);
 
 	
 	signal tree0s : all_sprites(0 to 2) := (
-		(64, to_unsigned(50, 10), to_unsigned(50, 10), "000000000000", tree0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
-		(64, to_unsigned(50, 10), to_unsigned(200, 10), "000000000000", tree0, "0000000000000000", false, 2, 2, TRUE, FALSE, FALSE),
-		(64, to_unsigned(180, 10), to_unsigned(200, 10), "000000000000", tree0, "0000000000000000", false, 4, 4, TRUE, FALSE, FALSE)
+		(64, to_unsigned(60, 10), to_unsigned(50, 10), "000000000000", tree0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(64, to_unsigned(60, 10), to_unsigned(200, 10), "000000000000", tree0, "0000000000000000", false, 2, 2, TRUE, FALSE, FALSE),
+		(64, to_unsigned(200, 10), to_unsigned(10, 10), "000000000000", tree0, "0000000000000000", false, 2, 2, TRUE, FALSE, FALSE)
 	);
 	
 	signal sprites_addrs : sprite_addr_array;
 	signal sprites_out : sprite_output_array;
-	signal grass_idx, bottompipe_idx, bird_idx, tree0_idx : natural range 0 to 15;
+	signal grass_idx, bottompipe_idx, bird_idx, tree0_idx : integer;
 	
 	
 	signal pipe_points: natural range 0 to 8000 := 0;
@@ -117,10 +117,10 @@ begin
 	bird(bird_idx).address <= calc_addr_f(bird(bird_idx), vga_row, vga_col);
 	
 	
-	bird(bird_idx).in_range <= return_in_range(bird(bird_idx), vga_row, vga_col);
-	grassplane(grass_idx).in_range <= return_in_range(grassplane(grass_idx), vga_row, vga_col);
-	bottompipe(bottompipe_idx).in_range <= return_in_range(bottompipe(bottompipe_idx), vga_row, vga_col);
-	tree0s(tree0_idx).in_range <= return_in_range(tree0s(tree0_idx), vga_row, vga_col);
+	bird(bird_idx).in_range <= return_in_range(bird(bird_idx), vga_row, vga_col) when bird_idx /= -1 else false;
+	grassplane(grass_idx).in_range <= return_in_range(grassplane(grass_idx), vga_row, vga_col) when grass_idx /= -1 else false;
+	bottompipe(bottompipe_idx).in_range <= return_in_range(bottompipe(bottompipe_idx), vga_row, vga_col) when bottompipe_idx /= -1 else false;
+	tree0s(tree0_idx).in_range <= return_in_range(tree0s(tree0_idx), vga_row, vga_col) when tree0_idx /= -1 else false;
 	
 
 	sprites_addrs(grass) <= grassplane(grass_idx).address;	
@@ -151,15 +151,16 @@ begin
 				unsigned(bottompipe(bottompipe_idx).colours(11 downto 8))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
 				unsigned(tree0s(tree0_idx).colours(11 downto 8))				when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range;
 
-	sprite_z <= "0000" when bottompipe(bottompipe_idx).in_range and bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" else
-				"0000" when bird(bird_idx).in_range and bird(bird_idx).colours(15 downto 12) /= "1111" else
-				"0000" when grassplane(grass_idx).in_range and grassplane(grass_idx).colours(15 downto 12) /= "1111" else
-				"0000" when tree0s(tree0_idx).in_range and tree0s(tree0_idx).colours(15 downto 12) /= "1111" else
+	sprite_z <= "0000" when bottompipe_idx /= -1 and bottompipe(bottompipe_idx).in_range and bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" else
+				"0000" when bird_idx /= -1 and bird(bird_idx).in_range and bird(bird_idx).colours(15 downto 12) /= "1111" else
+				"0000" when grass_idx /= -1 and grassplane(grass_idx).in_range and grassplane(grass_idx).colours(15 downto 12) /= "1111" else
+				"0000" when tree0_idx /= -1 and tree0s(tree0_idx).in_range and tree0s(tree0_idx).colours(15 downto 12) /= "1111" else
 				"1111";
 	
-	red_out <=		txt_r when txt_not_a = "1111" else sprite_r when sprite_z = "0000" else "0111";
-	green_out <=	txt_g when txt_not_a = "1111" else sprite_g when sprite_z = "0000" else "1100";
-	blue_out <=		txt_b when txt_not_a = "1111" else sprite_b when sprite_z = "0000" else "1100";
+	red_out		<=	txt_r when txt_not_a = "1111" else sprite_r when sprite_z = "0000" else "0111";
+	green_out	<=	txt_g when txt_not_a = "1111" else sprite_g when sprite_z = "0000" else "1100";
+	blue_out	<=	txt_b when txt_not_a = "1111" else sprite_b when sprite_z = "0000" else "1100";
+	
 	
 	process(clk)
 		variable ticks : integer := 0;
