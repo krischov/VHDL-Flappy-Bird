@@ -43,7 +43,7 @@ package body spriteengine_package is
 		if (s.underflow = false) then
 			return s.visible and vga_row < s.y0 + (s.size * s.scaling_factor_y) and vga_row >= s.y0 and vga_col < s.x0 + (s.size * s.scaling_factor_x) and vga_col >= s.x0;
 		else
-			return s.visible and vga_row < s.y0 + (s.size * s.scaling_factor_y) and vga_row >= s.y0 and s.x0 > 959 and vga_col < s.x0 + (s.size * s.scaling_factor_x);
+			return s.visible and vga_row < s.y0 + (s.size * s.scaling_factor_y) and vga_row >= s.y0 and s.x0 >= 959 and vga_col < s.x0 + (s.size * s.scaling_factor_x);
 		end if;
 	end function;
 

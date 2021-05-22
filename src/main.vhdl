@@ -176,10 +176,12 @@ begin
 				if (bottompipe(i).x0 <= 640) then
 					bottompipe(i).underflow <= false;
 					bottompipe(i).x0 <= bottompipe(i).x0 - 2;
+					if (bottompipe(i).x0 < 1) then
+						bottompipe(i).underflow <= true;
+					end if;
 				elsif (bottompipe(i).x0 >= 959) then
-					bottompipe(i).underflow <= true;
 					bottompipe(i).x0 <= bottompipe(i).x0 - 2;
-				elsif (bottompipe(i).x0 <= 959) then
+				elsif (bottompipe(i).x0 < 959) then
 					bottompipe(i).underflow <= false;
 					bottompipe(i).x0 <= to_unsigned(640, 10); 
 				end if;
@@ -191,7 +193,7 @@ begin
 						bird(0).y0 <= bird(0).y0 - 50;
 					end if;
 				elsif (bird(0).y0 <= 480) then
-					bird(0).y0 <= bird(0).y0 + 2;
+					bird(0).y0 <= bird(0).y0 + 3;
 				end if;
 			end if;
 		if (mouse_lbtn = '0' and mouse_flag = '1') then
