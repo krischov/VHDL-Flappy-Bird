@@ -240,18 +240,18 @@ begin
 			end loop;
 		
 			-- Mouse input (make the bird flap)
-			
+		if (collision_flag = '0') then
 			if (mouse_lbtn = '1' and mouse_flag = '0') then
 				mouse_flag := '1';
-				if (collision_flag = '0') then 
+ 
 					if (bird(0).y0 >= 50) then
 						bird(0).y0 <= bird(0).y0 - 50;
 					end if;
-				end if;	
+					
 			elsif (bird(0).y0 <= 448) then
 					bird(0).y0 <= bird(0).y0 + 3;
 			end if;
-			
+		end if;
 			if (mouse_lbtn = '0' and mouse_flag = '1') then
 				mouse_flag := '0';
 			end if;
