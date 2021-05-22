@@ -52,7 +52,7 @@ architecture x of main is
 
 	signal bird : all_sprites(0 to 1)  := (
 		(32, to_unsigned(50, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
-		(32, to_unsigned(150, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
+		(32, to_unsigned(150, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE)
 	);
 	signal grassplane : all_sprites(0 to 9) := (
 		(32, to_unsigned(448, 10), to_unsigned(0,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
@@ -197,7 +197,7 @@ begin
 	begin
 		if (v_sync = '1') then
 		
-			if (collision_flag = '0') then
+			--if (collision_flag = '0') then
 			-- Moby's Movement
 	
 			for i in 0 to (bottompipe'length - 1) loop
@@ -245,17 +245,17 @@ begin
 				mouse_flag := '1';
 				if (collision_flag = '0') then 
 					if (bird(0).y0 >= 50) then
-						bird(0).y0 <= bird(0).y0 - 50;
+						bird(0).y0 <= bird(0).y0 - 75;
 					end if;
 				end if;	
 			elsif (bird(0).y0 <= 448) then
-					bird(0).y0 <= bird(0).y0 + 3;
+				bird(0).y0 <= bird(0).y0 + 3;
 			end if;
 			
 			if (mouse_lbtn = '0' and mouse_flag = '1') then
 				mouse_flag := '0';
 			end if;
-		end if;
+		--end if;
 		end if; 
 	end process;
 end architecture;
