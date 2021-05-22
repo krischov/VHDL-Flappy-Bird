@@ -47,12 +47,12 @@ begin
 	char_row <= resize(row / 8, 6);
 	char_col <= resize(col / 8, 7);
 	
-	txtrow <= txtvec(to_integer(char_row));
-	char_addr <= char2rom(txtrow.txt(to_integer(char_col) + 1));
+	txtrow <= txtvec(to_integer(char_row)) when txtvec(to_integer(char_row)).scale_index = -1 else txtvec(txtvec(to_integer(char_row)).scale_index);
+	char_addr <= char2rom(txtrow.txt((to_integer(char_col) + 1) / to_integer(txtrow.scale)));
 	
 	r <= txtrow.r;
 	g <= txtrow.g;
 	b <= txtrow.b;
 	--not_a <= (others => pixel) when (char_col + 1 > txtrow.char_col and char_col < txtrow.char_col + txtrow.txt_len) else "0000";
-	not_a <= (others => pixel) when txtrow.txt(to_integer(char_col) + 1) /= nul else "0000";
+	not_a <= (others => pixel) when txtrow.txt((to_integer(char_col) + 1) / to_integer(txtrow.scale)) /= nul else "0000";
 end architecture;

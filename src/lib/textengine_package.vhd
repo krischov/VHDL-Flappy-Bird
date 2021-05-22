@@ -20,6 +20,7 @@ package textengine_package is
 		r			: unsigned(3 downto 0);
 		g			: unsigned(3 downto 0);
 		b			: unsigned(3 downto 0);
+		scale_index : integer range -1 to 63;
 	end record textengine_row;
 	constant init_textengine_row : textengine_row := 
 		(
@@ -32,7 +33,8 @@ package textengine_package is
 			scale => to_unsigned(0, textengine_row.scale'length),
 			r => "1111",
 			g => "1111",
-			b => "1111"
+			b => "1111",
+			scale_index => -1
 		);
 	--array of textengine record for each of the 60 rows		
 	type textengine_vector is array (59 downto 0) of textengine_row;
@@ -294,11 +296,18 @@ package body textengine_package is
 				scale => in_scale,
 				r => in_r,
 				g => in_g,
-				b => in_b
+				b => in_b,
+				scale_index => -1
 			);
 			
 			txt_vector(to_integer(in_char_row)).txt(start_idx to end_idx) <= s;
-	
+			
+			if (in_scale /= 1) then
+				for i in to_integer(in_char_row) to to_integer(in_char_row) + to_integer(in_scale) - 1 loop
+					txt_vector(i).scale_index <= to_integer(in_char_row);
+				end loop;
+			end if;
+			
 	end procedure;
 
 	-- wrapper for str2text that converts integer paramaters to unsigned 
