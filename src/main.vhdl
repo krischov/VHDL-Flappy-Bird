@@ -44,10 +44,9 @@ architecture x of main is
 	signal sprite_b : unsigned(3 downto 0);
 	signal sprite_z : unsigned(3 downto 0);
 	signal mouse_btn : string(1 to 50) := var_len_str("No Mouse Button Pressed", 50);
-	
+	signal collision_flag : std_logic := '0';
 	signal sec : natural range 0 to 59 := 0;
-	
-	
+
 	
 	-- (sprite size, y0, x0, addr, sprite, colour, in_range, scale_x, scale_y, visible, underflow, passed_pipe)  
 
@@ -187,10 +186,19 @@ begin
 	
 	VSYNC: process(v_sync)
 	variable mouse_flag : std_logic := '0';
+--	variable birdx_pos0 : integer range 0 to 320 := bird.x0;
+--	variable birdx_pos1: integer range 0 to 320 := bird.x0 + 32;
+--	variable birdy_pos0 : integer range 0 to 320 := bird.y0;
+--	variable birdy_pos1 : integer range 0 to 320 := bird.y0 + 32;
+	 
+	
+	
 	begin
 		if (v_sync = '1') then
-			
+		
+			if (collision_flag = '0') then
 			-- Moby's Movement
+	
 			for i in 0 to (bottompipe'length - 1) loop
 				if (bottompipe(i).x0 <= 640) then
 					bottompipe(i).underflow <= false;
@@ -208,6 +216,20 @@ begin
 				end if;
 				
 				-- Do collision and point detection here
+				if (((bird(0).x0 >= bottompipe(0).x0) and (bird(0).x0 <= bottompipe(0).x0 + 31)) or
+					((bird(0).x0 + 31 >= bottompipe(0).x0) and (bird(0).x0 + 31 <= bottompipe(0).x0 + 31)) or
+					((bird(0).y0 >= bottompipe(0).y0) and (bird(0).y0 <= bottompipe(0).y0 + bottompipe(0).size*bottompipe(0).scaling_factor_y - 1)) or
+					((bird(0).y0 + 31 >= bottompipe(0).y0) and (bird(0).y0 + 31 <= bottompipe(0).y0 + bottompipe(0).size*bottompipe(0).scaling_factor_y - 1))) then
+					collision_flag <= '1';
+				end if;
+				if (((bird(0).x0 >= bottompipe(1).x0) and (bird(0).x0 <= bottompipe(1).x0 + 31)) or
+					  ((bird(0).x0 + 31 >= bottompipe(1).x0) and (bird(0).x0 + 31 <= bottompipe(1).x0 + 31)) or
+					  ((bird(0).y0 >= bottompipe(1).y0) and (bird(0).y0 <= bottompipe(1).y0 + bottompipe(1).size*bottompipe(1).scaling_factor_y + 1)) or
+					  ((bird(0).y0 + 31 >= bottompipe(1).y0) and (bird(0).y0 + 31 <= bottompipe(1).y0 + bottompipe(1).size*bottompipe(1).scaling_factor_y - 1))) then
+					  collision_flag <= '1';
+				end if;
+					 
+				
 				if (bottompipe(i).passed_pipe = false and bird(0).x0 > bottompipe(i).x0 + bottompipe(i).size * bottompipe(i).scaling_factor_x) then
 					-- if the user has just passed through this pipe, give them a point
 					bottompipe(i).passed_pipe <= true;
@@ -215,20 +237,24 @@ begin
 				end if;
 				
 			end loop;
-			
+		
 			-- Mouse input (make the bird flap)
+			
 			if (mouse_lbtn = '1' and mouse_flag = '0') then
 				mouse_flag := '1';
-				if (bird(0).y0 >= 0) then
-					bird(0).y0 <= bird(0).y0 - 50;
-				end if;
-			elsif (bird(0).y0 <= 480) then
+				if (collision_flag = '0') then 
+					if (bird(0).y0 >= 50) then
+						bird(0).y0 <= bird(0).y0 - 50;
+					end if;
+				end if;	
+			elsif (bird(0).y0 <= 448) then
 					bird(0).y0 <= bird(0).y0 + 3;
-				end if;
 			end if;
+			
 			if (mouse_lbtn = '0' and mouse_flag = '1') then
 				mouse_flag := '0';
 			end if;
-		
-		end process;
+		end if;
+		end if; 
+	end process;
 end architecture;
