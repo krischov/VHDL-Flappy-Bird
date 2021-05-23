@@ -202,12 +202,6 @@ begin
 	
 	VSYNC: process(v_sync)
 	variable mouse_flag : std_logic := '0';
---	variable birdx_pos0 : integer range 0 to 320 := bird.x0;
---	variable birdx_pos1: integer range 0 to 320 := bird.x0 + 32;
---	variable birdy_pos0 : integer range 0 to 320 := bird.y0;
---	variable birdy_pos1 : integer range 0 to 320 := bird.y0 + 32;
-	 
-	
 	
 	begin
 		if (v_sync = '1') then
@@ -231,19 +225,34 @@ begin
 						-- this pipe is being recycled, it should earn points again
 						bottompipe(i).passed_pipe <= false;
 					end if;
+					
+					if (toppipes(i).x0 <= 640) then
+						toppipes(i).underflow <= false;
+						toppipes(i).x0 <= toppipes(i).x0 - 2;
+						if (toppipes(i).x0 < 1) then
+							toppipes(i).underflow <= true;
+						end if;
+					elsif (toppipes(i).x0 >= 959) then
+						toppipes(i).x0 <= toppipes(i).x0 - 2;
+					elsif (toppipes(i).x0 < 959) then
+						toppipes(i).underflow <= false;
+						toppipes(i).x0 <= to_unsigned(640, 10); 
+						-- this pipe is being recycled, it should earn points again
+						toppipes(i).passed_pipe <= false;
+					end if;
 				end if;	
 					
 					-- Do collision and point detection here
-					if ((((bird(0).x0 + 2 >= bottompipe(0).x0) and (bird(0).x0 + 2 <= bottompipe(0).x0 + bird(0).size - 1)) or
-						((bird(0).x0 + bird(0).size - 1 >= bottompipe(0).x0) and (bird(0).x0 + bird(0).size - 1 <= bottompipe(0).x0 + 31))) and
-						(((bird(0).y0 + 4 >= bottompipe(0).y0) and (bird(0).y0 + 4 <= bottompipe(0).y0 + bottompipe(0).size*bottompipe(0).scaling_factor_y - 1)) or
-						((bird(0).y0 + bird(0).size - 8 >= bottompipe(0).y0) and (bird(0).y0 + bird(0).size - 8 <= bottompipe(0).y0 + bottompipe(0).size*bottompipe(0).scaling_factor_y - 1)))) then
+					if ((((bird(0).x0 + 2 >= bottompipe(i).x0) and (bird(0).x0 + 2 <= bottompipe(i).x0 + bird(0).size - 1)) or
+						((bird(0).x0 + bird(0).size - 1 >= bottompipe(i).x0) and (bird(0).x0 + bird(0).size - 1 <= bottompipe(i).x0 + 31))) and
+						(((bird(0).y0 + 4 >= bottompipe(i).y0) and (bird(0).y0 + 4 <= bottompipe(i).y0 + bottompipe(i).size*bottompipe(i).scaling_factor_y - 1)) or
+						((bird(0).y0 + bird(0).size - 8 >= bottompipe(i).y0) and (bird(0).y0 + bird(0).size - 8 <= bottompipe(i).y0 + bottompipe(i).size*bottompipe(i).scaling_factor_y - 1)))) then
 						collision_flag <= '1';
 					end if;
-					if ((((bird(0).x0 + 2 >= bottompipe(1).x0) and (bird(0).x0 + 2 <= bottompipe(1).x0 + bird(0).size - 1)) or
-						  ((bird(0).x0 + bird(0).size - 1 >= bottompipe(1).x0) and (bird(0).x0 + bird(0).size - 1 <= bottompipe(1).x0 + bird(0).size - 1))) and
-						  (((bird(0).y0 + 4 >= bottompipe(1).y0) and (bird(0).y0 + 4 <= bottompipe(1).y0 + bottompipe(1).size*bottompipe(1).scaling_factor_y + 1)) or
-						  ((bird(0).y0 + bird(0).size - 8 >= bottompipe(1).y0) and (bird(0).y0 + bird(0).size - 8 <= bottompipe(1).y0 + bottompipe(1).size*bottompipe(1).scaling_factor_y - 1)))) then
+					if ((((bird(0).x0 + 2 >= toppipes(i).x0) and (bird(0).x0 + 2 <= toppipes(i).x0 + bird(0).size - 1)) or
+						  ((bird(0).x0 + bird(0).size - 1 >= toppipes(i).x0) and (bird(0).x0 + bird(0).size - 1 <= toppipes(i).x0 + bird(0).size - 1))) and
+						  (((bird(0).y0 + 4 >= toppipes(i).y0) and (bird(0).y0 + 4 <= toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y + 1)) or
+						  ((bird(0).y0 + bird(0).size - 8 >= toppipes(i).y0) and (bird(0).y0 + bird(0).size - 8 <= toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y - 1)))) then
 						  collision_flag <= '1';
 					end if;
 					
