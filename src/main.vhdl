@@ -315,7 +315,7 @@ begin
 						
 						-- Do collision and point detection here
 						if (((bird(0).x0 + 2 >= toppipes(i).x0) and ((bird(0).x0 + (bird(0).x0 + bird(0).size - 1)) <= toppipes(i).x0 + toppipes(i).size - 1)) and 
-							(((bird(0).y0 + 4 >= toppipes(i).y0) and (bird(0).y0 + 4 <= toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y + 1)) or
+							(((bird(0).y0 >= toppipes(i).y0) and (bird(0).y0 <= toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y + 1)) or
 							((bird(0).y0 + bird(0).size - 6 >= bottompipe(i).y0) and (bird(0).y0 + bird(0).size - 8 <= bottompipe(i).y0 + bottompipe(1).size*bottompipe(i).scaling_factor_y - 1)))) then
 							collision_flag := '1';
 						else
@@ -372,20 +372,7 @@ begin
 								end if;
 							end if;
 						end if;
-						
-						if (((bird(0).x0 + 2 >= bottompipe(i).x0) and (bird(0).x0 + 2 <= bottompipe(i).x0 + bottompipe(i).size - 1)) and 
-							((bird(0).y0 + bird(0).size - 6 >= bottompipe(i).y0) and (bird(0).y0 + bird(0).size - 6 <= bottompipe(i).y0 + bottompipe(i).size*bottompipe(i).scaling_factor_y - 1))) then
-							birdxpos := (bottompipe(i).x0 + bottompipe(i).size - 1) - (bird(0).x0);
-							birdypos := bottompipe(i).y0 - (bird(0).y0);
-							pipexpos := (bottompipe(i).size - 1) - birdxpos;
-							pipeypos := bottompipe(i).y0;
-							bird_pos := resize(birdypos * 32 + birdxpos, 10);
-							toppipe_pos := resize(pipeypos * 64 + pipeypos, 12);
-							if (bird_transparency(to_integer(bird_pos)) /= '1' and top_pipe_transparency(to_integer(toppipe_pos)) /= '1') then
-								collision_flag := '1';
-							end if;
-						end if;
-						
+
 				-- if the user has just passed through this pipe, give them a point
 					if (bottompipe(i).passed_pipe = false and bird(0).x0 > bottompipe(i).x0 + bottompipe(i).size * bottompipe(i).scaling_factor_x) then
 						bottompipe(i).passed_pipe <= true;

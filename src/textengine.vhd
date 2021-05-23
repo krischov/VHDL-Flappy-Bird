@@ -50,7 +50,7 @@ begin
 
 	char_row <= resize(row / 8, 6);
 	txtrow <= txtvec(txtvec(to_integer(char_row)).scale_index);
-	char_col <= resize((col - txtrow.col) / 8 / txtrow.scaleX, 7);
+	char_col <= resize((col - txtrow.col) / 8 / txtrow.scaleX, 7) when txtrow.scaleY /= 1 else (col / 8);
 
 	acsess_row <=	resize((row - txtrow.row) / txtrow.scaleY, 3) when txtrow.scaleY /= 1 else row(2 downto 0);
 	--acsess_col <= col(2 downto 0);

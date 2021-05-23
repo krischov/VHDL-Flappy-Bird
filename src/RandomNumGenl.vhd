@@ -12,7 +12,7 @@ entity randomNumGen is
 end entity randomNumGen;
 
 architecture a of randomNumGen is
-	signal temp : std_logic_vector(7 downto 0) := std_logic_vector(to_unsigned(seed, 8));
+	signal temp : std_logic_vector(8 downto 0) := std_logic_vector(to_unsigned(seed, 9));
 begin
 	process (clk)
 	variable t_randNumYScale : std_logic_vector(3 downto 0);
@@ -44,3 +44,4 @@ begin
 	end process;	
 end architecture;
 		
+
