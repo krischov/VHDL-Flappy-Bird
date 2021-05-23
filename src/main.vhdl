@@ -45,6 +45,7 @@ architecture x of main is
 	signal sprite_z : unsigned(3 downto 0);
 	signal mouse_btn : string(1 to 50) := var_len_str("No Mouse Button Pressed", 50);
 	signal next_frame_collision_flag : std_logic := '0';
+	
 	signal sec : natural range 0 to 59 := 0;
 	signal birdcollision_addr : unsigned (11 downto 0);
 	signal pipecollision_addr : unsigned (11 downto 0);
@@ -288,6 +289,7 @@ begin
 	variable t_flag: std_logic := '0';
 	variable bird_pos : unsigned (9 downto 0);
 	variable toppipe_pos : unsigned (11 downto 0);
+	variable collision_flag : std_logic := '0';
 	
 	constant bird_transparency : std_logic_vector(1023 downto 0) := (
     x"fefefefefefefefefefefefefefefefefee002fefe0000fefe0000fefc00007efc00007ef000001ef000001ec000001ec000001ec000001ec0000006c00000068000000080000000800000068000000680000006c000001ec000001efe803efefe803efefefefefefefefefefefefefefefefefefefefefefefefefefefefefe"
@@ -327,17 +329,17 @@ begin
 			for i in 0 to (bottompipe'length - 1) loop
 			
 				-- Do collision and point detection here
-				if (((bird(0).x0 + 2 >= toppipes(i).x0) and (bird(0).x0 + 2 <= toppipes(i).x0 + bird(0).size - 1)) and 
-					((bird(0).y0 + 4 >= toppipes(i).y0) and (bird(0).y0 + 4 <= toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y - 1))) then
-					birdxpos := (bird(0).x0 + 2) - (toppipes(i).x0 + bird(0).size - 1);
-					birdypos := (bird(0).y0 + 4) - (toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y - 1);
-					pipexpos := (toppipes(i).x0 + bird(0).size - 1) - birdxpos;
-					pipeypos := (toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y - 1) - birdypos;
-					birdcollision_addr <= resize(birdypos * 32 + birdxpos, 12);
-					pipecollision_addr <= resize(pipeypos * 64 + pipeypos, 12);
-					t_flag := '1';
-				
-				end if;
+--				if (((bird(0).x0 + 2 >= toppipes(i).x0) and (bird(0).x0 + 2 <= toppipes(i).x0 + bird(0).size - 1)) and 
+--					((bird(0).y0 + 4 >= toppipes(i).y0) and (bird(0).y0 + 4 <= toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y - 1))) then
+--					birdxpos := (bird(0).x0 + 2) - (toppipes(i).x0 + bird(0).size - 1);
+--					birdypos := (bird(0).y0 + 4) - (toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y - 1);
+--					pipexpos := (toppipes(i).x0 + bird(0).size - 1) - birdxpos;
+--					pipeypos := (toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y - 1) - birdypos;
+--					birdcollision_addr <= resize(birdypos * 32 + birdxpos, 12);
+--					pipecollision_addr <= resize(pipeypos * 64 + pipeypos, 12);
+--					t_flag := '1';
+--				
+--				end if;
 				
 				if (collision_flag = '0' and t_flag = '0') then
 					if (bottompipe(i).x0 <= 640) then
@@ -363,24 +365,21 @@ begin
 					-- this pipe is being recycled, it should earn points again
 					toppipes(i).passed_pipe <= false;
 				end if;
-			end if;	
+			
 					
 					-- Do collision and point detection here
 					if (((bird(0).x0 + 2 >= toppipes(i).x0) and (bird(0).x0 + 2 <= toppipes(i).x0 + toppipes(i).size - 1)) and 
 						((bird(0).y0 + 4 >= toppipes(i).y0) and (bird(0).y0 + 4 <= toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y - 1))) then
 						birdxpos := (toppipes(i).x0 + toppipes(i).size - 1) - (bird(0).x0);
 						birdypos := (toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y - 1) - (bird(0).y0);
-						pipexpos := (toppipes(i).x0 + toppipes(i).size - 1) - birdxpos;
+						pipexpos := (toppipes(i).size - 1) - birdxpos;
 						pipeypos := (toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y - 1);
 						bird_pos := resize(birdypos * 32 + birdxpos, 10);
 						toppipe_pos := resize(pipeypos * 64 + pipeypos, 12);
 						if (bird_transparency(to_integer(bird_pos)) /= '1' and top_pipe_transparency(to_integer(toppipe_pos)) /= '1') then
-							collision_flag <= '1';
+							collision_flag := '1';
 						end if;
 					end if;
-				end if;	
-					
-
 					
 					if (((bird(0).x0 + bird(0).size - 1 >= toppipes(i).x0) and (bird(0).x0 + bird(0).size - 1 <= toppipes(i).x0 + bird(0).size - 1)) and 
 						((bird(0).y0 + 4 >= toppipes(i).y0) and (bird(0).y0 + 4 <= toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y - 1))) then
@@ -391,10 +390,36 @@ begin
 						bird_pos := resize(birdypos * 32 + birdxpos, 10);
 						toppipe_pos := resize(pipeypos * 64 + pipeypos, 12);
 						if (bird_transparency(to_integer(bird_pos)) /= '1' and top_pipe_transparency(to_integer(toppipe_pos)) /= '1') then
-							collision_flag <= '1';
+							collision_flag := '1';
 						end if;
 					end if;
 						
+					if (((bird(0).x0 + bird(0).size - 1 >= bottompipe(i).x0) and (bird(0).x0 + bird(0).size - 1 <= bottompipe(i).x0 + bird(0).size - 1)) and 
+						((bird(0).y0 + bird(0).size - 6 >= bottompipe(i).y0) and (bird(0).y0 + bird(0).size - 6 <= bottompipe(i).y0 + bottompipe(i).size*bottompipe(i).scaling_factor_y - 1))) then
+						birdxpos := (bird(0).size -  1) - ((bird(0).x0 + bird(0).size - 1) - toppipes(i).x0);
+						birdypos := bottompipe(i).y0 - (bird(0).y0);
+						pipexpos := bird(0).x0 + bird(0).size - 1;
+						pipeypos := bottompipe(i).y0;
+						bird_pos := resize(birdypos * 32 + birdxpos, 10);
+						toppipe_pos := resize(pipeypos * 64 + pipeypos, 12);
+						if (bird_transparency(to_integer(bird_pos)) /= '1' and top_pipe_transparency(to_integer(toppipe_pos)) /= '1') then
+							collision_flag := '1';
+						end if;
+					end if;
+					
+					if (((bird(0).x0 + 2 >= bottompipe(i).x0) and (bird(0).x0 + 2 <= bottompipe(i).x0 + bottompipe(i).size - 1)) and 
+						((bird(0).y0 + bird(0).size - 6 >= bottompipe(i).y0) and (bird(0).y0 + bird(0).size - 6 <= bottompipe(i).y0 + bottompipe(i).size*bottompipe(i).scaling_factor_y - 1))) then
+						birdxpos := (bottompipe(i).x0 + bottompipe(i).size - 1) - (bird(0).x0);
+						birdypos := bottompipe(i).y0 - (bird(0).y0);
+						pipexpos := (bottompipe(i).size - 1) - birdxpos;
+						pipeypos := bottompipe(i).y0;
+						bird_pos := resize(birdypos * 32 + birdxpos, 10);
+						toppipe_pos := resize(pipeypos * 64 + pipeypos, 12);
+						if (bird_transparency(to_integer(bird_pos)) /= '1' and top_pipe_transparency(to_integer(toppipe_pos)) /= '1') then
+							collision_flag := '1';
+						end if;
+					end if;
+					
 						
 --					if (((bird(0).x0 + 2 >= toppipes(i).x0) and (bird(0).x0 + 2 <= toppipes(i).x0 + bird(0).size - 1)) and 
 --						((bird(0).y0 + bird(0).size - 8 >= toppipes(i).y0) and (bird(0).y0 + bird(0).size - 8 <= toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y - 1))) then
