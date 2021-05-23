@@ -112,6 +112,7 @@ begin
 	
 	--str2text(text_vector, 2, 20, 1, "1111", "1111", "1111", "The Modelsim Mobsters:");
 	str2text(text_vector, 7, 65, 2, "1010", "0101", "1100", "Points " & int2str(pipe_points));
+	str2text(text_vector, 10, 10, 2, "1010", "0101", "1100", "STATIC");
 	
 	--Sprites
 
