@@ -86,8 +86,8 @@ architecture x of main is
 	);
 	
 	signal mousecursor : all_sprites(0 to 1) := (
-		(4, to_unsigned(236, 10), to_unsigned(316,10), "000000000000", cursor, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
-		(4, to_unsigned(150, 10), to_unsigned(50,10), "000000000000", cursor, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE)
+		(32, to_unsigned(236, 10), to_unsigned(316,10), "000000000000", cursor, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(150, 10), to_unsigned(50,10), "000000000000", cursor, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE)
 	);
 	
 	
@@ -111,7 +111,7 @@ begin
 	str2text(text_vector, 5, 0, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|_|  |_|\___/ \__,_|\___|_|___/_|_| |_| |_||_|  |_|\___/|_.__/|___/\__\___|_|");
 	
 	--str2text(text_vector, 2, 20, 1, "1111", "1111", "1111", "The Modelsim Mobsters:");
-	str2text(text_vector, 7, 65, 2, "1010", "0101", "1100", "Points " & int2str(pipe_points));
+	str2text(text_vector, 7, 65, 1, "1010", "0101", "1100", "Points " & int2str(pipe_points));
 	
 	--Sprites
 
@@ -227,6 +227,22 @@ begin
 				mouse_btn <= var_len_str("No Mouse button Pressed", mouse_btn'length);
 			end if;
 
+			if ((bottompipe_idx /= -1 and bird_idx /= -1)) then
+					if ((bird(bird_idx).in_range and bottompipe(bottompipe_idx).in_range)) then
+						if ((bird(bird_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).colours(15 downto 12) = "1111")) then
+							next_frame_collision_flag <= '1';
+						end if;
+					end if;
+			end if;
+				
+			if ((toppipe_idx /= -1 and bird_idx /= -1)) then
+					if ((bird(bird_idx).in_range and toppipes(toppipe_idx).in_range)) then
+						if ((bird(bird_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).colours(15 downto 12) = "1111")) then
+							next_frame_collision_flag <= '1';
+						end if;
+					end if;
+			end if;	
+
 			if (txt_not_a = "1111") then
 				red_out <= txt_r;
 				green_out <= txt_g;
@@ -244,22 +260,6 @@ begin
 					blue_out <= "0000";
 				end if;
 			end if;
-
-			if ((bottompipe_idx /= -1 and bird_idx /= -1)) then
-					if ((bird(bird_idx).in_range and bottompipe(bottompipe_idx).in_range)) then
-						if ((bird(bird_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).colours(15 downto 12) = "1111")) then
-							next_frame_collision_flag <= '1';
-						end if;
-					end if;
-			end if;
-				
-			if ((toppipe_idx /= -1 and bird_idx /= -1)) then
-					if ((bird(bird_idx).in_range and toppipes(toppipe_idx).in_range)) then
-						if ((bird(bird_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).colours(15 downto 12) = "1111")) then
-							next_frame_collision_flag <= '1';
-						end if;
-					end if;
-			end if;	
 			
 		end if;
 
@@ -267,45 +267,53 @@ begin
 	
 	VSYNC: process(v_sync)
 	variable mouse_flag : std_logic := '0';
-	
+		variable frame : natural range 0 to 60 := 0;
+		-- total number of pixels to shift bird up by per mouse click
+		constant h_boost : natural range 0 to 256 := 60;
+		-- apply this much h_boost per frame to get it done in 8 frames
+		constant h_boost_per_frame : natural range 0 to 8 := h_boost / 8; 
+		-- If > 0 the mouse bird should be boosted this frame. Decremented by 1 each frame a hboost is applied
+		variable apply_h_boost : natural range 0 to 8 := 0; 
 	begin
 		if (v_sync = '1') then
-		
-			--if (collision_flag = '0') then
-			-- Moby's Movement
-	
-				for i in 0 to (bottompipe'length - 1) loop
-				if (collision_flag = '0') then
-					if (bottompipe(i).x0 <= 640) then
-						bottompipe(i).underflow <= false;
-						bottompipe(i).x0 <= bottompipe(i).x0 - 2;
-						if (bottompipe(i).x0 < 1) then
-							bottompipe(i).underflow <= true;
-						end if;
-					elsif (bottompipe(i).x0 >= 959) then
-						bottompipe(i).x0 <= bottompipe(i).x0 - 2;
-					elsif (bottompipe(i).x0 < 959) then
-						bottompipe(i).underflow <= false;
-						bottompipe(i).x0 <= to_unsigned(640, 10); 
-						-- this pipe is being recycled, it should earn points again
-						bottompipe(i).passed_pipe <= false;
+			
+			frame := frame + 1;
+			if (frame > 59) then
+				frame := 0;
+			end if;
+			
+			for i in 0 to (bottompipe'length - 1) loop
+			if (collision_flag = '0') then
+				if (bottompipe(i).x0 <= 640) then
+					bottompipe(i).underflow <= false;
+					bottompipe(i).x0 <= bottompipe(i).x0 - 2;
+					if (bottompipe(i).x0 < 1) then
+						bottompipe(i).underflow <= true;
 					end if;
-					
-					if (toppipes(i).x0 <= 640) then
-						toppipes(i).underflow <= false;
-						toppipes(i).x0 <= toppipes(i).x0 - 2;
-						if (toppipes(i).x0 < 1) then
-							toppipes(i).underflow <= true;
-						end if;
-					elsif (toppipes(i).x0 >= 959) then
-						toppipes(i).x0 <= toppipes(i).x0 - 2;
-					elsif (toppipes(i).x0 < 959) then
-						toppipes(i).underflow <= false;
-						toppipes(i).x0 <= to_unsigned(640, 10); 
-						-- this pipe is being recycled, it should earn points again
-						toppipes(i).passed_pipe <= false;
+				elsif (bottompipe(i).x0 >= 959) then
+					bottompipe(i).x0 <= bottompipe(i).x0 - 2;
+				elsif (bottompipe(i).x0 < 959) then
+					bottompipe(i).underflow <= false;
+					bottompipe(i).x0 <= to_unsigned(640, 10); 
+					-- this pipe is being recycled, it should earn points again
+					bottompipe(i).passed_pipe <= false;
+				end if;
+				
+				if (toppipes(i).x0 <= 640) then
+					toppipes(i).underflow <= false;
+					toppipes(i).x0 <= toppipes(i).x0 - 2;
+					if (toppipes(i).x0 < 1) then
+						toppipes(i).underflow <= true;
 					end if;
-				end if;	
+				elsif (toppipes(i).x0 >= 959) then
+					toppipes(i).x0 <= toppipes(i).x0 - 2;
+				elsif (toppipes(i).x0 < 959) then
+					toppipes(i).underflow <= false;
+					toppipes(i).x0 <= to_unsigned(640, 10); 
+					-- this pipe is being recycled, it should earn points again
+					toppipes(i).passed_pipe <= false;
+				end if;
+			end if;	
 					
 					-- Do collision and point detection here
 --					if ((((bird(0).x0 + 2 >= bottompipe(0).x0) and (bird(0).x0 + 2 <= bottompipe(0).x0 + bird(0).size - 1)) or
@@ -325,29 +333,43 @@ begin
 --						collision_flag <= '1';
 --					end if;
 
-					if (bottompipe(i).passed_pipe = false and bird(0).x0 > bottompipe(i).x0 + bottompipe(i).size * bottompipe(i).scaling_factor_x) then
-						-- if the user has just passed through this pipe, give them a point
-						bottompipe(i).passed_pipe <= true;
-						pipe_points <= pipe_points + 1; 
-					end if;
-					
-				end loop;
+			-- if the user has just passed through this pipe, give them a point
+			if (bottompipe(i).passed_pipe = false and bird(0).x0 > bottompipe(i).x0 + bottompipe(i).size * bottompipe(i).scaling_factor_x) then
+				bottompipe(i).passed_pipe <= true;
+				pipe_points <= pipe_points + 1; 
+			end if;
+				
+			end loop;
+		
+			-- Boost the bird up on mouse click, otherwise make it fall 
+			-- Don't let the bird flap if we have detected a collision (remember we are drawing the next frame here)
+			if (next_frame_collision_flag = '0') then
+				if (apply_h_boost > 0) then
+					bird(0).y0 <= bird(0).y0 - h_boost_per_frame;
+					apply_h_boost := apply_h_boost - 1;
+				else
+					-- lower bird by 3 pixels (make it 'fall' 3 pixels)
+					bird(0).y0 <= bird(0).y0 + 3;
+				end if;
+			end if;
 			
-				-- Mouse input (make the bird flap)
-				if (collision_flag = '0') then
-					if (mouse_lbtn = '1' and mouse_flag = '0') then
-						mouse_flag := '1';
-						if (bird(0).y0 >= 0) then
-							bird(0).y0 <= bird(0).y0 - 60;
-						end if;	
-					elsif (bird(0).y0 <= 448) then
-					--	bird(0).y0 <= bird(0).y0 + 3;
-					end if;
+			-- Mouse input (make the bird flap)
+			-- Don't let the bird flap if we have detected a collision (remember we are drawing the next frame here)
+			if (next_frame_collision_flag = '0') then
+				if (mouse_lbtn = '1' and mouse_flag = '0') then
+					mouse_flag := '1';
+					apply_h_boost := 8;
+--						if (bird(0).y0 >= 0) then
+--							bird(0).y0 <= bird(0).y0 - 60;
+--						end if;	
+				--elsif (bird(0).y0 <= 448) then
+				--	bird(0).y0 <= bird(0).y0 + 3;
 				end if;
-				if (mouse_lbtn = '0' and mouse_flag = '1') then
-					mouse_flag := '0';
-				end if;
-			--end if;
+			end if;
+			
+			if (mouse_lbtn = '0' and mouse_flag = '1') then
+				mouse_flag := '0';
+			end if;
 			
 			if (next_frame_collision_flag = '1') then
 				collision_flag <= '1';

@@ -53,12 +53,16 @@ begin
 		
 	txtrow <= txtvec(txtvec(to_integer(char_row)).scale_index);
 
-	scaled_row <=	row(2 downto 0) when txtrow.scale = 1 else
-					row(3 downto 1) when txtrow.scale = 2;
+--	scaled_row <=	row(2 downto 0) when txtrow.scale = 1 else
+--					row(3 downto 1) when txtrow.scale = 2;
+--	
+--	scaled_col <=	col(2 downto 0) when txtrow.scale = 1 else
+--					col(3 downto 1) when txtrow.scale = 2;
+--	
 	
-	scaled_col <=	col(2 downto 0) when txtrow.scale = 1 else
-					col(3 downto 1) when txtrow.scale = 2;
+	scaled_row <=	row(2 downto 0) / 2;
 	
+	scaled_col <=	col(2 downto 0) / 2;
 	
 	char_addr <= char2rom(txtrow.txt(to_integer(char_col) + 1));
 
