@@ -81,6 +81,7 @@ unsigned char r, g, b;
 
 unsigned short address;
 
+unsigned char transparent;
 
 char read_buf[4096];
 char out_buf[32];
@@ -158,28 +159,32 @@ char *argv[];
 	
 
 	/* write the output mif file */
-	fprintf(sprite, "Depth = %u;\nWidth = 8;\nAddress_radix = hex;\nData_radix = hex;\nContent\n  Begin\n",
-			width * height);
-
-	fprintf(sprite, "-- Sprite: %s; size: %hux%hu pixels (Transparancy Map)\n", argv[1], width, height);
+	fprintf(sprite, "-- Sprite: %s; size: %hux%hu pixels (Transparancy Map)\n"
+		"constant X : std_logic_vector(%hu downto 0) := (\n\tx\"", 
+		argv[1], width, height, (unsigned short) (width * height - 1)
+	);
 
 	for (i = 0; i < width * height; ++i, address++) {
-		unsigned char transparent = 0x00;
-		
-
 		fread(&r, sizeof (r), 1, ppm);
 		fread(&g, sizeof (g), 1, ppm);
 		fread(&b, sizeof (b), 1, ppm);
 
 		/* 0x0F => 00001111 */
 		if ((r & 0x0F) && (g & 0x0F) && (b & 0x0F)) {
-			transparent = 0xFF;
+			transparent |= 0x01 << (8 - (i % 8));
+		} else {
+			transparent |= 0x00 << (8 - (i % 8));
 		}
 
-		fprintf(sprite, "%04hx : %02hx ;\n", address, transparent);
+		/* We have 8 transparancy values, write out the byte */
+
+		if (i % 8 == 7) {
+			fprintf(sprite, "%02hhx", transparent);
+			transparent = 0x00;
+		}
 	}	
 
-	fputs("\nEnd;", sprite);
+	fputs("\"\n);\n", sprite);
 
 	fclose(ppm);
 	fclose(sprite);
