@@ -286,7 +286,7 @@ package body textengine_package is
 			len := s'length;
 		end if;
 		
-		start_idx := to_integer(in_char_col) + 1;
+		start_idx := to_integer(in_char_col / in_scale) + 1;
 		end_idx := start_idx + s'length - 1;
 		
 		txt_vector(to_integer(in_char_row)) <=
@@ -294,7 +294,7 @@ package body textengine_package is
 				row => resize(in_char_row * 8, 10),
 				col => resize(in_char_col * 8, 10),
 				char_row => in_char_row, 
-				char_col => in_char_col, 
+				char_col => in_char_col / in_scale, 
 				txt_len => to_unsigned(len, 7),
 				txt => (others => nul), -- initalise everything to null
 				scale => in_scale,

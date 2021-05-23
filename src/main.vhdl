@@ -45,6 +45,7 @@ architecture x of main is
 	signal sprite_z : unsigned(3 downto 0);
 	signal mouse_btn : string(1 to 50) := var_len_str("No Mouse Button Pressed", 50);
 	signal next_frame_collision_flag : std_logic := '0';
+	signal collision_flag : std_logic := '0';
 	signal sec : natural range 0 to 59 := 0;
 	signal birdcollision_addr : unsigned (11 downto 0);
 	signal pipecollision_addr : unsigned (11 downto 0);
@@ -115,12 +116,7 @@ begin
 	
 	--str2text(text_vector, 2, 20, 1, "1111", "1111", "1111", "The Modelsim Mobsters:");
 	str2text(text_vector, 7, 65, 2, "1010", "0101", "1100", "Points " & int2str(pipe_points));
-	str2text(text_vector, 10, 10, 2, "1010", "0101", "1100", "STATIC");
-	str2text(text_vector, 13, 10, 3, "1010", "0101", "1100", "STATIC");
-	str2text(text_vector, 16, 10, 4, "1010", "0101", "1100", "STATIC");
-	str2text(text_vector, 25, 10, 5, "1010", "0101", "1100", "STATIC");
-	str2text(text_vector, 35, 10, 6, "1010", "0101", "1100", "STATIC");
-	str2text(text_vector, 45, 10, 7, "1010", "0101", "1100", "STATIC");
+	str2text(text_vector, 10, 10, 4, "1010", "0101", "1100", "Points " & int2str(pipe_points));
 	
 	--Sprites
 
@@ -322,39 +318,29 @@ begin
 --			t_flag := '0';
 --		end if;
 	
-	
-	
 			for i in 0 to (bottompipe'length - 1) loop
-			
-				-- Do collision and point detection here
-				if (((bird(0).x0 + 2 >= toppipes(i).x0) and (bird(0).x0 + 2 <= toppipes(i).x0 + bird(0).size - 1)) and 
-					((bird(0).y0 + 4 >= toppipes(i).y0) and (bird(0).y0 + 4 <= toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y - 1))) then
-					birdxpos := (bird(0).x0 + 2) - (toppipes(i).x0 + bird(0).size - 1);
-					birdypos := (bird(0).y0 + 4) - (toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y - 1);
-					pipexpos := (toppipes(i).x0 + bird(0).size - 1) - birdxpos;
-					pipeypos := (toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y - 1) - birdypos;
-					birdcollision_addr <= resize(birdypos * 32 + birdxpos, 12);
-					pipecollision_addr <= resize(pipeypos * 64 + pipeypos, 12);
-					t_flag := '1';
-				
+			if (collision_flag = '0') then
+				if (bottompipe(i).x0 <= 640) then
+					bottompipe(i).underflow <= false;
+					bottompipe(i).x0 <= bottompipe(i).x0 - 2;
+					if (bottompipe(i).x0 < 1) then
+						bottompipe(i).underflow <= true;
+					end if;
+				elsif (bottompipe(i).x0 >= 959) then
+					bottompipe(i).x0 <= bottompipe(i).x0 - 2;
+				elsif (bottompipe(i).x0 < 959) then
+					bottompipe(i).underflow <= false;
+					bottompipe(i).x0 <= to_unsigned(640, 10); 
+					-- this pipe is being recycled, it should earn points again
+					bottompipe(i).passed_pipe <= false;
 				end if;
 				
-				if (collision_flag = '0' and t_flag = '0') then
-					if (bottompipe(i).x0 <= 640) then
-						bottompipe(i).underflow <= false;
-						bottompipe(i).x0 <= bottompipe(i).x0 - 2;
-						if (bottompipe(i).x0 < 1) then
-							bottompipe(i).underflow <= true;
-						end if;
-					elsif (bottompipe(i).x0 >= 959) then
-						bottompipe(i).x0 <= bottompipe(i).x0 - 2;
-					elsif (bottompipe(i).x0 < 959) then
-						bottompipe(i).underflow <= false;
-						bottompipe(i).x0 <= to_unsigned(640, 10); 
-						-- this pipe is being recycled, it should earn points again
-						bottompipe(i).passed_pipe <= false;
+				if (toppipes(i).x0 <= 640) then
+					toppipes(i).underflow <= false;
+					toppipes(i).x0 <= toppipes(i).x0 - 2;
+					if (toppipes(i).x0 < 1) then
+						toppipes(i).underflow <= true;
 					end if;
-
 				elsif (toppipes(i).x0 >= 959) then
 					toppipes(i).x0 <= toppipes(i).x0 - 2;
 				elsif (toppipes(i).x0 < 959) then
@@ -378,9 +364,6 @@ begin
 							collision_flag <= '1';
 						end if;
 					end if;
-				end if;	
-					
-
 					
 					if (((bird(0).x0 + bird(0).size - 1 >= toppipes(i).x0) and (bird(0).x0 + bird(0).size - 1 <= toppipes(i).x0 + bird(0).size - 1)) and 
 						((bird(0).y0 + 4 >= toppipes(i).y0) and (bird(0).y0 + 4 <= toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y - 1))) then
@@ -424,17 +407,17 @@ begin
 --						collision_flag <= '1';
 --					end if;
 
-				-- if the user has just passed through this pipe, give them a point
-				if (bottompipe(i).passed_pipe = false and bird(0).x0 > bottompipe(i).x0 + bottompipe(i).size * bottompipe(i).scaling_factor_x) then
-					bottompipe(i).passed_pipe <= true;
-					pipe_points <= pipe_points + 1; 
-				end if;
+			-- if the user has just passed through this pipe, give them a point
+			if (bottompipe(i).passed_pipe = false and bird(0).x0 > bottompipe(i).x0 + bottompipe(i).size * bottompipe(i).scaling_factor_x) then
+				bottompipe(i).passed_pipe <= true;
+				pipe_points <= pipe_points + 1; 
+			end if;
 				
 			end loop;
 		
 			-- Boost the bird up on mouse click, otherwise make it fall 
 			-- Don't let the bird flap if we have detected a collision (remember we are drawing the next frame here)
-			if (next_frame_collision_flag = '0') then
+			if (collision_flag = '0') then
 				if (apply_h_boost > 0) then
 					bird(0).y0 <= bird(0).y0 - h_boost_per_frame;
 					apply_h_boost := apply_h_boost - 1;
@@ -446,24 +429,15 @@ begin
 			
 			-- Mouse input (make the bird flap)
 			-- Don't let the bird flap if we have detected a collision (remember we are drawing the next frame here)
-			if (next_frame_collision_flag = '0') then
+			if (collision_flag = '0') then
 				if (mouse_lbtn = '1' and mouse_flag = '0') then
 					mouse_flag := '1';
 					apply_h_boost := 8;
---						if (bird(0).y0 >= 0) then
---							bird(0).y0 <= bird(0).y0 - 60;
---						end if;	
-				--elsif (bird(0).y0 <= 448) then
-				--	bird(0).y0 <= bird(0).y0 + 3;
 				end if;
 			end if;
 			
 			if (mouse_lbtn = '0' and mouse_flag = '1') then
 				mouse_flag := '0';
-			end if;
-			
-			if (next_frame_collision_flag = '1') then
-				collision_flag := '1';
 			end if;
 		end if; 
 	end process;
