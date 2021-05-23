@@ -372,7 +372,7 @@ begin
 								end if;
 							end if;
 						end if;
-
+						
 				-- if the user has just passed through this pipe, give them a point
 					if (bottompipe(i).passed_pipe = false and bird(0).x0 > bottompipe(i).x0 + bottompipe(i).size * bottompipe(i).scaling_factor_x) then
 						bottompipe(i).passed_pipe <= true;
