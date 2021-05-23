@@ -251,6 +251,14 @@ begin
 							next_frame_collision_flag <= '1';
 						end if;
 					end if;
+			end if;
+				
+			if ((toppipe_idx /= -1 and bird_idx /= -1)) then
+					if ((bird(bird_idx).in_range and toppipes(toppipe_idx).in_range)) then
+						if ((bird(bird_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).colours(15 downto 12) = "1111")) then
+							next_frame_collision_flag <= '1';
+						end if;
+					end if;
 			end if;	
 			
 		end if;
