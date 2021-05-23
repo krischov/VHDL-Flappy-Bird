@@ -40,4 +40,6 @@ begin
 	-- Transparancy Maps 
 	rom6: rom_ctrl generic map ("bird0_tmap.MIF", 10, 1024, 8) port map (sprite_addrs(bird0_tmap)(9 downto 0), clk, sprites_out(bird0_tmap));
 	
+	rom7 : rom_ctrl generic map ("heartsprite.MIF", 8, 256) port map (sprite_addrs(heart)(7 downto 0), clk, sprites_out(heart));
+	
 end architecture a;
