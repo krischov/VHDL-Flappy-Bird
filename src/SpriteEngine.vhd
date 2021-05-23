@@ -38,6 +38,6 @@ begin
 	rom5: rom_ctrl generic map ("cursor.MIF", 10, 1024) port map (sprite_addrs(cursor)(9 downto 0), clk, sprites_out(cursor)); 
 	
 	-- Transparancy Maps 
-	rom6: rom_ctrl generic map ("bird0_tmap.MIF", 10, 1024, 8) port map (sprite_addres(bird0_tmap)(9 downto 0), clk, sprites_out(bird0_tmap);
+	rom6: rom_ctrl generic map ("bird0_tmap.MIF", 10, 1024, 8) port map (sprite_addrs(bird0_tmap)(9 downto 0), clk, sprites_out(bird0_tmap));
 	
 end architecture a;
