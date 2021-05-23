@@ -52,9 +52,9 @@ begin
 	txtrow <= txtvec(txtvec(to_integer(char_row)).scale_index);
 	char_col <= resize((col - txtrow.col) / 8 / txtrow.scaleX, 7);
 
-	acsess_row <=	resize((row - txtrow.row) / txtrow.scaleY, 3);
+	acsess_row <=	resize((row - txtrow.row) / txtrow.scaleY, 3) when txtrow.scaleY /= 1 else row(2 downto 0);
 	--acsess_col <= col(2 downto 0);
-	acsess_col <= 	resize((col - txtrow.col) / txtrow.scaleX, 3);
+	acsess_col <= 	resize((col - txtrow.col) / txtrow.scaleX, 3) when txtrow.scaleX /= 1 else col(2 downto 0);
 	
 	char_addr <= char2rom(txtrow.txt(to_integer(char_col) + 1));
 

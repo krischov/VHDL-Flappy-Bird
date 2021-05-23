@@ -92,8 +92,8 @@ architecture x of main is
 	);
 	
 	signal hearts: all_sprites(0 to 1) := (
-		(16, to_unsigned(400, 10), to_unsigned(400,10), "000000000000", heart, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
-		(16, to_unsigned(550, 10), to_unsigned(550,10), "000000000000", heart, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE)
+		(16, to_unsigned(8, 10), to_unsigned(8,10), "000000000000", heart, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(16, to_unsigned(8, 10), to_unsigned(32,10), "000000000000", heart, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
 	);
 	
 	
@@ -109,18 +109,16 @@ begin
 	spriteengine0 : spriteengine port map (clk, vga_row, vga_col, sprites_addrs, sprites_out);
 	textengine0: textengine port map(clk, text_vector, vga_row, vga_col, txt_r, txt_g, txt_b, txt_not_a);
 		
-	str2text(text_vector, 0, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, " __  __           _      _     _            __  __       _         _");
-	str2text(text_vector, 1, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|  \/  |         | |    | |   (_)          |  \/  |     | |       | |");
-	str2text(text_vector, 2, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| \  / | ___   __| | ___| |___ _ _ __ ___  | \  / | ___ | |__  ___| |_ ___ _ __");
-	str2text(text_vector, 3, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| |\/| |/ _ \ / _` |/ _ \ / __| | '_ ` _ \ | |\/| |/ _ \| '_ \/ __| __/ _ \ '__|");
-	str2text(text_vector, 4, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| |  | | (_) | (_| |  __/ \__ \ | | | | | || |  | | (_) | |_) \__ \ ||  __/ |");
-	str2text(text_vector, 5, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|_|  |_|\___/ \__,_|\___|_|___/_|_| |_| |_||_|  |_|\___/|_.__/|___/\__\___|_|");
+--	str2text(text_vector, 0, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, " __  __           _      _     _            __  __       _         _");
+--	str2text(text_vector, 1, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|  \/  |         | |    | |   (_)          |  \/  |     | |       | |");
+--	str2text(text_vector, 2, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| \  / | ___   __| | ___| |___ _ _ __ ___  | \  / | ___ | |__  ___| |_ ___ _ __");
+--	str2text(text_vector, 3, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| |\/| |/ _ \ / _` |/ _ \ / __| | '_ ` _ \ | |\/| |/ _ \| '_ \/ __| __/ _ \ '__|");
+--	str2text(text_vector, 4, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| |  | | (_) | (_| |  __/ \__ \ | | | | | || |  | | (_) | |_) \__ \ ||  __/ |");
+--	str2text(text_vector, 5, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|_|  |_|\___/ \__,_|\___|_|___/_|_| |_| |_||_|  |_|\___/|_.__/|___/\__\___|_|");
 	
 	--str2text(text_vector, 2, 20, 1, "1111", "1111", "1111", "The Modelsim Mobsters:");
-	str2text(text_vector, 7, 65, 2, 3, "1010", "0101", "1100", "Points " & int2str(pipe_points));
-	str2text(text_vector, 15, 10, 4, 1, "1010", "0101", "1100", "Points " & int2str(pipe_points));
-	str2text(text_vector, 20, 65, 2, 5, "1010", "0101", "1100", "Static ");
-	
+	str2text(text_vector, 7, 60, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
+
 	--Sprites
 
 	grass_idx <= get_active_idx(grassplane, vga_row, vga_col);	
@@ -374,21 +372,20 @@ begin
 								end if;
 							end if;
 						end if;
-	--					
-	--					if ((((bird(0).x0 + 2 >= bottompipe(0).x0) and (bird(0).x0 + 2 <= bottompipe(0).x0 + bird(0).size - 1)) or
-	--						((bird(0).x0 + bird(0).size - 1 >= bottompipe(0).x0) and (bird(0).x0 + bird(0).size - 1 <= bottompipe(0).x0 + 31))) and
-	--						(((bird(0).y0 + 4 >= bottompipe(0).y0) and (bird(0).y0 + 4 <= bottompipe(0).y0 + bottompipe(0).size*bottompipe(0).scaling_factor_y - 1)) or
-	--						((bird(0).y0 + bird(0).size - 8 >= bottompipe(0).y0) and (bird(0).y0 + bird(0).size - 8 <= bottompipe(0).y0 + bottompipe(0).size*bottompipe(0).scaling_factor_y - 1)))) then
-	--						collision_flag <= '1';
-	--					end if;
-	--					if ((((bird(0).x0 + 2 >= bottompipe(1).x0) and (bird(0).x0 + 2 <= bottompipe(1).x0 + bird(0).size - 1)) or
-	--						  ((bird(0).x0 + bird(0).size - 1 >= bottompipe(1).x0) and (bird(0).x0 + bird(0).size - 1 <= bottompipe(1).x0 + bird(0).size - 1))) and
-	--						  (((bird(0).y0 + 4 >= bottompipe(1).y0) and (bird(0).y0 + 4 <= bottompipe(1).y0 + bottompipe(1).size*bottompipe(1).scaling_factor_y + 1)) or
-	--						  ((bird(0).y0 + bird(0).size - 8 >= bottompipe(1).y0) and (bird(0).y0 + bird(0).size - 8 <= bottompipe(1).y0 + bottompipe(1).size*bottompipe(1).scaling_factor_y - 1)))) then
-	--						  collision_flag <= '1';
-	--					end if;
-	--					
-	--		
+						
+						if (((bird(0).x0 + 2 >= bottompipe(i).x0) and (bird(0).x0 + 2 <= bottompipe(i).x0 + bottompipe(i).size - 1)) and 
+							((bird(0).y0 + bird(0).size - 6 >= bottompipe(i).y0) and (bird(0).y0 + bird(0).size - 6 <= bottompipe(i).y0 + bottompipe(i).size*bottompipe(i).scaling_factor_y - 1))) then
+							birdxpos := (bottompipe(i).x0 + bottompipe(i).size - 1) - (bird(0).x0);
+							birdypos := bottompipe(i).y0 - (bird(0).y0);
+							pipexpos := (bottompipe(i).size - 1) - birdxpos;
+							pipeypos := bottompipe(i).y0;
+							bird_pos := resize(birdypos * 32 + birdxpos, 10);
+							toppipe_pos := resize(pipeypos * 64 + pipeypos, 12);
+							if (bird_transparency(to_integer(bird_pos)) /= '1' and top_pipe_transparency(to_integer(toppipe_pos)) /= '1') then
+								collision_flag := '1';
+							end if;
+						end if;
+						
 				-- if the user has just passed through this pipe, give them a point
 					if (bottompipe(i).passed_pipe = false and bird(0).x0 > bottompipe(i).x0 + bottompipe(i).size * bottompipe(i).scaling_factor_x) then
 						bottompipe(i).passed_pipe <= true;
