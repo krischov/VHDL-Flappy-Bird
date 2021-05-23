@@ -45,7 +45,6 @@ architecture x of main is
 	signal sprite_z : unsigned(3 downto 0);
 	signal mouse_btn : string(1 to 50) := var_len_str("No Mouse Button Pressed", 50);
 	signal next_frame_collision_flag : std_logic := '0';
-	signal collision_flag : std_logic := '0';
 	signal sec : natural range 0 to 59 := 0;
 	signal birdcollision_addr : unsigned (11 downto 0);
 	signal pipecollision_addr : unsigned (11 downto 0);
@@ -270,13 +269,9 @@ begin
 				green_out <= sprite_g;
 				blue_out <= sprite_b;
 			else
-				red_out <= "0000";
-				green_out <= "0000";
-				if (collision_flag = '1') then
-					blue_out <= "1111";
-				else
-					blue_out <= "0000";
-				end if;
+				red_out <= "0111";
+				green_out <= "1100";
+				blue_out <= "1100";
 			end if;
 			
 		end if;
@@ -284,11 +279,12 @@ begin
 	end process;
 	
 	VSYNC: process(v_sync)
-	variable mouse_flag : std_logic := '0';
-	variable birdxpos, birdypos : unsigned (9 downto 0);
-	variable pipexpos, pipeypos : unsigned (9 downto 0);
-	variable t_flag: std_logic := '0';
-	
+		variable mouse_flag : std_logic := '0';
+		variable birdxpos, birdypos : unsigned (9 downto 0);
+		variable pipexpos, pipeypos : unsigned (9 downto 0);
+		variable t_flag: std_logic := '0';
+		
+		variable collision_flag : std_logic := '0';
 		variable frame : natural range 0 to 60 := 0;
 		-- total number of pixels to shift bird up by per mouse click
 		constant h_boost : natural range 0 to 256 := 60;
@@ -305,7 +301,7 @@ begin
 			end if;
 		if (t_flag = '1') then
 			if (bird_char_rom(7 downto 0) /= x"ff" and toppipe_char_rom(7 downto 0) /= x"ff") then
-				collision_flag <= '1';
+				collision_flag := '1';
 			end if;
 			t_flag := '0';
 		end if;
@@ -413,7 +409,7 @@ begin
 			end if;
 			
 			if (next_frame_collision_flag = '1') then
-				collision_flag <= '1';
+				collision_flag := '1';
 			end if;
 		end if; 
 	end process;
