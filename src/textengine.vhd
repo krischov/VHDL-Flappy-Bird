@@ -60,9 +60,9 @@ begin
 --					col(3 downto 1) when txtrow.scale = 2;
 --	
 	
-	scaled_row <=	row(2 downto 0) / 2;
+	scaled_row <=	row(3 downto 1);
 	
-	scaled_col <=	col(2 downto 0) / 2;
+	scaled_col <=	col(3 downto 1);
 	
 	char_addr <= char2rom(txtrow.txt(to_integer(char_col) + 1));
 

@@ -19,7 +19,7 @@ end entity spriteengine;
 architecture a of spriteengine is
 	
 	component rom_ctrl is
-		generic (mif_file : STRING; address_size: NATURAL range 0 to 13; words : NATURAL range 0 to 4096);
+		GENERIC (mif_file : STRING; address_size: NATURAL range 0 to 13; words : NATURAL range 0 to 4096; word_size : NATURAL range 0 to 16 := 16);
 		port
 		(
 			address	: in STD_LOGIC_VECTOR((address_size-1) downto 0);

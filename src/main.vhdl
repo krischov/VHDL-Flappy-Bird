@@ -219,8 +219,8 @@ begin
 				--sec <= sec + 1;
 				ticks := 0;
 				
-			mousecursor(0).x0 <= mouse_row;
-			mousecursor(0).y0 <= mouse_col;
+			mousecursor(0).x0 <= mouse_col;
+			mousecursor(0).y0 <= mouse_row;
 			
 			
 			if (mouse_lbtn = '1') then

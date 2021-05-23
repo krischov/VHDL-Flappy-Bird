@@ -40,7 +40,7 @@ LIBRARY altera_mf;
 USE altera_mf.all;
 
 ENTITY rom_ctrl IS
-	GENERIC (mif_file : STRING; address_size: NATURAL range 0 to 13; words : NATURAL range 0 to 4096);
+	GENERIC (mif_file : STRING; address_size: NATURAL range 0 to 13; words : NATURAL range 0 to 4096; word_size : NATURAL range 0 to 16 := 16);
 	PORT
 	(
 		address	: IN STD_LOGIC_VECTOR((address_size-1) downto 0);
@@ -95,7 +95,7 @@ BEGIN
 		outdata_reg_a => "UNREGISTERED",
 		ram_block_type => "M9K",
 		widthad_a => address_size,
-		width_a => 16,
+		width_a => word_size,
 		width_byteena_a => 1
 	)
 	PORT MAP (
