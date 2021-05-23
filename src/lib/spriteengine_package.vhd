@@ -15,9 +15,10 @@ package spriteengine_package is
 	constant bird0_tmap : natural range 0 to 31 := 7;
 	constant crackpipe_tmap : natural range 0 to 31 := 8;
 	constant toppipe_tmap : natural range 0 to 31 := 9;
+	constant heart 	: natural range 0 to 31 := 10;
 	
-	type sprite_output_array is array(0 to 9) of std_logic_vector(15 downto 0);
-	type sprite_addr_array is array (0 to 9) of std_logic_vector(11 downto 0);
+	type sprite_output_array is array(0 to 10) of std_logic_vector(15 downto 0);
+	type sprite_addr_array is array (0 to 10) of std_logic_vector(11 downto 0);
 	
 	type sprite is record
 		size 				: natural range 0 to 64;
@@ -71,7 +72,9 @@ package body spriteengine_package is
 	
 	
 	begin
-		if (s.size = 32) then
+		if(s.size = 16) then
+			return STD_LOGIC_VECTOR(shift_left(row / scaleY, 4) + ((col + 1) / scaleX));
+		elsif (s.size = 32) then
 			return STD_LOGIC_VECTOR(shift_left(row / scaleY, 5) + ((col + 1) / scaleX));
 		else -- size is 64
 			return STD_LOGIC_VECTOR(shift_left(row / scaleY, 6) + ((col(9 downto 0) + 1) / scaleX));
