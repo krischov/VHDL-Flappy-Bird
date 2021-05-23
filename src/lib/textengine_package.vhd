@@ -16,7 +16,6 @@ package textengine_package is
 		char_col	: unsigned(6 downto 0);
 		txt			: string(1 to 80);		-- note string should be NUL terminated!
 		txt_len		: unsigned(6 downto 0); -- number of characters in string (minus NUL byte)
-		scale		: unsigned(3 downto 0); -- scale character with 1 being 8x8, 2 being 16x16, 3 being 32x32; 4 being 64x64 etc.
 		scaleX		: unsigned(3 downto 0);
 		scaleY		: unsigned(3 downto 0);
 		r			: unsigned(3 downto 0);
@@ -32,9 +31,8 @@ package textengine_package is
 			char_col => to_unsigned(0, textengine_row.char_col'length), 
 			txt => (others => nul),
 			txt_len => to_unsigned(0, textengine_row.txt_len'length),
-			scale => to_unsigned(0, textengine_row.scale'length),
-			scaleX => to_unsigned(0, textengine_row.scale'length),
-			scaleY => to_unsigned(0, textengine_row.scale'length), 
+			scaleX => to_unsigned(0, textengine_row.scaleX'length),
+			scaleY => to_unsigned(0, textengine_row.scaleY'length), 
 			r => "1111",
 			g => "1111",
 			b => "1111",
@@ -48,23 +46,25 @@ package textengine_package is
 		signal txt_vector	: inout textengine_vector; 
 		in_char_row			: in unsigned(5 downto 0);
 		in_char_col			: in unsigned(6 downto 0);
-		in_scale			: in unsigned(3 downto 0);
+		in_scale_x			: in unsigned(3 downto 0) := "000";
+		in_scale_y			: in unsigned(3 downto 0) := "000";
 		in_r				: in unsigned(3 downto 0);
 		in_g				: in unsigned(3 downto 0);
 		in_b				: in unsigned(3 downto 0);
 		s 					: in string
 	);
-		
+
 	-- wrapper for str2text that converts integer paramaters to unsigned 
 	procedure str2text(
 		signal txt_vector	: inout textengine_vector; 
 		in_char_row			: in integer;
 		in_char_col			: in integer;
-		in_scale			: in integer;
+		in_scale_x			: in integer := 0;
+		in_scale_y			: in integer := 0;
 		in_r				: in unsigned(3 downto 0);
 		in_g				: in unsigned(3 downto 0);
 		in_b				: in unsigned(3 downto 0);
-		s 					: in string
+		s 					: in string	
 	);
 	
 	
@@ -260,7 +260,8 @@ package body textengine_package is
 		signal txt_vector	: inout textengine_vector; 
 		in_char_row			: in unsigned(5 downto 0);
 		in_char_col			: in unsigned(6 downto 0);
-		in_scale			: in unsigned(3 downto 0);
+		in_scale_x			: in unsigned(3 downto 0) := "0000";
+		in_scale_y			: in unsigned(3 downto 0) := "0000";
 		in_r				: in unsigned(3 downto 0);
 		in_g				: in unsigned(3 downto 0);
 		in_b				: in unsigned(3 downto 0);
@@ -286,7 +287,7 @@ package body textengine_package is
 			len := s'length;
 		end if;
 		
-		start_idx := to_integer(in_char_col / in_scale) + 1;
+		start_idx := to_integer(in_char_col / in_scale_x) + 1;
 		end_idx := start_idx + s'length - 1;
 		
 		txt_vector(to_integer(in_char_row)) <=
@@ -294,19 +295,18 @@ package body textengine_package is
 				row => resize(in_char_row * 8, 10),
 				col => resize(in_char_col * 8, 10),
 				char_row => in_char_row, 
-				char_col => in_char_col / in_scale, 
+				char_col => in_char_col / in_scale_x, 
 				txt_len => to_unsigned(len, 7),
 				txt => (others => nul), -- initalise everything to null
-				scale => in_scale,
-				scaleX => in_scale,
-				scaleY => in_scale,
+				scaleX => in_scale_x,
+				scaleY => in_scale_y,
 				r => in_r,
 				g => in_g,
 				b => in_b,
 				scale_index => to_integer(in_char_row)
 			);
 			
-			for i in to_integer(in_char_row) to to_integer(in_char_row) + to_integer(in_scale) - 1 loop
+			for i in to_integer(in_char_row) to to_integer(in_char_row) + to_integer(in_scale_y) - 1 loop
 				txt_vector(i).scale_index <= to_integer(in_char_row);
 			end loop;
 			
@@ -319,7 +319,8 @@ package body textengine_package is
 		signal txt_vector	: inout textengine_vector; 
 		in_char_row			: in integer;
 		in_char_col			: in integer;
-		in_scale			: in integer;
+		in_scale_x			: in integer := 0;
+		in_scale_y			: in integer := 0;
 		in_r				: in unsigned(3 downto 0);
 		in_g				: in unsigned(3 downto 0);
 		in_b				: in unsigned(3 downto 0);
@@ -329,7 +330,8 @@ package body textengine_package is
 		str2text(txt_vector, 
 			to_unsigned(in_char_row, textengine_row.char_row'length),
 			to_unsigned(in_char_col, textengine_row.char_col'length),
-			to_unsigned(in_scale, textengine_row.scale'length),
+			to_unsigned(in_scale_x, textengine_row.scaleX'length),
+			to_unsigned(in_scale_y, textengine_row.scaleY'length),
 			in_r, in_g, in_b, s);
 	end procedure;
 
