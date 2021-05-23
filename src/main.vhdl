@@ -340,12 +340,12 @@ begin
 			end if;	
 					
 					-- Do collision and point detection here
-					if (((bird(0).x0 + 2 >= bottompipe(i).x0) and (bird(0).x0 + 2 <= bottompipe(i).x0 + bird(0).size - 1)) and 
-						((bird(0).y0 + 4 >= bottompipe(i).y0) and (bird(0).y0 + 4 <= bottompipe(i).y0 + bottompipe(i).size*bottompipe(i).scaling_factor_y - 1))) then
-						birdxpos := (bird(0).x0 + 2) - (bottompipe(i).x0 + bird(0).size - 1);
-						birdypos := (bird(0).y0 + 4) - (bottompipe(i).y0 + bottompipe(i).size*bottompipe(i).scaling_factor_y - 1);
-						pipexpos := (bottompipe(i).x0 + bird(0).size - 1) - birdxpos;
-						pipeypos := (bottompipe(i).y0 + bottompipe(i).size*bottompipe(i).scaling_factor_y - 1) - birdypos;
+					if (((bird(0).x0 + 2 >= toppipes(i).x0) and (bird(0).x0 + 2 <= toppipes(i).x0 + bird(0).size - 1)) and 
+						((bird(0).y0 + 4 >= toppipes(i).y0) and (bird(0).y0 + 4 <= toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y - 1))) then
+						birdxpos := (bird(0).x0 + 2) - (toppipes(i).x0 + bird(0).size - 1);
+						birdypos := (bird(0).y0 + 4) - (toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y - 1);
+						pipexpos := (toppipes(i).x0 + bird(0).size - 1) - birdxpos;
+						pipeypos := (toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y - 1) - birdypos;
 						birdcollision_addr <= resize(birdypos * 32 + birdxpos, 12);
 						pipecollision_addr <= resize(pipeypos * 64 + pipeypos, 12);
 						t_flag := '1';
