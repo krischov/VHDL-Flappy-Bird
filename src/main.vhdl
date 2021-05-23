@@ -85,7 +85,7 @@ architecture x of main is
 		(64, to_unsigned(200, 10), to_unsigned(10, 10), "000000000000", tree0, "0000000000000000", false, 2, 2, FALSE, FALSE, FALSE)
 	);
 	
-	signal mousecursor : all_sprites(0 to 2) := (
+	signal mousecursor : all_sprites(0 to 1) := (
 		(4, to_unsigned(236, 10), to_unsigned(316,10), "000000000000", cursor, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
 		(4, to_unsigned(150, 10), to_unsigned(50,10), "000000000000", cursor, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE)
 	);
@@ -93,7 +93,7 @@ architecture x of main is
 	
 	signal sprites_addrs : sprite_addr_array;
 	signal sprites_out : sprite_output_array;
-	signal grass_idx, bottompipe_idx, bird_idx, tree0_idx, toppipe_idx : integer := -1;
+	signal grass_idx, bottompipe_idx, bird_idx, tree0_idx, toppipe_idx , mousecursor_idx : integer := -1;
 	
 	
 	signal pipe_points: natural range 0 to 8000 := 0;
@@ -180,7 +180,7 @@ begin
 				unsigned(toppipes(toppipe_idx).colours(11 downto 8))		when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
 				unsigned(tree0s(tree0_idx).colours(11 downto 8))			when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range;
 
-	sprite_z <= "0000" when mousecursor_idx /= -1 and (mousecursor(mousecursor_idx).in_range and (mousecursor(mousecursor_idx).colours(15 downto 12) /= "1111" else
+	sprite_z <= "0000" when mousecursor_idx /= -1 and mousecursor(mousecursor_idx).in_range and mousecursor(mousecursor_idx).colours(15 downto 12) /= "1111" else
 				"0000" when bird_idx /= -1 and bird(bird_idx).in_range and bird(bird_idx).colours(15 downto 12) /= "1111" else
 				"0000" when grass_idx /= -1 and grassplane(grass_idx).in_range and grassplane(grass_idx).colours(15 downto 12) /= "1111" else
 				"0000" when bottompipe_idx /= -1 and bottompipe(bottompipe_idx).in_range and bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" else

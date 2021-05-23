@@ -34,6 +34,7 @@ begin
 	rom2: rom_ctrl generic map("toppipe.MIF", 12, 4096) port map (sprite_addrs(toppipe), clk, sprites_out(toppipe));
 	rom3: rom_ctrl generic map("tree0.MIF", 12, 4096) port map (sprite_addrs(tree0), clk, sprites_out(tree0));
 	rom4: rom_ctrl generic map("grass.MIF", 10, 1024) port map (sprite_addrs(grass)(9 downto 0), clk, sprites_out(grass));
+	rom5: rom_ctrl generic map("cursor.MIF", 10, 1024) port map (sprite_addrs(cursor)(9 downto 0), clk, sprites_out(cursor)); 
 	
 	
 end architecture a;

@@ -11,10 +11,10 @@ package spriteengine_package is
 	constant tree1 	: natural range 0 to 31 := 3;
 	constant grass 	: natural range 0 to 31 := 4;
 	constant toppipe  : natural range 0 to 31 := 5;
+	constant cursor   : natural range 0 to 31 := 6;
 	
-	
-	type sprite_output_array is array(0 to 5) of std_logic_vector(15 downto 0);
-	type sprite_addr_array is array (0 to 5) of std_logic_vector(11 downto 0);
+	type sprite_output_array is array(0 to 6) of std_logic_vector(15 downto 0);
+	type sprite_addr_array is array (0 to 6) of std_logic_vector(11 downto 0);
 	
 	type sprite is record
 		size 				: natural range 0 to 64;
