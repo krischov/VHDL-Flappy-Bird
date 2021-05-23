@@ -243,12 +243,6 @@ begin
 	
 	VSYNC: process(v_sync)
 	variable mouse_flag : std_logic := '0';
---	variable birdx_pos0 : integer range 0 to 320 := bird.x0;
---	variable birdx_pos1: integer range 0 to 320 := bird.x0 + 32;
---	variable birdy_pos0 : integer range 0 to 320 := bird.y0;
---	variable birdy_pos1 : integer range 0 to 320 := bird.y0 + 32;
-	 
-	
 	
 	begin
 		if (v_sync = '1') then
@@ -271,6 +265,21 @@ begin
 						bottompipe(i).x0 <= to_unsigned(640, 10); 
 						-- this pipe is being recycled, it should earn points again
 						bottompipe(i).passed_pipe <= false;
+					end if;
+					
+					if (toppipes(i).x0 <= 640) then
+						toppipes(i).underflow <= false;
+						toppipes(i).x0 <= toppipes(i).x0 - 2;
+						if (toppipes(i).x0 < 1) then
+							toppipes(i).underflow <= true;
+						end if;
+					elsif (toppipes(i).x0 >= 959) then
+						toppipes(i).x0 <= toppipes(i).x0 - 2;
+					elsif (toppipes(i).x0 < 959) then
+						toppipes(i).underflow <= false;
+						toppipes(i).x0 <= to_unsigned(640, 10); 
+						-- this pipe is being recycled, it should earn points again
+						toppipes(i).passed_pipe <= false;
 					end if;
 				end if;	
 					
