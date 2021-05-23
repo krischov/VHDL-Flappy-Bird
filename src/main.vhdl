@@ -68,8 +68,13 @@ architecture x of main is
 	);
 
 	signal bottompipe : all_sprites(0 to 1) := (
-		(64, to_unsigned(0, 10), to_unsigned(340, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
-		(64, to_unsigned(288, 10), to_unsigned(340, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE)
+		(64, to_unsigned(288, 10), to_unsigned(340, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
+		(64, to_unsigned(288, 10), to_unsigned(540, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE)
+	);
+	
+	signal toppipes : all_sprites(0 to 1) := (
+		(64, to_unsigned(0, 10), to_unsigned(340, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
+		(64, to_unsigned(0, 10), to_unsigned(540, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE)
 	);
 
 	
@@ -81,7 +86,7 @@ architecture x of main is
 	
 	signal sprites_addrs : sprite_addr_array;
 	signal sprites_out : sprite_output_array;
-	signal grass_idx, bottompipe_idx, bird_idx, tree0_idx : integer;
+	signal grass_idx, bottompipe_idx, bird_idx, tree0_idx, toppipe_idx : integer;
 	
 	
 	signal pipe_points: natural range 0 to 8000 := 0;
@@ -109,6 +114,9 @@ begin
 	bottompipe_idx <= get_active_idx(bottompipe, vga_row, vga_col);
 	bottompipe(bottompipe_idx).address <= calc_addr_f(bottompipe(bottompipe_idx), vga_row, vga_col);
 	
+	toppipe_idx <= get_active_idx(toppipes, vga_row, vga_col);
+	toppipes(toppipe_idx).address <= calc_addr_f(toppipes(toppipe_idx), vga_row, vga_col);
+	
 	tree0_idx <= get_active_idx(tree0s, vga_row, vga_col);
 	tree0s(tree0_idx).address <= calc_addr_f(tree0s(tree0_idx), vga_row, vga_col);
 	
@@ -119,11 +127,13 @@ begin
 	bird(bird_idx).in_range <= return_in_range(bird(bird_idx), vga_row, vga_col) when bird_idx /= -1 else false;
 	grassplane(grass_idx).in_range <= return_in_range(grassplane(grass_idx), vga_row, vga_col) when grass_idx /= -1 else false;
 	bottompipe(bottompipe_idx).in_range <= return_in_range(bottompipe(bottompipe_idx), vga_row, vga_col) when bottompipe_idx /= -1 else false;
+	toppipes(toppipe_idx).in_range <= return_in_range(toppipes(toppipe_idx), vga_row, vga_col) when toppipe_idx /= -1 else false;
 	tree0s(tree0_idx).in_range <= return_in_range(tree0s(tree0_idx), vga_row, vga_col) when tree0_idx /= -1 else false;
 	
 
 	sprites_addrs(grass) <= grassplane(grass_idx).address;	
 	sprites_addrs(crackpipe) <= bottompipe(bottompipe_idx).address;
+	sprites_addrs(toppipe) <= toppipes(toppipe_idx).address;
 	sprites_addrs(tree0) <= tree0s(tree0_idx).address;
 	sprites_addrs(bird0) <= bird(bird_idx).address;
 	
@@ -131,28 +141,33 @@ begin
 	grassplane(grass_idx).colours <= sprites_out(grass);
 	tree0s(tree0_idx).colours <= sprites_out(tree0);
 	bottompipe(bottompipe_idx).colours <= sprites_out(crackpipe);
-
+	toppipes(toppipe_idx).colours <= sprites_out(toppipe);
 
 	
 	sprite_r <= unsigned(bird(bird_idx).colours(3 downto 0))				when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
 				unsigned(grassplane(grass_idx).colours(3 downto 0))			when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range else
 				unsigned(bottompipe(bottompipe_idx).colours(3 downto 0))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
+				unsigned(toppipes(toppipe_idx).colours(3 downto 0))	when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
 				unsigned(tree0s(tree0_idx).colours(3 downto 0))				when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range;
 	
 	sprite_g <= unsigned(bird(bird_idx).colours(7 downto 4))				when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
 				unsigned(grassplane(grass_idx).colours(7 downto 4))			when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range else
 				unsigned(bottompipe(bottompipe_idx).colours(7 downto 4))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
+				unsigned(toppipes(toppipe_idx).colours(7 downto 4))	when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
 				unsigned(tree0s(tree0_idx).colours(7 downto 4))				when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range;
 	
 	sprite_b <=  
 				unsigned(bird(bird_idx).colours(11 downto 8)) 				when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
 				unsigned(grassplane(grass_idx).colours(11 downto 8))		when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range else
 				unsigned(bottompipe(bottompipe_idx).colours(11 downto 8))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
+				unsigned(toppipes(toppipe_idx).colours(11 downto 8))	when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
 				unsigned(tree0s(tree0_idx).colours(11 downto 8))				when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range;
 
-	sprite_z <= "0000" when bottompipe_idx /= -1 and bottompipe(bottompipe_idx).in_range and bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" else
+	sprite_z <= 
 				"0000" when bird_idx /= -1 and bird(bird_idx).in_range and bird(bird_idx).colours(15 downto 12) /= "1111" else
 				"0000" when grass_idx /= -1 and grassplane(grass_idx).in_range and grassplane(grass_idx).colours(15 downto 12) /= "1111" else
+				"0000" when bottompipe_idx /= -1 and bottompipe(bottompipe_idx).in_range and bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" else
+				"0000" when toppipe_idx /= -1 and toppipes(toppipe_idx).in_range and toppipes(toppipe_idx).colours(15 downto 12) /= "1111" else
 				"0000" when tree0_idx /= -1 and tree0s(tree0_idx).in_range and tree0s(tree0_idx).colours(15 downto 12) /= "1111" else
 				"1111";
 	
