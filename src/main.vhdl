@@ -95,7 +95,7 @@ architecture x of main is
 	);
 	
 	signal hearts: all_sprites(0 to 1) := (
-		(16, to_unsigned(500, 10), to_unsigned(500,10), "000000000000", heart, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(16, to_unsigned(400, 10), to_unsigned(400,10), "000000000000", heart, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
 		(16, to_unsigned(550, 10), to_unsigned(550,10), "000000000000", heart, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE)
 	);
 	
