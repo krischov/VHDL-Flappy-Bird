@@ -315,7 +315,12 @@ begin
 				
 						
 						-- Do collision and point detection here
-						
+						if (((bird(0).x0 + 2 >= toppipes(i).x0) and ((bird(0).x0 + (bird(0).x0 + bird(0).size - 1)) <= toppipes(i).x0 + toppipes(i).size - 1)) and 
+							(((bird(0).y0 + 4 >= toppipes(i).y0) and (bird(0).y0 + 4 <= toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y + 1)) or
+							((bird(0).y0 + bird(0).size - 8 >= bottompipe(i).y0) and (bird(0).y0 + bird(0).size - 8 <= bottompipe(i).y0 + bottompipe(1).size*bottompipe(i).scaling_factor_y - 1)))) then
+							collision_flag := '1';
+						end if;
+							
 						if (((bird(0).x0 + 2 >= toppipes(i).x0) and (bird(0).x0 + 2 <= toppipes(i).x0 + toppipes(i).size - 1)) and 
 							((bird(0).y0 + 4 >= toppipes(i).y0) and (bird(0).y0 + 4 <= toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y - 1))) then
 							birdxpos := (toppipes(i).x0 + toppipes(i).size - 1) - (bird(0).x0);
