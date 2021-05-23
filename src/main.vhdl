@@ -104,7 +104,7 @@ begin
 	str2text(text_vector, 5, 0, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|_|  |_|\___/ \__,_|\___|_|___/_|_| |_| |_||_|  |_|\___/|_.__/|___/\__\___|_|");
 	
 	--str2text(text_vector, 2, 20, 1, "1111", "1111", "1111", "The Modelsim Mobsters:");
-	str2text(text_vector, 7, 65, 1, "1010", "0101", "1100", "Points " & int2str(pipe_points));
+	str2text(text_vector, 7, 65, 2, "1010", "0101", "1100", "Points " & int2str(pipe_points));
 	
 	--Sprites
 
@@ -171,9 +171,9 @@ begin
 				"0000" when tree0_idx /= -1 and tree0s(tree0_idx).in_range and tree0s(tree0_idx).colours(15 downto 12) /= "1111" else
 				"1111";
 	
-	red_out		<=	txt_r when txt_not_a = "1111" else sprite_r when sprite_z = "0000" else "0111";
-	green_out	<=	txt_g when txt_not_a = "1111" else sprite_g when sprite_z = "0000" else "1100";
-	blue_out	<=	txt_b when txt_not_a = "1111" else sprite_b when sprite_z = "0000" else "1100";
+	red_out		<=	"1111" when vga_col < 5 and bird_idx = -1 else txt_r when txt_not_a = "1111" else sprite_r when sprite_z = "0000" else "0111";
+	green_out	<=	"1111" when vga_col < 5 and bottompipe_idx = -1 else txt_g when txt_not_a = "1111" else sprite_g when sprite_z = "0000" else "1100";
+	blue_out	<=	"1111" when vga_col < 5 and bird_idx = -1 and bottompipe_idx = -1 else txt_b when txt_not_a = "1111" else sprite_b when sprite_z = "0000" else "1100";
 	
 	
 	process(clk)
