@@ -218,6 +218,10 @@ begin
 --			end if;
 				--sec <= sec + 1;
 				ticks := 0;
+				
+			mousecursor(0).x0 <= mouse_row;
+			mousecursor(0).y0 <= mouse_col;
+			
 			
 			if (mouse_lbtn = '1') then
 				mouse_btn <= var_len_str("Left Mouse button Pressed", mouse_btn'length);
