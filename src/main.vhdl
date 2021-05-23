@@ -316,7 +316,7 @@ begin
 						
 						-- Do collision and point detection here
 						if (((bird(0).x0 + 2 >= toppipes(i).x0) and ((bird(0).x0 + (bird(0).x0 + bird(0).size - 1)) <= toppipes(i).x0 + toppipes(i).size - 1)) and 
-							(((bird(0).y0 + 4 >= toppipes(i).y0) and (bird(0).y0 + 4 <= toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y + 1)) or
+							(((bird(0).y0 >= toppipes(i).y0) and (bird(0).y0 <= toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y + 1)) or
 							((bird(0).y0 + bird(0).size - 6 >= bottompipe(i).y0) and (bird(0).y0 + bird(0).size - 8 <= bottompipe(i).y0 + bottompipe(1).size*bottompipe(i).scaling_factor_y - 1)))) then
 							collision_flag := '1';
 						else
@@ -373,21 +373,7 @@ begin
 								end if;
 							end if;
 						end if;
-	--					
-	--					if ((((bird(0).x0 + 2 >= bottompipe(0).x0) and (bird(0).x0 + 2 <= bottompipe(0).x0 + bird(0).size - 1)) or
-	--						((bird(0).x0 + bird(0).size - 1 >= bottompipe(0).x0) and (bird(0).x0 + bird(0).size - 1 <= bottompipe(0).x0 + 31))) and
-	--						(((bird(0).y0 + 4 >= bottompipe(0).y0) and (bird(0).y0 + 4 <= bottompipe(0).y0 + bottompipe(0).size*bottompipe(0).scaling_factor_y - 1)) or
-	--						((bird(0).y0 + bird(0).size - 8 >= bottompipe(0).y0) and (bird(0).y0 + bird(0).size - 8 <= bottompipe(0).y0 + bottompipe(0).size*bottompipe(0).scaling_factor_y - 1)))) then
-	--						collision_flag <= '1';
-	--					end if;
-	--					if ((((bird(0).x0 + 2 >= bottompipe(1).x0) and (bird(0).x0 + 2 <= bottompipe(1).x0 + bird(0).size - 1)) or
-	--						  ((bird(0).x0 + bird(0).size - 1 >= bottompipe(1).x0) and (bird(0).x0 + bird(0).size - 1 <= bottompipe(1).x0 + bird(0).size - 1))) and
-	--						  (((bird(0).y0 + 4 >= bottompipe(1).y0) and (bird(0).y0 + 4 <= bottompipe(1).y0 + bottompipe(1).size*bottompipe(1).scaling_factor_y + 1)) or
-	--						  ((bird(0).y0 + bird(0).size - 8 >= bottompipe(1).y0) and (bird(0).y0 + bird(0).size - 8 <= bottompipe(1).y0 + bottompipe(1).size*bottompipe(1).scaling_factor_y - 1)))) then
-	--						  collision_flag <= '1';
-	--					end if;
-	--					
-	--		
+	
 				-- if the user has just passed through this pipe, give them a point
 					if (bottompipe(i).passed_pipe = false and bird(0).x0 > bottompipe(i).x0 + bottompipe(i).size * bottompipe(i).scaling_factor_x) then
 						bottompipe(i).passed_pipe <= true;
