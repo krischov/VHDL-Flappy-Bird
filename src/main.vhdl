@@ -48,8 +48,6 @@ architecture x of main is
 	signal sec : natural range 0 to 59 := 0;
 	signal birdcollision_addr : unsigned (11 downto 0);
 	signal pipecollision_addr : unsigned (11 downto 0);
-	signal bird_char_rom : std_logic_vector(15 downto 0);
-	signal toppipe_char_rom : std_logic_vector (15 downto 0);
 	
 	
 	-- (sprite size, y0, x0, addr, sprite, colour, in_range, scale_x, scale_y, visible, underflow, passed_pipe)  
@@ -164,8 +162,6 @@ begin
 	sprites_addrs(tree0) <= tree0s(tree0_idx).address;
 	sprites_addrs(bird0) <= bird(bird_idx).address;
 	sprites_addrs(cursor) <= mousecursor(mousecursor_idx).address;
-	sprites_addrs(bird0_tmap) <= std_logic_vector(birdcollision_addr);
-	sprites_addrs(toppipe_tmap) <= std_logic_vector(pipecollision_addr);
 	sprites_addrs(heart) <= hearts(heart_idx).address;
 	
 	
@@ -175,8 +171,6 @@ begin
 	bottompipe(bottompipe_idx).colours <= sprites_out(crackpipe);
 	toppipes(toppipe_idx).colours <= sprites_out(toppipe);
 	mousecursor(mousecursor_idx).colours <= sprites_out(cursor);
-	bird_char_rom <= sprites_out(bird0_tmap);
-	toppipe_char_rom <= sprites_out(toppipe_tmap);
 	hearts(heart_idx).colours <= sprites_out(heart);
 
 
@@ -322,6 +316,12 @@ begin
 				
 						
 						-- Do collision and point detection here
+						if (((bird(0).x0 + 2 >= toppipes(i).x0) and ((bird(0).x0 + (bird(0).x0 + bird(0).size - 1)) <= toppipes(i).x0 + toppipes(i).size - 1)) and 
+							(((bird(0).y0 + 4 >= toppipes(i).y0) and (bird(0).y0 + 4 <= toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y + 1)) or
+							((bird(0).y0 + bird(0).size - 8 >= bottompipe(i).y0) and (bird(0).y0 + bird(0).size - 8 <= bottompipe(i).y0 + bottompipe(1).size*bottompipe(i).scaling_factor_y - 1)))) then
+							collision_flag := '1';
+						end if;
+							
 						if (((bird(0).x0 + 2 >= toppipes(i).x0) and (bird(0).x0 + 2 <= toppipes(i).x0 + toppipes(i).size - 1)) and 
 							((bird(0).y0 + 4 >= toppipes(i).y0) and (bird(0).y0 + 4 <= toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y - 1))) then
 							birdxpos := (toppipes(i).x0 + toppipes(i).size - 1) - (bird(0).x0);
