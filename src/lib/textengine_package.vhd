@@ -17,6 +17,8 @@ package textengine_package is
 		txt			: string(1 to 80);		-- note string should be NUL terminated!
 		txt_len		: unsigned(6 downto 0); -- number of characters in string (minus NUL byte)
 		scale		: unsigned(3 downto 0); -- scale character with 1 being 8x8, 2 being 16x16, 3 being 32x32; 4 being 64x64 etc.
+		scaleX		: unsigned(3 downto 0);
+		scaleY		: unsigned(3 downto 0);
 		r			: unsigned(3 downto 0);
 		g			: unsigned(3 downto 0);
 		b			: unsigned(3 downto 0);
@@ -31,6 +33,8 @@ package textengine_package is
 			txt => (others => nul),
 			txt_len => to_unsigned(0, textengine_row.txt_len'length),
 			scale => to_unsigned(0, textengine_row.scale'length),
+			scaleX => to_unsigned(0, textengine_row.scale'length),
+			scaleY => to_unsigned(0, textengine_row.scale'length), 
 			r => "1111",
 			g => "1111",
 			b => "1111",
@@ -287,13 +291,15 @@ package body textengine_package is
 		
 		txt_vector(to_integer(in_char_row)) <=
 			(
-				row => "0000000000",
-				col => "0000000000",
+				row => resize(in_char_row * 8, 10),
+				col => resize(in_char_col * 8, 10),
 				char_row => in_char_row, 
 				char_col => in_char_col, 
 				txt_len => to_unsigned(len, 7),
 				txt => (others => nul), -- initalise everything to null
 				scale => in_scale,
+				scaleX => in_scale,
+				scaleY => in_scale,
 				r => in_r,
 				g => in_g,
 				b => in_b,
