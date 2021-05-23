@@ -301,7 +301,7 @@ package body textengine_package is
 			);
 			
 			for i in to_integer(in_char_row) to to_integer(in_char_row) + to_integer(in_scale) - 1 loop
-				txt_vector(i).scale_index <= i;
+				txt_vector(i).scale_index <= to_integer(in_char_row);
 			end loop;
 			
 			txt_vector(to_integer(in_char_row)).txt(start_idx to end_idx) <= s;
