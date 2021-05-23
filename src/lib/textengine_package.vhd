@@ -4,6 +4,10 @@ use ieee.numeric_std.all;
 
 package textengine_package is 
 
+-- BUG NOTE: When scaling in the Y direciton, you must also scale X by some amount 
+-- (i.e. Can't leave x sacle as 1, but it can be 2 as a minimum)
+-- This bug is not worth fixing as the result of fixing it isn't very useful in this game 
+
 	-- The VGA screen has a resolution of 640x480 pixels
 	-- if we assume the smallest possable character size, 8x8 pixels
 	-- then we have a maximum of 60 character rows, and 80 character columns.
