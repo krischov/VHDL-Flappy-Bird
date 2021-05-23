@@ -44,6 +44,7 @@ architecture x of main is
 	signal sprite_b : unsigned(3 downto 0);
 	signal sprite_z : unsigned(3 downto 0);
 	signal mouse_btn : string(1 to 50) := var_len_str("No Mouse Button Pressed", 50);
+	signal next_frame_collision_flag : std_logic := '0';
 	signal collision_flag : std_logic := '0';
 	signal sec : natural range 0 to 59 := 0;
 
@@ -51,7 +52,7 @@ architecture x of main is
 	-- (sprite size, y0, x0, addr, sprite, colour, in_range, scale_x, scale_y, visible, underflow, passed_pipe)  
 
 	signal bird : all_sprites(0 to 1)  := (
-		(32, to_unsigned(50, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(195, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
 		(32, to_unsigned(150, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE)
 	);
 	signal grassplane : all_sprites(0 to 9) := (
@@ -79,14 +80,14 @@ architecture x of main is
 
 	
 	signal tree0s : all_sprites(0 to 2) := (
-		(64, to_unsigned(60, 10), to_unsigned(50, 10), "000000000000", tree0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
-		(64, to_unsigned(60, 10), to_unsigned(200, 10), "000000000000", tree0, "0000000000000000", false, 2, 2, TRUE, FALSE, FALSE),
-		(64, to_unsigned(200, 10), to_unsigned(10, 10), "000000000000", tree0, "0000000000000000", false, 2, 2, TRUE, FALSE, FALSE)
+		(64, to_unsigned(60, 10), to_unsigned(50, 10), "000000000000", tree0, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE),
+		(64, to_unsigned(60, 10), to_unsigned(200, 10), "000000000000", tree0, "0000000000000000", false, 2, 2, FALSE, FALSE, FALSE),
+		(64, to_unsigned(200, 10), to_unsigned(10, 10), "000000000000", tree0, "0000000000000000", false, 2, 2, FALSE, FALSE, FALSE)
 	);
 	
 	signal sprites_addrs : sprite_addr_array;
 	signal sprites_out : sprite_output_array;
-	signal grass_idx, bottompipe_idx, bird_idx, tree0_idx, toppipe_idx : integer;
+	signal grass_idx, bottompipe_idx, bird_idx, tree0_idx, toppipe_idx : integer := -1;
 	
 	
 	signal pipe_points: natural range 0 to 8000 := 0;
@@ -147,33 +148,45 @@ begin
 	sprite_r <= unsigned(bird(bird_idx).colours(3 downto 0))				when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
 				unsigned(grassplane(grass_idx).colours(3 downto 0))			when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range else
 				unsigned(bottompipe(bottompipe_idx).colours(3 downto 0))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
-				unsigned(toppipes(toppipe_idx).colours(3 downto 0))	when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
+				unsigned(toppipes(toppipe_idx).colours(3 downto 0))			when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
 				unsigned(tree0s(tree0_idx).colours(3 downto 0))				when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range;
 	
 	sprite_g <= unsigned(bird(bird_idx).colours(7 downto 4))				when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
 				unsigned(grassplane(grass_idx).colours(7 downto 4))			when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range else
 				unsigned(bottompipe(bottompipe_idx).colours(7 downto 4))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
-				unsigned(toppipes(toppipe_idx).colours(7 downto 4))	when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
+				unsigned(toppipes(toppipe_idx).colours(7 downto 4))			when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
 				unsigned(tree0s(tree0_idx).colours(7 downto 4))				when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range;
 	
 	sprite_b <=  
 				unsigned(bird(bird_idx).colours(11 downto 8)) 				when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
 				unsigned(grassplane(grass_idx).colours(11 downto 8))		when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range else
 				unsigned(bottompipe(bottompipe_idx).colours(11 downto 8))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
-				unsigned(toppipes(toppipe_idx).colours(11 downto 8))	when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
-				unsigned(tree0s(tree0_idx).colours(11 downto 8))				when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range;
+				unsigned(toppipes(toppipe_idx).colours(11 downto 8))		when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
+				unsigned(tree0s(tree0_idx).colours(11 downto 8))			when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range;
 
 	sprite_z <= 
-				"0000" when bird_idx /= -1 and bird(bird_idx).in_range and bird(bird_idx).colours(15 downto 12) /= "1111" else
-				"0000" when grass_idx /= -1 and grassplane(grass_idx).in_range and grassplane(grass_idx).colours(15 downto 12) /= "1111" else
-				"0000" when bottompipe_idx /= -1 and bottompipe(bottompipe_idx).in_range and bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" else
-				"0000" when toppipe_idx /= -1 and toppipes(toppipe_idx).in_range and toppipes(toppipe_idx).colours(15 downto 12) /= "1111" else
-				"0000" when tree0_idx /= -1 and tree0s(tree0_idx).in_range and tree0s(tree0_idx).colours(15 downto 12) /= "1111" else
+				"0000" when bird_idx /= -1			and bird(bird_idx).in_range				and bird(bird_idx).colours(15 downto 12) /= "1111" else
+				"0000" when grass_idx /= -1			and grassplane(grass_idx).in_range		and grassplane(grass_idx).colours(15 downto 12) /= "1111" else
+				"0000" when bottompipe_idx /= -1 	and bottompipe(bottompipe_idx).in_range and bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" else
+				"0000" when toppipe_idx /= -1 		and toppipes(toppipe_idx).in_range 		and toppipes(toppipe_idx).colours(15 downto 12) /= "1111" else
+				"0000" when tree0_idx /= -1 		and tree0s(tree0_idx).in_range 			and tree0s(tree0_idx).colours(15 downto 12) /= "1111" else
 				"1111";
+		
+		
+--	red_out		<=	txt_r when txt_not_a = "1111" else sprite_r when sprite_z = "0000" else "0000";
+--	green_out	<=	txt_g when txt_not_a = "1111" else sprite_g when sprite_z = "0000" else "0000";
+--	blue_out	<=	txt_b when txt_not_a = "1111" else sprite_b when sprite_z = "0000" else "0000" when collision_flag = '1' else "1111"; -- BLUE: No Collision, BLACK: Collision
 	
-	red_out		<=	"1111" when vga_col < 5 and bird_idx = -1 else txt_r when txt_not_a = "1111" else sprite_r when sprite_z = "0000" else "0111";
-	green_out	<=	"1111" when vga_col < 5 and bottompipe_idx = -1 else txt_g when txt_not_a = "1111" else sprite_g when sprite_z = "0000" else "1100";
-	blue_out	<=	"1111" when vga_col < 5 and bird_idx = -1 and bottompipe_idx = -1 else txt_b when txt_not_a = "1111" else sprite_b when sprite_z = "0000" else "1100";
+
+--	collision_flag <= '1' when rising_edge(clk) and 
+--						bottompipe_idx /= -1 and bird_idx /= -1 and 
+--						bird(bird_idx).visible and bottompipe(bottompipe_idx).visible and
+--						sprite_z = "0000";			
+	
+		
+--	red_out		<=	txt_r when txt_not_a = "1111" else sprite_r when sprite_z = "0000" else "0111";
+--	green_out	<=	txt_g when txt_not_a = "1111" else sprite_g when sprite_z = "0000" else "1100";
+--	blue_out	<=	txt_b when txt_not_a = "1111" else sprite_b when sprite_z = "0000" else "1100";
 	
 	
 	process(clk)
@@ -189,7 +202,6 @@ begin
 --			end if;
 				--sec <= sec + 1;
 				ticks := 0;
-			end if;
 			
 			if (mouse_lbtn = '1') then
 				mouse_btn <= var_len_str("Left Mouse button Pressed", mouse_btn'length);
@@ -198,6 +210,35 @@ begin
 			else
 				mouse_btn <= var_len_str("No Mouse button Pressed", mouse_btn'length);
 			end if;
+
+			if (txt_not_a = "1111") then
+				red_out <= txt_r;
+				green_out <= txt_g;
+				blue_out <= txt_b;
+			elsif (sprite_z = "0000") then
+				red_out <= sprite_r;
+				green_out <= sprite_g;
+				blue_out <= sprite_b;
+			else
+				red_out <= "0000";
+				green_out <= "0000";
+				if (collision_flag = '1') then
+					blue_out <= "1111";
+				else
+					blue_out <= "0000";
+				end if;
+			end if;
+
+			if ((bottompipe_idx /= -1 and bird_idx /= -1)) then
+					if ((bird(bird_idx).in_range and bottompipe(bottompipe_idx).in_range)) then
+						if ((bird(bird_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).colours(15 downto 12) = "1111")) then
+							next_frame_collision_flag <= '1';
+						end if;
+					end if;
+			end if;	
+			
+		end if;
+
 	end process;
 	
 	VSYNC: process(v_sync)
@@ -234,18 +275,18 @@ begin
 				end if;	
 					
 					-- Do collision and point detection here
-					if ((((bird(0).x0 + 2 >= bottompipe(0).x0) and (bird(0).x0 + 2 <= bottompipe(0).x0 + bird(0).size - 1)) or
-						((bird(0).x0 + bird(0).size - 1 >= bottompipe(0).x0) and (bird(0).x0 + bird(0).size - 1 <= bottompipe(0).x0 + 31))) and
-						(((bird(0).y0 + 4 >= bottompipe(0).y0) and (bird(0).y0 + 4 <= bottompipe(0).y0 + bottompipe(0).size*bottompipe(0).scaling_factor_y - 1)) or
-						((bird(0).y0 + bird(0).size - 8 >= bottompipe(0).y0) and (bird(0).y0 + bird(0).size - 8 <= bottompipe(0).y0 + bottompipe(0).size*bottompipe(0).scaling_factor_y - 1)))) then
-						collision_flag <= '1';
-					end if;
-					if ((((bird(0).x0 + 2 >= bottompipe(1).x0) and (bird(0).x0 + 2 <= bottompipe(1).x0 + bird(0).size - 1)) or
-						  ((bird(0).x0 + bird(0).size - 1 >= bottompipe(1).x0) and (bird(0).x0 + bird(0).size - 1 <= bottompipe(1).x0 + bird(0).size - 1))) and
-						  (((bird(0).y0 + 4 >= bottompipe(1).y0) and (bird(0).y0 + 4 <= bottompipe(1).y0 + bottompipe(1).size*bottompipe(1).scaling_factor_y + 1)) or
-						  ((bird(0).y0 + bird(0).size - 8 >= bottompipe(1).y0) and (bird(0).y0 + bird(0).size - 8 <= bottompipe(1).y0 + bottompipe(1).size*bottompipe(1).scaling_factor_y - 1)))) then
-						  collision_flag <= '1';
-					end if;
+--					if ((((bird(0).x0 + 2 >= bottompipe(0).x0) and (bird(0).x0 + 2 <= bottompipe(0).x0 + bird(0).size - 1)) or
+--						((bird(0).x0 + bird(0).size - 1 >= bottompipe(0).x0) and (bird(0).x0 + bird(0).size - 1 <= bottompipe(0).x0 + 31))) and
+--						(((bird(0).y0 + 4 >= bottompipe(0).y0) and (bird(0).y0 + 4 <= bottompipe(0).y0 + bottompipe(0).size*bottompipe(0).scaling_factor_y - 1)) or
+--						((bird(0).y0 + bird(0).size - 8 >= bottompipe(0).y0) and (bird(0).y0 + bird(0).size - 8 <= bottompipe(0).y0 + bottompipe(0).size*bottompipe(0).scaling_factor_y - 1)))) then
+--						collision_flag <= '1';
+--					end if;
+--					if ((((bird(0).x0 + 2 >= bottompipe(1).x0) and (bird(0).x0 + 2 <= bottompipe(1).x0 + bird(0).size - 1)) or
+--						  ((bird(0).x0 + bird(0).size - 1 >= bottompipe(1).x0) and (bird(0).x0 + bird(0).size - 1 <= bottompipe(1).x0 + bird(0).size - 1))) and
+--						  (((bird(0).y0 + 4 >= bottompipe(1).y0) and (bird(0).y0 + 4 <= bottompipe(1).y0 + bottompipe(1).size*bottompipe(1).scaling_factor_y + 1)) or
+--						  ((bird(0).y0 + bird(0).size - 8 >= bottompipe(1).y0) and (bird(0).y0 + bird(0).size - 8 <= bottompipe(1).y0 + bottompipe(1).size*bottompipe(1).scaling_factor_y - 1)))) then
+--						  collision_flag <= '1';
+--					end if;
 					
 --					if (bird_idx /= -1 and bottompipe_idx /= -1) then
 --						collision_flag <= '1';
@@ -267,13 +308,17 @@ begin
 							bird(0).y0 <= bird(0).y0 - 60;
 						end if;	
 					elsif (bird(0).y0 <= 448) then
-						bird(0).y0 <= bird(0).y0 + 3;
+					--	bird(0).y0 <= bird(0).y0 + 3;
 					end if;
 				end if;
 				if (mouse_lbtn = '0' and mouse_flag = '1') then
 					mouse_flag := '0';
 				end if;
 			--end if;
+			
+			if (next_frame_collision_flag = '1') then
+				collision_flag <= '1';
+			end if;
 		end if; 
 	end process;
 end architecture;
