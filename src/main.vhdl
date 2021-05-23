@@ -116,8 +116,10 @@ begin
 --	str2text(text_vector, 4, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| |  | | (_) | (_| |  __/ \__ \ | | | | | || |  | | (_) | |_) \__ \ ||  __/ |");
 --	str2text(text_vector, 5, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|_|  |_|\___/ \__,_|\___|_|___/_|_| |_| |_||_|  |_|\___/|_.__/|___/\__\___|_|");
 	
-	--str2text(text_vector, 2, 20, 1, "1111", "1111", "1111", "The Modelsim Mobsters:");
-	str2text(text_vector, 7, 60, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
+	str2text(text_vector, 7, 65, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
+	str2text(text_vector, 12, 60, 2, 1, "0011", "0100", "1010", "STATIC1");
+	str2text(text_vector, 15, 60, 1, 2, "0011", "0100", "1010", "STATIC2");
+	str2text(text_vector, 20, 60, 3, 3, "0011", "0100", "1010", "STATIC3");
 
 	--Sprites
 
@@ -315,7 +317,7 @@ begin
 						
 						-- Do collision and point detection here
 						if (((bird(0).x0 + 2 >= toppipes(i).x0) and ((bird(0).x0 + bird(0).size - 1) <= toppipes(i).x0 + toppipes(i).size - 1)) and 
-							(((bird(0).y0 >= toppipes(i).y0) and (bird(0).y0 <= toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y + 1)) or
+							(((bird(0).y0 + 4 >= toppipes(i).y0) and (bird(0).y0 + 4 <= toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y + 1)) or
 							((bird(0).y0 + bird(0).size - 6 >= bottompipe(i).y0) and (bird(0).y0 + bird(0).size - 8 <= bottompipe(i).y0 + bottompipe(1).size*bottompipe(i).scaling_factor_y - 1)))) then
 							collision_flag := '1';
 						else
