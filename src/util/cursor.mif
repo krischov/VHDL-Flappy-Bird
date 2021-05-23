@@ -1,0 +1,25 @@
+Depth = 16;
+Width = 16;
+Address_radix = hex;
+Data_radix = hex;
+Content
+  Begin
+-- Sprite: cursor.ppm; size: 4x4 pixels
+0000 : 090f ;
+0001 : 0000 ;
+0002 : 0000 ;
+0003 : 090f ;
+0004 : 0000 ;
+0005 : 090f ;
+0006 : 090f ;
+0007 : 0000 ;
+0008 : 0000 ;
+0009 : 090f ;
+000a : 090f ;
+000b : 0000 ;
+000c : 090f ;
+000d : 0000 ;
+000e : 0000 ;
+000f : 090f ;
+
+End;

@@ -84,6 +84,12 @@ architecture x of main is
 		(64, to_unsigned(200, 10), to_unsigned(10, 10), "000000000000", tree0, "0000000000000000", false, 2, 2, TRUE, FALSE, FALSE)
 	);
 	
+	signal mousecursor : all_sprites(0 to 2) := (
+		(4, to_unsigned(236, 10), to_unsigned(316,10), "000000000000", cursor, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(4, to_unsigned(150, 10), to_unsigned(50,10), "000000000000", cursor, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE)
+	);
+	
+	
 	signal sprites_addrs : sprite_addr_array;
 	signal sprites_out : sprite_output_array;
 	signal grass_idx, bottompipe_idx, bird_idx, tree0_idx, toppipe_idx : integer;
@@ -116,6 +122,9 @@ begin
 	
 	toppipe_idx <= get_active_idx(toppipes, vga_row, vga_col);
 	toppipes(toppipe_idx).address <= calc_addr_f(toppipes(toppipe_idx), vga_row, vga_col);
+		
+	mousecursor_idx <= get_active_idx(mousecursor, vga_row, vga_col);
+	mousecursor(mousecursor_idx).address <= calc_addr_f(mousecursor(mousecursor_idx), vga_row, vga_col);
 	
 	tree0_idx <= get_active_idx(tree0s, vga_row, vga_col);
 	tree0s(tree0_idx).address <= calc_addr_f(tree0s(tree0_idx), vga_row, vga_col);
@@ -129,6 +138,8 @@ begin
 	bottompipe(bottompipe_idx).in_range <= return_in_range(bottompipe(bottompipe_idx), vga_row, vga_col) when bottompipe_idx /= -1 else false;
 	toppipes(toppipe_idx).in_range <= return_in_range(toppipes(toppipe_idx), vga_row, vga_col) when toppipe_idx /= -1 else false;
 	tree0s(tree0_idx).in_range <= return_in_range(tree0s(tree0_idx), vga_row, vga_col) when tree0_idx /= -1 else false;
+	mousecursor(mousecursor_idx).in_range <= return_in_range(mousecursor(mousecursor_idx), vga_row, vga_col) when mousecursor_idx /= -1 else false;
+	
 	
 
 	sprites_addrs(grass) <= grassplane(grass_idx).address;	
@@ -136,34 +147,39 @@ begin
 	sprites_addrs(toppipe) <= toppipes(toppipe_idx).address;
 	sprites_addrs(tree0) <= tree0s(tree0_idx).address;
 	sprites_addrs(bird0) <= bird(bird_idx).address;
+	sprites_addrs(cursor) <= mousecursor(mousecursor_idx).address;
+	
 	
 	bird(bird_idx).colours <= sprites_out(bird0);
 	grassplane(grass_idx).colours <= sprites_out(grass);
 	tree0s(tree0_idx).colours <= sprites_out(tree0);
 	bottompipe(bottompipe_idx).colours <= sprites_out(crackpipe);
 	toppipes(toppipe_idx).colours <= sprites_out(toppipe);
+	mousecursor(mousecursor_idx).colours <= sprites_out(cursor);
 
 	
-	sprite_r <= unsigned(bird(bird_idx).colours(3 downto 0))				when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
+	sprite_r <= unsigned(mousecursor(mousecursor_idx).colours(3 downto 0))				when mousecursor(mousecursor_idx).colours(15 downto 12) /= "1111" and mousecursor(mousecursor_idx).in_range else
+				unsigned(bird(bird_idx).colours(3 downto 0))				when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
 				unsigned(grassplane(grass_idx).colours(3 downto 0))			when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range else
 				unsigned(bottompipe(bottompipe_idx).colours(3 downto 0))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
 				unsigned(toppipes(toppipe_idx).colours(3 downto 0))	when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
 				unsigned(tree0s(tree0_idx).colours(3 downto 0))				when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range;
 	
-	sprite_g <= unsigned(bird(bird_idx).colours(7 downto 4))				when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
+	sprite_g <= unsigned(mousecursor(mousecursor_idx).colours(7 downto 4))				when mousecursor(mousecursor_idx).colours(15 downto 12) /= "1111" and mousecursor(mousecursor_idx).in_range else 
+				unsigned(bird(bird_idx).colours(7 downto 4))				when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
 				unsigned(grassplane(grass_idx).colours(7 downto 4))			when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range else
 				unsigned(bottompipe(bottompipe_idx).colours(7 downto 4))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
 				unsigned(toppipes(toppipe_idx).colours(7 downto 4))	when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
 				unsigned(tree0s(tree0_idx).colours(7 downto 4))				when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range;
 	
-	sprite_b <=  
+	sprite_b <= unsigned(mousecursor(mousecursor_idx).colours(11 downto 8)) 			when mousecursor(mousecursor_idx).colours(15 downto 12) /= "1111" and mousecursor(mousecursor_idx).in_range else
 				unsigned(bird(bird_idx).colours(11 downto 8)) 				when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
 				unsigned(grassplane(grass_idx).colours(11 downto 8))		when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range else
 				unsigned(bottompipe(bottompipe_idx).colours(11 downto 8))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
 				unsigned(toppipes(toppipe_idx).colours(11 downto 8))	when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
 				unsigned(tree0s(tree0_idx).colours(11 downto 8))				when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range;
 
-	sprite_z <= 
+	sprite_z <= "0000" when mousecursor_idx /= -1 and (mousecursor(mousecursor_idx).in_range and (mousecursor(mousecursor_idx).colours(15 downto 12) /= "1111" else
 				"0000" when bird_idx /= -1 and bird(bird_idx).in_range and bird(bird_idx).colours(15 downto 12) /= "1111" else
 				"0000" when grass_idx /= -1 and grassplane(grass_idx).in_range and grassplane(grass_idx).colours(15 downto 12) /= "1111" else
 				"0000" when bottompipe_idx /= -1 and bottompipe(bottompipe_idx).in_range and bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" else
