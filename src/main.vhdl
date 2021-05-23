@@ -47,7 +47,11 @@ architecture x of main is
 	signal next_frame_collision_flag : std_logic := '0';
 	signal collision_flag : std_logic := '0';
 	signal sec : natural range 0 to 59 := 0;
-
+	signal birdcollision_addr : unsigned (11 downto 0);
+	signal pipecollision_addr : unsigned (11 downto 0);
+	signal bird_char_rom : std_logic_vector(15 downto 0);
+	signal toppipe_char_rom : std_logic_vector (15 downto 0);
+	
 	
 	-- (sprite size, y0, x0, addr, sprite, colour, in_range, scale_x, scale_y, visible, underflow, passed_pipe)  
 
@@ -149,6 +153,9 @@ begin
 	sprites_addrs(tree0) <= tree0s(tree0_idx).address;
 	sprites_addrs(bird0) <= bird(bird_idx).address;
 	sprites_addrs(cursor) <= mousecursor(mousecursor_idx).address;
+	sprites_addrs(bird0_tmap) <= std_logic_vector(birdcollision_addr);
+	sprites_addrs(toppipe_tmap) <= std_logic_vector(pipecollision_addr);
+	
 	
 	
 	bird(bird_idx).colours <= sprites_out(bird0);
@@ -157,6 +164,9 @@ begin
 	bottompipe(bottompipe_idx).colours <= sprites_out(crackpipe);
 	toppipes(toppipe_idx).colours <= sprites_out(toppipe);
 	mousecursor(mousecursor_idx).colours <= sprites_out(cursor);
+	bird_char_rom <= sprites_out(bird0_tmap);
+	toppipe_char_rom <= sprites_out(toppipe_tmap);
+	
 
 	
 	sprite_r <= unsigned(mousecursor(mousecursor_idx).colours(3 downto 0))				when mousecursor(mousecursor_idx).colours(15 downto 12) /= "1111" and mousecursor(mousecursor_idx).in_range else
@@ -234,21 +244,21 @@ begin
 				mouse_btn <= var_len_str("No Mouse button Pressed", mouse_btn'length);
 			end if;
 
-			if ((bottompipe_idx /= -1 and bird_idx /= -1)) then
-					if ((bird(bird_idx).in_range and bottompipe(bottompipe_idx).in_range)) then
-						if ((bird(bird_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).colours(15 downto 12) = "1111")) then
-							next_frame_collision_flag <= '1';
-						end if;
-					end if;
-			end if;
-				
-			if ((toppipe_idx /= -1 and bird_idx /= -1)) then
-					if ((bird(bird_idx).in_range and toppipes(toppipe_idx).in_range)) then
-						if ((bird(bird_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).colours(15 downto 12) = "1111")) then
-							next_frame_collision_flag <= '1';
-						end if;
-					end if;
-			end if;	
+--			if ((bottompipe_idx /= -1 and bird_idx /= -1)) then
+--					if ((bird(bird_idx).in_range and bottompipe(bottompipe_idx).in_range)) then
+--						if ((bird(bird_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).colours(15 downto 12) = "1111")) then
+--							next_frame_collision_flag <= '1';
+--						end if;
+--					end if;
+--			end if;
+--				
+--			if ((toppipe_idx /= -1 and bird_idx /= -1)) then
+--					if ((bird(bird_idx).in_range and toppipes(toppipe_idx).in_range)) then
+--						if ((bird(bird_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).colours(15 downto 12) = "1111")) then
+--							next_frame_collision_flag <= '1';
+--						end if;
+--					end if;
+--			end if;	
 
 			if (txt_not_a = "1111") then
 				red_out <= txt_r;
@@ -274,6 +284,10 @@ begin
 	
 	VSYNC: process(v_sync)
 	variable mouse_flag : std_logic := '0';
+	variable birdxpos, birdypos : unsigned (9 downto 0);
+	variable pipexpos, pipeypos : unsigned (9 downto 0);
+	variable t_flag: std_logic := '0';
+	
 		variable frame : natural range 0 to 60 := 0;
 		-- total number of pixels to shift bird up by per mouse click
 		constant h_boost : natural range 0 to 256 := 60;
@@ -288,7 +302,13 @@ begin
 			if (frame > 59) then
 				frame := 0;
 			end if;
-			
+		if (t_flag = '1') then
+			if (bird_char_rom(7 downto 0) /= x"ff" and toppipe_char_rom(7 downto 0) /= x"ff") then
+				collision_flag <= '1';
+			end if;
+			t_flag := '0';
+		end if;
+	
 			for i in 0 to (bottompipe'length - 1) loop
 			if (collision_flag = '0') then
 				if (bottompipe(i).x0 <= 640) then
@@ -323,6 +343,19 @@ begin
 			end if;	
 					
 					-- Do collision and point detection here
+					if (((bird(0).x0 + 2 >= bottompipe(i).x0) and (bird(0).x0 + 2 <= bottompipe(i).x0 + bird(0).size - 1)) and 
+						((bird(0).y0 + 4 >= bottompipe(i).y0) and (bird(0).y0 + 4 <= bottompipe(i).y0 + bottompipe(i).size*bottompipe(i).scaling_factor_y - 1))) then
+						birdxpos := (bird(0).x0 + 2) - (bottompipe(i).x0 + bird(0).size - 1);
+						birdypos := (bird(0).y0 + 4) - (bottompipe(i).y0 + bottompipe(i).size*bottompipe(i).scaling_factor_y - 1);
+						pipexpos := (bottompipe(i).x0 + bird(0).size - 1) - birdxpos;
+						pipeypos := (bottompipe(i).y0 + bottompipe(i).size*bottompipe(i).scaling_factor_y - 1) - birdypos;
+						birdcollision_addr <= resize(birdypos * 32 + birdxpos, 12);
+						pipecollision_addr <= resize(pipeypos * 64 + pipeypos, 12);
+						t_flag := '1';
+					
+					end if;
+					
+--					
 --					if ((((bird(0).x0 + 2 >= bottompipe(0).x0) and (bird(0).x0 + 2 <= bottompipe(0).x0 + bird(0).size - 1)) or
 --						((bird(0).x0 + bird(0).size - 1 >= bottompipe(0).x0) and (bird(0).x0 + bird(0).size - 1 <= bottompipe(0).x0 + 31))) and
 --						(((bird(0).y0 + 4 >= bottompipe(0).y0) and (bird(0).y0 + 4 <= bottompipe(0).y0 + bottompipe(0).size*bottompipe(0).scaling_factor_y - 1)) or
@@ -335,7 +368,7 @@ begin
 --						  ((bird(0).y0 + bird(0).size - 8 >= bottompipe(1).y0) and (bird(0).y0 + bird(0).size - 8 <= bottompipe(1).y0 + bottompipe(1).size*bottompipe(1).scaling_factor_y - 1)))) then
 --						  collision_flag <= '1';
 --					end if;
-					
+--					
 --					if (bird_idx /= -1 and bottompipe_idx /= -1) then
 --						collision_flag <= '1';
 --					end if;

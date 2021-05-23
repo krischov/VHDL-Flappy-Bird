@@ -13,11 +13,11 @@ package spriteengine_package is
 	constant toppipe  : natural range 0 to 31 := 5;
 	constant cursor   : natural range 0 to 31 := 6;
 	constant bird0_tmap : natural range 0 to 31 := 7;
-	constant crackpipe_tmap : natural range 0 to 31 := 7;
-	constant toppipe_tmap : natural range 0 to 31 := 7;
+	constant crackpipe_tmap : natural range 0 to 31 := 8;
+	constant toppipe_tmap : natural range 0 to 31 := 9;
 	
-	type sprite_output_array is array(0 to 7) of std_logic_vector(15 downto 0);
-	type sprite_addr_array is array (0 to 7) of std_logic_vector(11 downto 0);
+	type sprite_output_array is array(0 to 9) of std_logic_vector(15 downto 0);
+	type sprite_addr_array is array (0 to 9) of std_logic_vector(11 downto 0);
 	
 	type sprite is record
 		size 				: natural range 0 to 64;
