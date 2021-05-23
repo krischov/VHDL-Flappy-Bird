@@ -34,21 +34,34 @@ architecture x of textengine is
 	END COMPONENT char_rom;
 	
 	-- signals
-	signal char_row : unsigned(5 downto 0);
+	signal char_row: unsigned(5 downto 0);
 	signal char_col : unsigned(6 downto 0);
 	
 	signal txtrow : textengine_row;
+	signal rom_addr: unsigned(5 downto 0);
 	signal char_addr : unsigned(5 downto 0);
+	
+	signal scaled_row:  unsigned(2 downto 0);
+	signal scaled_col:  unsigned(2 downto 0);
 	
 	signal pixel : std_logic;
 begin
-	char_rom0: char_rom port map (std_logic_vector(char_addr), std_logic_vector(row(2 downto 0)), std_logic_vector(col(2 downto 0)), clk, pixel);
-
-	char_row <= resize(row / 8, 6);
-	char_col <= resize(col / 8, 7);
+	char_rom0: char_rom port map (std_logic_vector(char_addr), std_logic_vector(scaled_row), std_logic_vector(scaled_col), clk, pixel);
 	
+	char_col <= resize(col / 8, 7);
+	char_row <= resize(row / 8, 6);
+		
 	txtrow <= txtvec(txtvec(to_integer(char_row)).scale_index);
+
+	scaled_row <=	row(2 downto 0) when txtrow.scale = 1 else
+					row(3 downto 1) when txtrow.scale = 2;
+	
+	scaled_col <=	col(2 downto 0) when txtrow.scale = 1 else
+					col(3 downto 1) when txtrow.scale = 2;
+	
+	
 	char_addr <= char2rom(txtrow.txt(to_integer(char_col) + 1));
+
 	
 	r <= txtrow.r;
 	g <= txtrow.g;
