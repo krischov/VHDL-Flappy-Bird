@@ -41,28 +41,32 @@ architecture x of textengine is
 	signal rom_addr: unsigned(5 downto 0);
 	signal char_addr : unsigned(5 downto 0);
 	
-	signal scaled_row:  unsigned(2 downto 0);
-	signal scaled_col:  unsigned(2 downto 0);
+	signal scaled_row:  unsigned(9 downto 0);
+	signal scaled_col:  unsigned(9 downto 0);
+	
+	signal acsess_row:  unsigned(2 downto 0);
+	signal acsess_col:  unsigned(2 downto 0);	
 	
 	signal pixel : std_logic;
 begin
-	char_rom0: char_rom port map (std_logic_vector(char_addr), std_logic_vector(scaled_row), std_logic_vector(scaled_col), clk, pixel);
+	char_rom0: char_rom port map (std_logic_vector(char_addr), std_logic_vector(acsess_row), std_logic_vector(acsess_col), clk, pixel);
 	
 	char_col <= resize(col / 8, 7);
 	char_row <= resize(row / 8, 6);
 		
 	txtrow <= txtvec(txtvec(to_integer(char_row)).scale_index);
 
---	scaled_row <=	row(2 downto 0) when txtrow.scale = 1 else
---					row(3 downto 1) when txtrow.scale = 2;
+	scaled_row <=	row;
+	--scaled_row <=	(row + ((char_row - txtrow.scale_index) * txtrow.scale));
 --	
 --	scaled_col <=	col(2 downto 0) when txtrow.scale = 1 else
 --					col(3 downto 1) when txtrow.scale = 2;
 --	
 	
-	scaled_row <=	row(3 downto 1);
-	
-	scaled_col <=	col(3 downto 1);
+	acsess_row <=	row(2 downto 0) when txtrow.scale = 1 else
+					scaled_row(3 downto 1);
+	acsess_col <=	col(2 downto 0) when txtrow.scale = 1 else
+					col(3 downto 1);
 	
 	char_addr <= char2rom(txtrow.txt(to_integer(char_col) + 1));
 
