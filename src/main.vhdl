@@ -103,10 +103,6 @@ architecture x of main is
 	
 	
 	signal pipe_points: natural range 0 to 8000 := 0;
-	
-	signal hidden_text_test : boolean := false;
-	signal t1 : textengine_vector := (others => init_textengine_row);
-	signal t2 : textengine_vector := (others => init_textengine_row);
 begin
 
 	spriteengine0 : spriteengine port map (clk, vga_row, vga_col, sprites_addrs, sprites_out);
@@ -119,14 +115,7 @@ begin
 --	str2text(text_vector, 4, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| |  | | (_) | (_| |  __/ \__ \ | | | | | || |  | | (_) | |_) \__ \ ||  __/ |");
 --	str2text(text_vector, 5, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|_|  |_|\___/ \__,_|\___|_|___/_|_| |_| |_||_|  |_|\___/|_.__/|___/\__\___|_|");
 	
-	str2text(t1, 1, 65, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
-	str2text(t1, 2, 0, 4, 4, "0011", "0100", "1010", "Hidden Blink Test", hidden_text_test);
-	 
-	str2text(t2, 1, 65, 1, 1, "1111", "0100", "1010", "Points " & int2str(pipe_points));
-	str2text(t2, 2, 0, 2, 2, "1111", "0100", "1010", "2 Text Vector Tests");
-	str2text(t2, 5, 0, 4, 2, "1111", "0100", "1010", "Does it work");
-	
-	
+	str2text(text_vector, 1, 65, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
 	
 	--Sprites
 
@@ -223,8 +212,6 @@ begin
 			ticks := ticks + 1;
 			if (ticks >= 25000000) then
 				-- things to happen every second
-	
-				hidden_text_test <= not hidden_text_test;
 				
 				sec <= sec + 1;
 				ticks := 0;
@@ -241,10 +228,8 @@ begin
 				mouse_btn <= var_len_str("Left Mouse button Pressed", mouse_btn'length);
 			elsif (mouse_rbtn = '1') then
 				mouse_btn <= var_len_str("Right Mouse button Pressed", mouse_btn'length);
-				text_vector <= t2;
 			else
 				mouse_btn <= var_len_str("No Mouse button Pressed", mouse_btn'length);
-				text_vector <= t1;
 			end if;
 
 
