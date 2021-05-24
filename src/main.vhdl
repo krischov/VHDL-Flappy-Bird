@@ -92,8 +92,8 @@ architecture x of main is
 	);
 	
 	signal hearts: all_sprites(0 to 1) := (
-		(16, to_unsigned(400, 10), to_unsigned(400,10), "000000000000", heart, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
-		(16, to_unsigned(550, 10), to_unsigned(550,10), "000000000000", heart, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE)
+		(16, to_unsigned(8, 10), to_unsigned(8,10), "000000000000", heart, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(16, to_unsigned(8, 10), to_unsigned(32,10), "000000000000", heart, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
 	);
 	
 	
@@ -103,22 +103,19 @@ architecture x of main is
 	
 	
 	signal pipe_points: natural range 0 to 8000 := 0;
-	
 begin
 
 	spriteengine0 : spriteengine port map (clk, vga_row, vga_col, sprites_addrs, sprites_out);
 	textengine0: textengine port map(clk, text_vector, vga_row, vga_col, txt_r, txt_g, txt_b, txt_not_a);
 		
-	str2text(text_vector, 0, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, " __  __           _      _     _            __  __       _         _");
-	str2text(text_vector, 1, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|  \/  |         | |    | |   (_)          |  \/  |     | |       | |");
-	str2text(text_vector, 2, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| \  / | ___   __| | ___| |___ _ _ __ ___  | \  / | ___ | |__  ___| |_ ___ _ __");
-	str2text(text_vector, 3, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| |\/| |/ _ \ / _` |/ _ \ / __| | '_ ` _ \ | |\/| |/ _ \| '_ \/ __| __/ _ \ '__|");
-	str2text(text_vector, 4, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| |  | | (_) | (_| |  __/ \__ \ | | | | | || |  | | (_) | |_) \__ \ ||  __/ |");
-	str2text(text_vector, 5, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|_|  |_|\___/ \__,_|\___|_|___/_|_| |_| |_||_|  |_|\___/|_.__/|___/\__\___|_|");
+--	str2text(text_vector, 0, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, " __  __           _      _     _            __  __       _         _");
+--	str2text(text_vector, 1, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|  \/  |         | |    | |   (_)          |  \/  |     | |       | |");
+--	str2text(text_vector, 2, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| \  / | ___   __| | ___| |___ _ _ __ ___  | \  / | ___ | |__  ___| |_ ___ _ __");
+--	str2text(text_vector, 3, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| |\/| |/ _ \ / _` |/ _ \ / __| | '_ ` _ \ | |\/| |/ _ \| '_ \/ __| __/ _ \ '__|");
+--	str2text(text_vector, 4, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| |  | | (_) | (_| |  __/ \__ \ | | | | | || |  | | (_) | |_) \__ \ ||  __/ |");
+--	str2text(text_vector, 5, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|_|  |_|\___/ \__,_|\___|_|___/_|_| |_| |_||_|  |_|\___/|_.__/|___/\__\___|_|");
 	
-	--str2text(text_vector, 2, 20, 1, "1111", "1111", "1111", "The Modelsim Mobsters:");
-	str2text(text_vector, 7, 65, 1, 4, "1010", "0101", "1100", "Points " & int2str(pipe_points));
-	str2text(text_vector, 15, 10, 4, 1, "1010", "0101", "1100", "Points " & int2str(pipe_points));
+	str2text(text_vector, 1, 65, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
 	
 	--Sprites
 
@@ -213,14 +210,12 @@ begin
 	begin
 		if (rising_edge(clk)) then
 			ticks := ticks + 1;
---			if (ticks >= 25000000) then
---				-- things to happen every second
---	
---				sec <= sec + 1;
---				ticks := 0;
---			end if;
-				--sec <= sec + 1;
+			if (ticks >= 25000000) then
+				-- things to happen every second
+				
+				sec <= sec + 1;
 				ticks := 0;
+			end if;
 			
 			if (mouse_col <= 624) then
 				mousecursor(0).x0 <= mouse_col;
@@ -373,7 +368,7 @@ begin
 								end if;
 							end if;
 						end if;
-	
+						
 				-- if the user has just passed through this pipe, give them a point
 					if (bottompipe(i).passed_pipe = false and bird(0).x0 > bottompipe(i).x0 + bottompipe(i).size * bottompipe(i).scaling_factor_x) then
 						bottompipe(i).passed_pipe <= true;
