@@ -1,4 +1,0 @@
--- Sprite: sprites/bird0.ppm; size: 32x32 pixels (Transparancy Map)
-constant X : std_logic_vector(1023 downto 0) := (
-	x"fefefefefefefefefefefefefefefefefee002fefe0000fefe0000fefc00007efc00007ef000001ef000001ec000001ec000001ec000001ec0000006c00000068000000080000000800000068000000680000006c000001ec000001efe803efefe803efefefefefefefefefefefefefefefefefefefefefefefefefefefefefe"
-);
