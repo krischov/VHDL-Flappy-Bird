@@ -336,12 +336,12 @@ begin
 					if (bottompipe(i).x0 <= 640) then
 						bottompipe(i).underflow <= false;
 						bottompipe(i).x0 <= bottompipe(i).x0 - 2;
-						if (bottompipe(i).x0 < 1) then
+						if (bottompipe(i).x0 > (1023 - bottompipe(i).x0 * bottompipe(i).scaling_factor_x)) then
 							bottompipe(i).underflow <= true;
 						end if;
-					elsif (bottompipe(i).x0 >= 959) then
+					elsif (bottompipe(i).x0 >= (1023 - bottompipe(i).x0 * bottompipe(i).scaling_factor_x)) then
 						bottompipe(i).x0 <= bottompipe(i).x0 - 2;
-					elsif (bottompipe(i).x0 < 959) then
+					elsif (bottompipe(i).x0 < (1023 - bottompipe(i).x0 * bottompipe(i).scaling_factor_x)) then
 						bottompipe(i).underflow <= false;
 						bottompipe(i).x0 <= to_unsigned(640, 10); 
 						-- this pipe is being recycled, it should earn points again
@@ -352,12 +352,12 @@ begin
 					if (toppipes(i).x0 <= 640) then
 						toppipes(i).underflow <= false;
 						toppipes(i).x0 <= toppipes(i).x0 - 2;
-						if (toppipes(i).x0 < 1) then
+						if (toppipes(i).x0 > (1023 - toppipes(i).x0 * toppipes(i).scaling_factor_x)) then
 							toppipes(i).underflow <= true;
 						end if;
-					elsif (toppipes(i).x0 >= 959) then
+					elsif (toppipes(i).x0 >= (1023 - toppipes(i).x0 * toppipes(i).scaling_factor_x)) then
 						toppipes(i).x0 <= toppipes(i).x0 - 2;
-					elsif (toppipes(i).x0 < 959) then
+					elsif (toppipes(i).x0 < (1023 - toppipes(i).x0 * toppipes(i).scaling_factor_x)) then
 						toppipes(i).underflow <= false;
 						toppipes(i).x0 <= to_unsigned(640, 10); 
 						-- this pipe is being recycled, it should earn points again
@@ -464,12 +464,12 @@ begin
 				if (tree0s(i).x0 <= 640) then
 					tree0s(i).underflow <= false;
 					tree0s(i).x0 <= tree0s(i).x0 - 2;
-					if (tree0s(i).x0 < 1) then
+					if (tree0s(i).x0 > (1023 - tree0s(i).x0 * tree0s(i).scaling_factor_x)) then
 						tree0s(i).underflow <= true;
 					end if;
-				elsif (tree0s(i).x0 >= 959) then
+				elsif (tree0s(i).x0 >= (1023 - tree0s(i).x0 * tree0s(i).scaling_factor_x)) then
 					tree0s(i).x0 <= tree0s(i).x0 - 2;
-				elsif (tree0s(i).x0 < 959) then
+				elsif (tree0s(i).x0 < (1023 - tree0s(i).x0 * tree0s(i).scaling_factor_x)) then
 					tree0s(i).underflow <= false;
 					tree0s(i).x0 <= to_unsigned(640, 10);
 				end if;
@@ -479,12 +479,12 @@ begin
 				if (grassplane(i).x0 <= 640) then
 					grassplane(i).underflow <= false;
 					grassplane(i).x0 <= grassplane(i).x0 - 2;
-					if (grassplane(i).x0 < 1) then
+					if (grassplane(i).x0 > (1023 - grassplane(i).x0 * grassplane(i).scaling_factor_x)) then
 						grassplane(i).underflow <= true;
 					end if;
-				elsif (grassplane(i).x0 >= 959) then
+				elsif (grassplane(i).x0 >= (1023 - grassplane(i).x0 * grassplane(i).scaling_factor_x)) then
 					grassplane(i).x0 <= grassplane(i).x0 - 2;
-				elsif (grassplane(i).x0 < 959) then
+				elsif (grassplane(i).x0 < (1023 - grassplane(i).x0 * grassplane(i).scaling_factor_x)) then
 					grassplane(i).underflow <= false;
 					grassplane(i).x0 <= to_unsigned(640, 10);
 				end if;
