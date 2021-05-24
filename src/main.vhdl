@@ -35,6 +35,10 @@ architecture x of main is
 
 	
 	signal text_vector: textengine_vector := (others => init_textengine_row);
+	
+	signal tvec_mode_title: textengine_vector := (others => init_textengine_row);
+	signal tvec_mode_game: textengine_vector := (others => init_textengine_row);
+	
 	signal txt_r : unsigned(3 downto 0) := "0000";
 	signal txt_g : unsigned(3 downto 0) := "0000";
 	signal txt_b : unsigned(3 downto 0) := "0000";
@@ -53,7 +57,7 @@ architecture x of main is
 	-- (sprite size, y0, x0, addr, sprite, colour, in_range, scale_x, scale_y, visible, underflow, passed_pipe)  
 
 	signal bird : all_sprites(0 to 1)  := (
-		(32, to_unsigned(195, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(195, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE),
 		(32, to_unsigned(150, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE)
 	);
 	signal grassplane : all_sprites(0 to 9) := (
@@ -87,22 +91,41 @@ architecture x of main is
 	);
 	
 	signal mousecursor : all_sprites(0 to 1) := (
-		(16, to_unsigned(236, 10), to_unsigned(316,10), "000000000000", cursor, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(16, to_unsigned(236, 10), to_unsigned(316,10), "000000000000", cursor, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE),
 		(16, to_unsigned(150, 10), to_unsigned(50,10), "000000000000", cursor, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE)
 	);
 	
-	signal hearts: all_sprites(0 to 1) := (
+	signal hearts: all_sprites(0 to 2) := (
 		(16, to_unsigned(8, 10), to_unsigned(8,10), "000000000000", heart, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
-		(16, to_unsigned(8, 10), to_unsigned(32,10), "000000000000", heart, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
+		(16, to_unsigned(8, 10), to_unsigned(32,10), "000000000000", heart, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(16, to_unsigned(8, 10), to_unsigned(56,10), "000000000000", heart, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
 	);
 	
+	
+	-- Sprite Indexes
 	
 	signal sprites_addrs : sprite_addr_array;
 	signal sprites_out : sprite_output_array;
 	signal grass_idx, bottompipe_idx, bird_idx, tree0_idx, toppipe_idx , mousecursor_idx, heart_idx : integer := -1;
 	
+	-- ========================
 	
+	-- Game mode, and associated constants
+	
+	constant MODE_TITLE : integer range 0 to 7 := 0;
+	constant MODE_GAME : integer range 0 to 7 := 1;
+	
+	signal game_mode : integer range 0 to 7 := 0;
+	
+	-- ========================
+	
+	-- Player Stats
+	
+	signal health: natural range 0 to 7 := 3;
 	signal pipe_points: natural range 0 to 8000 := 0;
+	
+	
+	-- ========================
 begin
 
 	spriteengine0 : spriteengine port map (clk, vga_row, vga_col, sprites_addrs, sprites_out);
@@ -115,7 +138,27 @@ begin
 --	str2text(text_vector, 4, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| |  | | (_) | (_| |  __/ \__ \ | | | | | || |  | | (_) | |_) \__ \ ||  __/ |");
 --	str2text(text_vector, 5, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|_|  |_|\___/ \__,_|\___|_|___/_|_| |_| |_||_|  |_|\___/|_.__/|___/\__\___|_|");
 	
-	str2text(text_vector, 1, 65, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
+	-- Title Screen Text Vecotr 
+	str2text(tvec_mode_title, 1, 2, 8, 8, "0011", "0100", "1010", "Flappy");
+	str2text(tvec_mode_title, 9, 3, 8, 8, "0011", "0100", "1010", "Bird");
+	str2text(tvec_mode_title, 40, 8, 2, 2, "0011", "0100", "1010", "Created and Developed by");
+	str2text(tvec_mode_title, 42, 10, 2, 2, "0011", "0100", "1010", "The ModelsimMobsters");
+	str2text(tvec_mode_title, 50, 16, 1, 1, "0011", "0100", "1010", "Based on the concept of https://flappybird.io/");
+	
+	
+	-- =================
+	
+	-- Game Mode Screen Text Vector
+	
+	str2text(tvec_mode_game, 1, 65, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
+	
+	-- =================
+	
+	-- Set the text vector depending on game mode
+	
+	text_vector <=	tvec_mode_title	when game_mode = MODE_TITLE else
+					tvec_mode_game	when game_mode = MODE_GAME;
+	
 	
 	--Sprites
 
@@ -171,7 +214,7 @@ begin
 
 
 	
-	sprite_r <= unsigned(mousecursor(mousecursor_idx).colours(3 downto 0))				when mousecursor(mousecursor_idx).colours(15 downto 12) /= "1111" and mousecursor(mousecursor_idx).in_range else
+	sprite_r <= unsigned(mousecursor(mousecursor_idx).colours(3 downto 0))	when mousecursor(mousecursor_idx).colours(15 downto 12) /= "1111" and mousecursor(mousecursor_idx).in_range else
 				unsigned(bird(bird_idx).colours(3 downto 0))				when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
 				unsigned(grassplane(grass_idx).colours(3 downto 0))			when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range else
 				unsigned(bottompipe(bottompipe_idx).colours(3 downto 0))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
@@ -251,7 +294,7 @@ begin
 
 	end process;
 	
-	VSYNC: process(v_sync)
+	Pipe: process(v_sync)
 	variable mouse_flag : std_logic := '0';
 	variable birdxpos, birdypos : unsigned (9 downto 0);
 	variable pipexpos, pipeypos : unsigned (9 downto 0);
@@ -273,10 +316,12 @@ begin
 			if (frame > 59) then
 				frame := 0;
 			end if;
-
+			
+			-- Pipe Collision Detection, and Pipe Movement
+			
 			for i in 0 to (bottompipe'length - 1) loop
 
-				if (collision_flag = '0') then
+				if (collision_flag = '0' and game_mode = MODE_TITLE) then
 					if (bottompipe(i).x0 <= 640) then
 						bottompipe(i).underflow <= false;
 						bottompipe(i).x0 <= bottompipe(i).x0 - 2;
@@ -403,4 +448,28 @@ begin
 			end if;
 		end if; 
 	end process;
+	
+	
+	-- Grass movement 
+	
+	process(v_sync)
+	begin
+		if (v_sync = '1') then
+			for i in 0 to (grassplane'length - 1) loop
+				if (grassplane(i).x0 <= 640) then
+					grassplane(i).underflow <= false;
+					grassplane(i).x0 <= grassplane(i).x0 - 2;
+					if (grassplane(i).x0 < 1) then
+						grassplane(i).underflow <= true;
+					end if;
+				elsif (grassplane(i).x0 >= 959) then
+					grassplane(i).x0 <= grassplane(i).x0 - 2;
+				elsif (grassplane(i).x0 < 959) then
+					grassplane(i).underflow <= false;
+					grassplane(i).x0 <= to_unsigned(640, 10);
+				end if;
+			end loop;
+		end if;
+	end process;
+	
 end architecture;

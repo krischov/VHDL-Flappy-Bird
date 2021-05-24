@@ -139,7 +139,6 @@ package textengine_package is
 end package;
 
 package body textengine_package is
-
 	-- This function takes a (maximum) 14bit unsigned input and converts it to a string
 	-- The function is only accurate in the range: 0 to 2^14 - 1
 	-- This is because division and mod operations are extreamly slow
