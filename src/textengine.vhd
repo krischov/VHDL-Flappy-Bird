@@ -64,7 +64,7 @@ begin
 	r <= txtrow.r;
 	g <= txtrow.g;
 	b <= txtrow.b;
-	not_a <= "0000" when txtvec(to_integer(char_row)).scale_index = -1
+	not_a <= "0000" when txtvec(to_integer(char_row)).scale_index = -1 or txtrow.hidden = true
 					else (others => pixel) when txtrow.txt((to_integer(char_col) + 1)) /= nul
 					else "0000";
 end architecture;

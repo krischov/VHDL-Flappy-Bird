@@ -48,6 +48,7 @@ package textengine_package is
 		g			: unsigned(3 downto 0);
 		b			: unsigned(3 downto 0);
 		scale_index : integer range -1 to 63;
+		hidden		: boolean; 				-- if true, the text is hidden and acts like it does not exist
 	end record textengine_row;
 	constant init_textengine_row : textengine_row := 
 		(
@@ -62,7 +63,8 @@ package textengine_package is
 			r => "1111",
 			g => "1111",
 			b => "1111",
-			scale_index => -1
+			scale_index => -1,
+			hidden => false
 		);
 	--array of textengine record for each of the 60 rows		
 	type textengine_vector is array (59 downto 0) of textengine_row;
@@ -72,12 +74,13 @@ package textengine_package is
 		signal txt_vector	: inout textengine_vector; 
 		in_char_row			: in unsigned(5 downto 0);
 		in_char_col			: in unsigned(6 downto 0);
-		in_scale_x			: in unsigned(3 downto 0) := "000";
-		in_scale_y			: in unsigned(3 downto 0) := "000";
+		in_scale_x			: in unsigned(3 downto 0) := "0001";
+		in_scale_y			: in unsigned(3 downto 0) := "0001";
 		in_r				: in unsigned(3 downto 0);
 		in_g				: in unsigned(3 downto 0);
 		in_b				: in unsigned(3 downto 0);
-		s 					: in string
+		s 					: in string;
+		in_hidden			: in boolean := false
 	);
 
 	-- wrapper for str2text that converts integer paramaters to unsigned 
@@ -85,12 +88,13 @@ package textengine_package is
 		signal txt_vector	: inout textengine_vector; 
 		in_char_row			: in integer;
 		in_char_col			: in integer;
-		in_scale_x			: in integer := 0;
-		in_scale_y			: in integer := 0;
+		in_scale_x			: in integer := 1;
+		in_scale_y			: in integer := 1;
 		in_r				: in unsigned(3 downto 0);
 		in_g				: in unsigned(3 downto 0);
 		in_b				: in unsigned(3 downto 0);
-		s 					: in string	
+		s 					: in string;
+		in_hidden			: in boolean := false
 	);
 	
 	
@@ -286,12 +290,13 @@ package body textengine_package is
 		signal txt_vector	: inout textengine_vector; 
 		in_char_row			: in unsigned(5 downto 0);
 		in_char_col			: in unsigned(6 downto 0);
-		in_scale_x			: in unsigned(3 downto 0) := "0000";
-		in_scale_y			: in unsigned(3 downto 0) := "0000";
+		in_scale_x			: in unsigned(3 downto 0) := "0001";
+		in_scale_y			: in unsigned(3 downto 0) := "0001";
 		in_r				: in unsigned(3 downto 0);
 		in_g				: in unsigned(3 downto 0);
 		in_b				: in unsigned(3 downto 0);
-		s 					: in string
+		s 					: in string;
+		in_hidden			: in boolean := false
 	) is
 		variable len : positive range 1 to 127;
 		-- string index must start @ 1 (doens't start at 0)
@@ -312,7 +317,8 @@ package body textengine_package is
 			-- so the actual length of the string is the length of the string
 			len := s'length;
 		end if;
-		
+	
+
 		start_idx := to_integer(in_char_col) + 1;
 		end_idx := start_idx + s'length - 1;
 		
@@ -329,7 +335,8 @@ package body textengine_package is
 				r => in_r,
 				g => in_g,
 				b => in_b,
-				scale_index => to_integer(in_char_row)
+				scale_index => to_integer(in_char_row),
+				hidden => in_hidden
 			);
 			
 			for i in to_integer(in_char_row) to to_integer(in_char_row) + to_integer(in_scale_y) - 1 loop
@@ -337,7 +344,7 @@ package body textengine_package is
 			end loop;
 			
 			txt_vector(to_integer(in_char_row)).txt(start_idx to end_idx) <= s;
-			
+
 	end procedure;
 
 	-- wrapper for str2text that converts integer paramaters to unsigned 
@@ -345,12 +352,13 @@ package body textengine_package is
 		signal txt_vector	: inout textengine_vector; 
 		in_char_row			: in integer;
 		in_char_col			: in integer;
-		in_scale_x			: in integer := 0;
-		in_scale_y			: in integer := 0;
+		in_scale_x			: in integer := 1;
+		in_scale_y			: in integer := 1;
 		in_r				: in unsigned(3 downto 0);
 		in_g				: in unsigned(3 downto 0);
 		in_b				: in unsigned(3 downto 0);
-		s 					: in string
+		s 					: in string;
+		in_hidden			: in boolean := false
 	) is
 	begin
 		str2text(txt_vector, 
@@ -358,7 +366,7 @@ package body textengine_package is
 			to_unsigned(in_char_col, textengine_row.char_col'length),
 			to_unsigned(in_scale_x, textengine_row.scaleX'length),
 			to_unsigned(in_scale_y, textengine_row.scaleY'length),
-			in_r, in_g, in_b, s);
+			in_r, in_g, in_b, s, in_hidden);
 	end procedure;
 
 	-- function to map character to char_rom address
