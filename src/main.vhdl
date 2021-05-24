@@ -18,7 +18,7 @@ entity main is
 		 red_out, green_out, blue_out : OUT unsigned(3 downto 0));
 end entity;
 
-architecture x of main is 
+architecture x of main is  
 	
 	-- components --
 	component spriteengine is
