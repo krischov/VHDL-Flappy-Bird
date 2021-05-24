@@ -8,6 +8,33 @@ package textengine_package is
 -- (i.e. Can't leave x sacle as 1, but it can be 2 as a minimum)
 -- This bug is not worth fixing as the result of fixing it isn't very useful in this game 
 
+
+--		Max Number Of Rows And Cols Using Each Scaling Size, and the number of characters:
+--
+--		NOTE: Scaling in the X direction (Scaling columns) is limited to powers of 2
+--
+--		+=======+======================+======================+==========+==========+
+--		| Scale |    Rows per Char     |    Cols per Char     | Max Rows | Max Cols |
+--		+=======+======================+======================+==========+==========+
+--		|     1 | 8 (1 standard char)  | 8 (1 standard char)  |       60 |       80 |
+--		+-------+----------------------+----------------------+----------+----------+
+--		|     2 | 16 (2 standard char) | 16 (2 standard char) |       30 |       40 |
+--		+-------+----------------------+----------------------+----------+----------+
+--		|     3 | 24 (3 standard char) | 16 (2 standard char) |       20 |       26 |
+--		+-------+----------------------+----------------------+----------+----------+
+--		|     4 | 32 (4 standard char) | 32 (4 standard char) |       15 |       20 |
+--		+-------+----------------------+----------------------+----------+----------+
+--		|     5 | 40 (5 standard char) | 32 (4 standard char) |       12 |       16 |
+--		+-------+----------------------+----------------------+----------+----------+
+--		|     6 | 48 (6 standard char) | 32 (4 standard char) |       10 |       13 |
+--		+-------+----------------------+----------------------+----------+----------+
+--		|     7 | 56 (7 standard char) | 32 (4 standard char) |        8 |       11 |
+--		+-------+----------------------+----------------------+----------+----------+
+--		|     8 | 64 (8 standard char) | 64 (8 standard char) |       10 |        7 |
+--		+-------+----------------------+----------------------+----------+----------+
+
+
+
 	-- The VGA screen has a resolution of 640x480 pixels
 	-- if we assume the smallest possable character size, 8x8 pixels
 	-- then we have a maximum of 60 character rows, and 80 character columns.
@@ -291,7 +318,7 @@ package body textengine_package is
 			len := s'length;
 		end if;
 		
-		start_idx := to_integer(in_char_col / in_scale_x) + 1;
+		start_idx := to_integer(in_char_col) + 1;
 		end_idx := start_idx + s'length - 1;
 		
 		txt_vector(to_integer(in_char_row)) <=
@@ -299,7 +326,7 @@ package body textengine_package is
 				row => resize(in_char_row * 8, 10),
 				col => resize(in_char_col * 8, 10),
 				char_row => in_char_row, 
-				char_col => in_char_col / in_scale_x, 
+				char_col => in_char_col, 
 				txt_len => to_unsigned(len, 7),
 				txt => (others => nul), -- initalise everything to null
 				scaleX => in_scale_x,

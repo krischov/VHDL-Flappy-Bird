@@ -50,19 +50,20 @@ begin
 
 	char_row <= resize(row / 8, 6);
 	txtrow <= txtvec(txtvec(to_integer(char_row)).scale_index);
-	char_col <= resize((col - txtrow.col) / 8 / txtrow.scaleX, 7);
-
-	acsess_row <=	resize((row - txtrow.row) / txtrow.scaleY, 3);
-	--acsess_col <= col(2 downto 0);
-	acsess_col <= 	resize((col - txtrow.col) / txtrow.scaleX, 3);
+	char_col <= resize((col / 8) / txtrow.scaleX, 7);
 	
+	acsess_row	<=	resize((row - txtrow.row) / txtrow.scaleY, 3);
+	acsess_col	<=	col(2 downto 0) when txtrow.scaleX = 1 else
+					col(3 downto 1) when txtrow.scaleX = 2 or txtrow.scaleX = 3 else
+					col(4 downto 2) when txtrow.scaleX = 4 or txtrow.scaleX = 5 else
+					col(5 downto 3) when txtrow.scaleX = 6 or txtrow.scaleX = 7 or txtrow.scaleX = 8;
+
 	char_addr <= char2rom(txtrow.txt(to_integer(char_col) + 1));
 
 	
 	r <= txtrow.r;
 	g <= txtrow.g;
 	b <= txtrow.b;
-	--not_a <= (others => pixel) when (char_col + 1 > txtrow.char_col and char_col < txtrow.char_col + txtrow.txt_len) else "0000";
 	not_a <= "0000" when txtvec(to_integer(char_row)).scale_index = -1
 					else (others => pixel) when txtrow.txt((to_integer(char_col) + 1)) /= nul
 					else "0000";

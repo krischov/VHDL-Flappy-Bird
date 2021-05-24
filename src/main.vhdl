@@ -116,11 +116,22 @@ begin
 --	str2text(text_vector, 4, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| |  | | (_) | (_| |  __/ \__ \ | | | | | || |  | | (_) | |_) \__ \ ||  __/ |");
 --	str2text(text_vector, 5, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|_|  |_|\___/ \__,_|\___|_|___/_|_| |_| |_||_|  |_|\___/|_.__/|___/\__\___|_|");
 	
-	str2text(text_vector, 7, 65, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
-	str2text(text_vector, 12, 60, 2, 1, "0011", "0100", "1010", "STATIC1");
-	str2text(text_vector, 15, 60, 1, 2, "0011", "0100", "1010", "STATIC2");
-	str2text(text_vector, 20, 60, 3, 3, "0011", "0100", "1010", "STATIC3");
+	str2text(text_vector, 1, 65, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
+	str2text(text_vector, 2, 0, 1, 2, "0011", "0100", "1010", "1,2");
+	str2text(text_vector, 5, 0, 1, 3, "0011", "0100", "1010", "1,3");
+	str2text(text_vector, 9, 0, 1, 4, "0011", "0100", "1010", "1,4");
+	str2text(text_vector, 14, 0, 1, 5, "0011", "0100", "1010", "1,5");
+	str2text(text_vector, 20, 0, 1, 6, "0011", "0100", "1010", "1,6");
+	str2text(text_vector, 27, 0, 1, 7, "0011", "0100", "1010", "1,7");
+	str2text(text_vector, 34, 0, 1, 8, "0011", "0100", "1010", "1,8");
+	str2text(text_vector, 42, 0, 2, 2, "0011", "0100", "1010", "2,2");
+	str2text(text_vector, 44, 0, 4, 3, "0011", "0100", "1010", "4,3");
+	str2text(text_vector, 47, 0, 2, 3, "0011", "0100", "1010", "2,3");
+	str2text(text_vector, 50, 0, 2, 1, "0011", "0100", "1010", "2,1");
+	str2text(text_vector, 51, 0, 4, 1, "0011", "0100", "1010", "4,1");
+	str2text(text_vector, 52, 0, 8, 1, "0011", "0100", "1010", "8,1");
 
+	
 	--Sprites
 
 	grass_idx <= get_active_idx(grassplane, vga_row, vga_col);	
