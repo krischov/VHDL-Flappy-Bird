@@ -4,11 +4,6 @@ use ieee.numeric_std.all;
 
 package textengine_package is 
 
--- BUG NOTE: When scaling in the Y direciton, you must also scale X by some amount 
--- (i.e. Can't leave x sacle as 1, but it can be 2 as a minimum)
--- This bug is not worth fixing as the result of fixing it isn't very useful in this game 
-
-
 --		Max Number Of Rows And Cols Using Each Scaling Size, and the number of characters:
 --
 --		NOTE: Scaling in the X direction (Scaling columns) is limited to powers of 2
