@@ -114,6 +114,10 @@ architecture x of main is
 	
 	constant MODE_TITLE : integer range 0 to 7 := 0;
 	constant MODE_GAME : integer range 0 to 7 := 1;
+	constant MODE_TRAIN : integer range 0 to 7 := 2;
+	constant MODE_HARD : integer range 0 to 7 := 3;
+	constant MODE_OVER : integer range 0 to 7 := 4;
+	
 	
 	signal game_mode : integer range 0 to 7 := MODE_GAME;
 	
@@ -121,7 +125,7 @@ architecture x of main is
 	
 	-- Player Stats
 	
-	signal health: natural range 0 to 7 := 3;
+	signal health: natural range 0 to 3 := 3;
 	signal pipe_points: natural range 0 to 8000 := 0;
 	
 	
@@ -319,7 +323,17 @@ begin
 			end if;
 			
 			-- Pipe Collision Detection, and Pipe Movement
-			
+			if (collision_flag = '1') then
+				if (health > 0) then
+					health <= health - 1;
+					hearts(health).visible <= FALSE;
+				else
+					health <= health - 1;
+					hearts(health).visible <= FALSE;
+					game_mode <= MODE_OVER;
+				end if;
+			end if;
+				
 			for i in 0 to (bottompipe'length - 1) loop
 
 				if (collision_flag = '0' and game_mode = MODE_GAME) then
@@ -442,35 +456,35 @@ begin
 			if (mouse_lbtn = '0' and mouse_flag = '1') then
 				mouse_flag := '0';
 			end if;
-			
-			for i in 0 to (tree0s'length - 1) loop
-				if (tree0s(i).underflow = false) then
-					tree0s(i).x0 <= tree0s(i).x0 - 2;
-					if (tree0s(i).x0 > 640) then
-						tree0s(i).underflow <= true;
+			if (game_mode /= MODE_OVER) then
+				for i in 0 to (tree0s'length - 1) loop
+					if (tree0s(i).underflow = false) then
+						tree0s(i).x0 <= tree0s(i).x0 - 2;
+						if (tree0s(i).x0 > 640) then
+							tree0s(i).underflow <= true;
+						end if;
+					elsif (tree0s(i).underflow = true and (1023 - tree0s(i).x0 <= (tree0s(i).size * tree0s(i).scaling_factor_x))) then
+						tree0s(i).x0 <= tree0s(i).x0 - 2;
+					elsif (tree0s(i).underflow = true and (1023 - tree0s(i).x0 > (tree0s(i).size * tree0s(i).scaling_factor_x))) then
+						tree0s(i).x0 <= to_unsigned(640, 10);
+						tree0s(i).underflow <= false;
 					end if;
-				elsif (tree0s(i).underflow = true and (1023 - tree0s(i).x0 <= (tree0s(i).size * tree0s(i).scaling_factor_x))) then
-					tree0s(i).x0 <= tree0s(i).x0 - 2;
-				elsif (tree0s(i).underflow = true and (1023 - tree0s(i).x0 > (tree0s(i).size * tree0s(i).scaling_factor_x))) then
-					tree0s(i).x0 <= to_unsigned(640, 10);
-					tree0s(i).underflow <= false;
-				end if;
-			end loop;
-			
-			for i in 0 to (grassplane'length - 1) loop
-				if (grassplane(i).underflow = false) then
-					grassplane(i).x0 <= grassplane(i).x0 - 2;
-					if (grassplane(i).x0 > 640) then
-						grassplane(i).underflow <= true;
+				end loop;
+				
+				for i in 0 to (grassplane'length - 1) loop
+					if (grassplane(i).underflow = false) then
+						grassplane(i).x0 <= grassplane(i).x0 - 2;
+						if (grassplane(i).x0 > 640) then
+							grassplane(i).underflow <= true;
+						end if;
+					elsif (grassplane(i).underflow = true and (1023 - grassplane(i).x0 <= (grassplane(i).size * grassplane(i).scaling_factor_x))) then
+						grassplane(i).x0 <= grassplane(i).x0 - 2;
+					elsif (grassplane(i).underflow = true and (1023 - grassplane(i).x0 > (grassplane(i).size * grassplane(i).scaling_factor_x))) then
+						grassplane(i).x0 <= to_unsigned(640, 10);
+						grassplane(i).underflow <= false;
 					end if;
-				elsif (grassplane(i).underflow = true and (1023 - grassplane(i).x0 <= (grassplane(i).size * grassplane(i).scaling_factor_x))) then
-					grassplane(i).x0 <= grassplane(i).x0 - 2;
-				elsif (grassplane(i).underflow = true and (1023 - grassplane(i).x0 > (grassplane(i).size * grassplane(i).scaling_factor_x))) then
-					grassplane(i).x0 <= to_unsigned(640, 10);
-					grassplane(i).underflow <= false;
-				end if;
-			end loop;
-			
+				end loop;
+			end if;
 		end if; 
 	end process;
 	
