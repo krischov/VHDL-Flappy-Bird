@@ -159,7 +159,7 @@ begin
 	
 	-- Game Mode Screen Text Vector
 	
-	str2text(tvec_mode_game, 1, 5, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
+	str2text(tvec_mode_game, 2, 2, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
 	
 	-- =================
 	
