@@ -61,16 +61,16 @@ architecture x of main is
 		(32, to_unsigned(150, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE)
 	);
 	signal grassplane : all_sprites(0 to 9) := (
-		(32, to_unsigned(448, 10), to_unsigned(0,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(64,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(0,10), "000000000000", grass, "0000000000000000", false, 2, 1, FALSE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(64,10), "000000000000", grass, "0000000000000000", false, 2, 1, FALSE, FALSE, FALSE),
 		(32, to_unsigned(448, 10), to_unsigned(128,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(192,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(256,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(320,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(384,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(448,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(512,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(576,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE)
+		(32, to_unsigned(448, 10), to_unsigned(192,10), "000000000000", grass, "0000000000000000", false, 2, 1, FALSE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(256,10), "000000000000", grass, "0000000000000000", false, 2, 1, FALSE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(320,10), "000000000000", grass, "0000000000000000", false, 2, 1, FALSE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(384,10), "000000000000", grass, "0000000000000000", false, 2, 1, FALSE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(448,10), "000000000000", grass, "0000000000000000", false, 2, 1, FALSE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(512,10), "000000000000", grass, "0000000000000000", false, 2, 1, FALSE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(576,10), "000000000000", grass, "0000000000000000", false, 2, 1, FALSE, FALSE, FALSE)
 	);
 
 	signal bottompipe : all_sprites(0 to 1) := (
@@ -115,7 +115,7 @@ architecture x of main is
 	constant MODE_TITLE : integer range 0 to 7 := 0;
 	constant MODE_GAME : integer range 0 to 7 := 1;
 	
-	signal game_mode : integer range 0 to 7 := 0;
+	signal game_mode : integer range 0 to 7 := MODE_GAME;
 	
 	-- ========================
 	
@@ -151,6 +151,7 @@ begin
 	-- Game Mode Screen Text Vector
 	
 	str2text(tvec_mode_game, 1, 65, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
+	str2text(tvec_mode_game, 3, 65, 1, 1, "0011", "0100", "1010", "x0 " & int2str(resize(grassplane(2).x0, 14)));
 	
 	-- =================
 	
@@ -254,9 +255,9 @@ begin
 				"0000" when heart_idx /= -1 and hearts(heart_idx).in_range and hearts(heart_idx).colours(15 downto 12) /= "1111" else
 				"1111";
 	
-	red_out		<=	txt_r when txt_not_a = "1111" else sprite_r when sprite_z = "0000" else "0111";
-	green_out	<=	txt_g when txt_not_a = "1111" else sprite_g when sprite_z = "0000" else "1100";
-	blue_out	<= 	txt_b when txt_not_a = "1111" else sprite_b when sprite_z = "0000" else "1100";
+	red_out		<=	txt_r when txt_not_a = "1111" else sprite_r when sprite_z = "0000" else "0111"; -- 0111
+	green_out	<=	txt_g when txt_not_a = "1111" else sprite_g when sprite_z = "0000" else "1100"; -- 1100
+	blue_out	<= 	txt_b when txt_not_a = "1111" else sprite_b when sprite_z = "0000" else "1100"; -- 1100
 	
 	
 	process(clk)
@@ -285,21 +286,10 @@ begin
 			else
 				mouse_btn <= var_len_str("No Mouse button Pressed", mouse_btn'length);
 			end if;
-
-
---			if (txt_not_a = "1111") then
---				red_out <= txt_r;
---				green_out <= txt_g;
---				blue_out <= txt_b;
---			elsif (sprite_z = "0000") then
---				red_out <= sprite_r;
---				green_out <= sprite_g;
---				blue_out <= sprite_b;
---			else
---				red_out <= "0111";
---				green_out <= "1100";
---				blue_out <= "1100";
---			end if;
+			
+			if (pb_0 = '1') then
+			
+			end if;
 			
 		end if;
 
@@ -332,36 +322,29 @@ begin
 			
 			for i in 0 to (bottompipe'length - 1) loop
 
-				if (collision_flag = '0' and game_mode = MODE_TITLE) then
-					if (bottompipe(i).x0 <= 640) then
-						bottompipe(i).underflow <= false;
+				if (collision_flag = '0' and game_mode = MODE_GAME) then
+					if (bottompipe(i).underflow = false) then
 						bottompipe(i).x0 <= bottompipe(i).x0 - 2;
-						if (bottompipe(i).x0 > (1023 - bottompipe(i).size * bottompipe(i).scaling_factor_x)) then
+						if (bottompipe(i).x0 > 640) then
 							bottompipe(i).underflow <= true;
 						end if;
-					elsif (bottompipe(i).x0 >= (1023 - bottompipe(i).size * bottompipe(i).scaling_factor_x)) then
+					elsif (bottompipe(i).underflow = true and (1023 - bottompipe(i).x0 <= (bottompipe(i).size * bottompipe(i).scaling_factor_x))) then
 						bottompipe(i).x0 <= bottompipe(i).x0 - 2;
-					elsif (bottompipe(i).x0 < (1023 - bottompipe(i).size * bottompipe(i).scaling_factor_x)) then
+					elsif (bottompipe(i).underflow = true and (1023 - bottompipe(i).x0 > (bottompipe(i).size * bottompipe(i).scaling_factor_x))) then
+						bottompipe(i).x0 <= to_unsigned(640, 10);
 						bottompipe(i).underflow <= false;
-						bottompipe(i).x0 <= to_unsigned(640, 10); 
-						-- this pipe is being recycled, it should earn points again
-						bottompipe(i).passed_pipe <= false;
 					end if;
-
 					
-					if (toppipes(i).x0 <= 640) then
-						toppipes(i).underflow <= false;
+					if (toppipes(i).underflow = false) then
 						toppipes(i).x0 <= toppipes(i).x0 - 2;
-						if (toppipes(i).x0 > (1023 - toppipes(i).size * toppipes(i).scaling_factor_x)) then
+						if (toppipes(i).x0 > 640) then
 							toppipes(i).underflow <= true;
 						end if;
-					elsif (toppipes(i).x0 >= (1023 - toppipes(i).size * toppipes(i).scaling_factor_x)) then
+					elsif (toppipes(i).underflow = true and (1023 - toppipes(i).x0 <= (toppipes(i).size * toppipes(i).scaling_factor_x))) then
 						toppipes(i).x0 <= toppipes(i).x0 - 2;
-					elsif (toppipes(i).x0 < (1023 - toppipes(i).size * toppipes(i).scaling_factor_x)) then
+					elsif (toppipes(i).underflow = true and (1023 - toppipes(i).x0 > (toppipes(i).size * toppipes(i).scaling_factor_x))) then
+						toppipes(i).x0 <= to_unsigned(640, 10);
 						toppipes(i).underflow <= false;
-						toppipes(i).x0 <= to_unsigned(640, 10); 
-						-- this pipe is being recycled, it should earn points again
-						toppipes(i).passed_pipe <= false;
 					end if;
 				
 					if (bird(0).visible = true) then
@@ -461,32 +444,30 @@ begin
 			end if;
 			
 			for i in 0 to (tree0s'length - 1) loop
-				if (tree0s(i).x0 <= 640) then
-					tree0s(i).underflow <= false;
+				if (tree0s(i).underflow = false) then
 					tree0s(i).x0 <= tree0s(i).x0 - 2;
-					if (tree0s(i).x0 > (1023 - tree0s(i).size * tree0s(i).scaling_factor_x)) then
+					if (tree0s(i).x0 > 640) then
 						tree0s(i).underflow <= true;
 					end if;
-				elsif (tree0s(i).x0 >= (1023 - tree0s(i).size * tree0s(i).scaling_factor_x)) then
+				elsif (tree0s(i).underflow = true and (1023 - tree0s(i).x0 <= (tree0s(i).size * tree0s(i).scaling_factor_x))) then
 					tree0s(i).x0 <= tree0s(i).x0 - 2;
-				elsif (tree0s(i).x0 < (1023 - tree0s(i).size * tree0s(i).scaling_factor_x)) then
-					tree0s(i).underflow <= false;
+				elsif (tree0s(i).underflow = true and (1023 - tree0s(i).x0 > (tree0s(i).size * tree0s(i).scaling_factor_x))) then
 					tree0s(i).x0 <= to_unsigned(640, 10);
+					tree0s(i).underflow <= false;
 				end if;
 			end loop;
 			
 			for i in 0 to (grassplane'length - 1) loop
-				if (grassplane(i).x0 <= 640) then
-					grassplane(i).underflow <= false;
+				if (grassplane(i).underflow = false) then
 					grassplane(i).x0 <= grassplane(i).x0 - 2;
-					if (grassplane(i).x0 > (1023 - grassplane(i).size * grassplane(i).scaling_factor_x)) then
+					if (grassplane(i).x0 > 640) then
 						grassplane(i).underflow <= true;
 					end if;
-				elsif (grassplane(i).x0 >= (1023 - grassplane(i).size * grassplane(i).scaling_factor_x)) then
+				elsif (grassplane(i).underflow = true and (1023 - grassplane(i).x0 <= (grassplane(i).size * grassplane(i).scaling_factor_x))) then
 					grassplane(i).x0 <= grassplane(i).x0 - 2;
-				elsif (grassplane(i).x0 < (1023 - grassplane(i).size * grassplane(i).scaling_factor_x)) then
-					grassplane(i).underflow <= false;
+				elsif (grassplane(i).underflow = true and (1023 - grassplane(i).x0 > (grassplane(i).size * grassplane(i).scaling_factor_x))) then
 					grassplane(i).x0 <= to_unsigned(640, 10);
+					grassplane(i).underflow <= false;
 				end if;
 			end loop;
 			
