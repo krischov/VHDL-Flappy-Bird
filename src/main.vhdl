@@ -44,6 +44,7 @@ architecture x of main is
 	signal tvec_mode_title: textengine_vector := (others => init_textengine_row);
 	signal tvec_mode_game: textengine_vector := (others => init_textengine_row);
 	signal tvec_mode_over: textengine_vector := (others => init_textengine_row);
+	signal tvec_mode_train: textengine_vector := (others=> init_textengine_row);
 	
 	
 	signal txt_r : unsigned(3 downto 0) := "0000";
@@ -177,6 +178,12 @@ begin
 	
 	
 	--==================
+
+	-- Training Mode Text Vector
+	str2text(tvec_mode_train, 2, 3, 4, 4, "0011", "0100", "1010", "Training Mode");
+
+	--==================
+
 	
 	-- Set the text vector depending on game mode
 	
@@ -326,6 +333,8 @@ begin
 				text_vector <= tvec_mode_game;
 			elsif (game_mode = MODE_OVER) then
 				text_vector <= tvec_mode_over;
+			elsif (game_mode = MODE_TRAIN) then
+				text_vector <= tvec_mode_train;
 			end if;
 	
 			
@@ -355,7 +364,7 @@ begin
 		if (rising_edge(v_sync)) then
 
 		
-			if (health_flag = '1') then
+			if (health_flag = '1' and game_mode = MODE_GAME) then
 				ticks := ticks + 1;
 				if (ticks = 5) then
 					health <= health - 1;
@@ -455,7 +464,7 @@ begin
 					hearts(2).visible <= FALSE;
 				end if;	
 			end if;
-			
+
 			frame := frame + 1;
 			if (frame > 59) then
 				frame := 0;
