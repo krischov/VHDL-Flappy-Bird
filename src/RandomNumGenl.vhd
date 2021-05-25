@@ -31,15 +31,16 @@ begin
 		temp(9) <= temp(8);
 		 
 		t_upper := to_integer(unsigned(temp(2 downto 0)));
+		
 		if(t_upper <= 2) then
-      finalRandNum := temp(t_upper) & temp(t_upper + 3) & temp(t_upper + 4) & temp(t_upper + 2);
-    else
-      finalRandNum := temp(t_upper downto t_upper - 3);
-	  end if;
+			finalRandNum := temp(t_upper) & temp(t_upper + 3) & temp(t_upper + 4) & temp(t_upper + 2);
+		else
+			finalRandNum := temp(t_upper downto t_upper - 3);
+		end if;
 	  
-	 randNum <= finalRandNum;
+		randNum <= finalRandNum;
+		
 	end if;
-
 	end process;	
 end architecture;
 		
