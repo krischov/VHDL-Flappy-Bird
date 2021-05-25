@@ -433,7 +433,15 @@ begin
 				end if;
 			end if;			
 			
-
+			if (pb_1 = '1') then
+				if (game_mode = MODE_TITLE) then
+					game_mode <=MODE_TRAIN;
+					hearts(0).visible <= FALSE;
+					hearts(1).visible <= FALSE;
+					hearts(2).visible <= FALSE;
+				end if;	
+			end if;
+			
 			frame := frame + 1;
 			if (frame > 59) then
 				frame := 0;
@@ -462,7 +470,7 @@ begin
 				end if;		
 		
 				if (initial_lclick = '1') then
-					if (collision_flag = '0' and game_mode = MODE_GAME and game_mode = MODE_TRAIN) then
+					if (collision_flag = '0' and (game_mode = MODE_GAME or game_mode = MODE_TRAIN)) then
 						if (bottompipe(i).x0 <= 640) then
 							bottompipe(i).underflow <= false;
 							bottompipe(i).x0 <= bottompipe(i).x0 - 2;
@@ -643,11 +651,7 @@ begin
 				collision_flag := '0';
 			end if;
 			
-			if (game_mode = MODE_TRAIN) then
-				hearts(0).visible <= FALSE;
-				hearts(1).visible <= FALSE;
-				hearts(2).visible <= FALSE;
-			end if;	
+
 		end if; 
 	end process;
 	
