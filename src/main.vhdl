@@ -38,6 +38,8 @@ architecture x of main is
 	
 	signal tvec_mode_title: textengine_vector := (others => init_textengine_row);
 	signal tvec_mode_game: textengine_vector := (others => init_textengine_row);
+	signal tvec_mode_over: textengine_vector := (others => init_textengine_row);
+	
 	
 	signal txt_r : unsigned(3 downto 0) := "0000";
 	signal txt_g : unsigned(3 downto 0) := "0000";
@@ -142,11 +144,11 @@ begin
 --	str2text(text_vector, 4, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| |  | | (_) | (_| |  __/ \__ \ | | | | | || |  | | (_) | |_) \__ \ ||  __/ |");
 --	str2text(text_vector, 5, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|_|  |_|\___/ \__,_|\___|_|___/_|_| |_| |_||_|  |_|\___/|_.__/|___/\__\___|_|");
 	
-	-- Title Screen Text Vecotr 
+	-- Title Screen Text Vector 
 	str2text(tvec_mode_title, 1, 2, 8, 8, "0011", "0100", "1010", "Flappy");
 	str2text(tvec_mode_title, 9, 3, 8, 8, "0011", "0100", "1010", "Bird");
 	str2text(tvec_mode_title, 40, 8, 2, 2, "0011", "0100", "1010", "Created and Developed by");
-	str2text(tvec_mode_title, 42, 10, 2, 2, "0011", "0100", "1010", "The ModelsimMobsters");
+	str2text(tvec_mode_title, 42, 10, 2, 2, "0011", "0100", "1010", "The Modelsim Mobsters");
 	str2text(tvec_mode_title, 50, 16, 1, 1, "0011", "0100", "1010", "Based on the concept of https://flappybird.io/");
 	
 	
@@ -159,10 +161,15 @@ begin
 	
 	-- =================
 	
+	-- Game Over Screen Text Vector
+	
+	str2text(tvec_mode_over, 9, 3, 8, 8, "0011", "0100", "1010", "Game Over");
+	
 	-- Set the text vector depending on game mode
 	
 	text_vector <=	tvec_mode_title	when game_mode = MODE_TITLE else
-					tvec_mode_game	when game_mode = MODE_GAME;
+					tvec_mode_game	when game_mode = MODE_GAME else
+					tvec_mode_over when game_mode = MODE_OVER;
 	
 	
 	--Sprites
@@ -456,7 +463,7 @@ begin
 			if (mouse_lbtn = '0' and mouse_flag = '1') then
 				mouse_flag := '0';
 			end if;
-			if (game_mode /= MODE_OVER) then
+			if (game_mode = MODE_GAME) then
 				for i in 0 to (tree0s'length - 1) loop
 					if (tree0s(i).underflow = false) then
 						tree0s(i).x0 <= tree0s(i).x0 - 2;
@@ -485,17 +492,11 @@ begin
 					end if;
 				end loop;
 			end if;
+			
+			--if (game_mode = MODE_OVER) then
+			
+				
 		end if; 
 	end process;
-	
-	
-	-- Grass movement 
-	
---	process(v_sync)
---	begin
---		if (rising_edge(v_sync)) then
---
---		end if;
---	end process;
 	
 end architecture;
