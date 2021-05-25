@@ -167,9 +167,7 @@ begin
 	
 	-- Set the text vector depending on game mode
 	
-	text_vector <=	tvec_mode_title	when game_mode = MODE_TITLE else
-					tvec_mode_game	when game_mode = MODE_GAME else
-					tvec_mode_over when game_mode = MODE_OVER;
+
 	
 	
 	--Sprites
@@ -301,6 +299,16 @@ begin
 			if (pb_0 = '1') then
 			
 			end if;
+			
+		
+			if (game_mode = MODE_TITLE) then
+				text_vector <= tvec_mode_title;
+			elsif (game_mode = MODE_GAME) then
+				text_vector <= tvec_mode_game;
+			elsif (game_mode = MODE_OVER) then
+				text_vector <= tvec_mode_over;
+			end if;
+			
 			
 		end if;
 
