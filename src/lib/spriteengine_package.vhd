@@ -106,11 +106,11 @@ package body spriteengine_package is
 		else
 			-- Drawing Right side of underflow (Scrolling into view)
 			if (vga_col >= 640 - (1023 - x0(9 downto 0))) then
-					col := resize(1023 - s.x0, 12);
+					col := vga_col - resize(1023 - s.x0, 12);
 			end if;
 			-- Drawing Left side of underflow (Scrolling out of view)
 			if (vga_col <= w - (1023 - x0(9 downto 0))) then
-				col := w - resize(1023 - s.x0, 12);
+				col := vga_col + (w - resize(1023 - s.x0, 12));
 			end if;
 			
 			if(s.size = 16) then
