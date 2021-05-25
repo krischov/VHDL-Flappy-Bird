@@ -341,10 +341,10 @@ begin
 
 		
 			if (health_flag = '1') then
-				health <= health - 1;
-				hearts(health - 1).visible <= FALSE;
 				ticks := ticks + 1;
 				if (ticks = 5) then
+					health <= health - 1;
+					hearts(health - 1).visible <= FALSE;
 					bird(0).visible <= FALSE;
 				elsif (ticks = 10) then
 					bird(0).visible <= TRUE;
@@ -454,7 +454,7 @@ begin
 				end if;
 				
 				if (initial_lclick = '1') then
-					if (collision_flag = '0' and game_mode = MODE_GAME ) then
+					if (collision_flag = '0' and game_mode = MODE_GAME) then
 						if (bottompipe(i).x0 <= 640) then
 							bottompipe(i).underflow <= false;
 							bottompipe(i).x0 <= bottompipe(i).x0 - 2;
