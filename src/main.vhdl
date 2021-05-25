@@ -452,8 +452,14 @@ begin
 				else
 					bottompipe(i).visible <= TRUE;
 					toppipes(i).visible <= TRUE;
-				end if;
-				
+				end if;		
+			
+				-- if the user has just passed through this pipe, give them a point			
+				if (enable_collision = '1' and bottompipe(i).passed_pipe = false and bird(0).x0 > bottompipe(i).x0 + bottompipe(i).size * bottompipe(i).scaling_factor_x) then
+					bottompipe(i).passed_pipe <= true;
+					pipe_points <= pipe_points + 1; 
+				end if;		
+		
 				if (initial_lclick = '1') then
 					if (collision_flag = '0' and game_mode = MODE_GAME) then
 						if (bottompipe(i).x0 <= 640) then
@@ -466,9 +472,9 @@ begin
 							bottompipe(i).x0 <= bottompipe(i).x0 - 2;
 						elsif (bottompipe(i).x0 < 1023 - bottompipe(i).size * bottompipe(i).scaling_factor_x) then
 							bottompipe(i).underflow <= false;
-							bottompipe(i).x0 <= to_unsigned(640, 10); 
+							bottompipe(i).x0 <= to_unsigned(640, 10);
 							-- the pipe is being recycled, it should gives points again
-							bottompipe(i).passed_pipe <= true;
+							bottompipe(i).passed_pipe <= false;
 						end if;
 							
 						if (toppipes(i).x0 <= 640) then
@@ -566,13 +572,7 @@ begin
 								end if;
 							end if;
 					end if;
-				end if;
-				-- if the user has just passed through this pipe, give them a point
-				
-				if (enable_collision = '1' and bottompipe(i).passed_pipe = false and bird(0).x0 > bottompipe(i).x0 + bottompipe(i).size * bottompipe(i).scaling_factor_x) then
-					bottompipe(i).passed_pipe <= true;
-					pipe_points <= pipe_points + 1; 
-				end if;
+				end if;	
 			end loop;
 		
 			-- Boost the bird up on mouse click, otherwise make it fall 
