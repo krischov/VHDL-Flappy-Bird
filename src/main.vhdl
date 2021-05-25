@@ -160,7 +160,6 @@ begin
 	-- Game Mode Screen Text Vector
 	
 	str2text(tvec_mode_game, 1, 65, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
-	str2text(tvec_mode_game, 3, 65, 1, 1, "0011", "0100", "1010", "x0 " & int2str(resize(grassplane(2).x0, 14)));
 	
 	-- =================
 	

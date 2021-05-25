@@ -133,12 +133,12 @@ package body spriteengine_package is
 			y1 := y0 + h;
 		
 			if (not sprites(i).underflow) then
-				if (sprites(i).visible and ((vga_row >= y0) and (vga_row < y1) and (vga_col + 1 >= x0) and (vga_col < x1))) then
+				if (((vga_row >= y0) and (vga_row < y1) and (vga_col + 1 >= x0) and (vga_col < x1))) then
 					return i;
 				end if;
 			else
 				-- NOTE: We rely on unsigned 10-bit overflow for x0 and x1 !!
-				if (sprites(i).visible and ((vga_row >= y0) and (vga_row < y1) and (2**10-1 - w <= x0(9 downto 0)) and (vga_col < x1(9 downto 0)))) then
+				if (((vga_row >= y0) and (vga_row < y1) and (2**10-1 - w <= x0(9 downto 0)) and (vga_col < x1(9 downto 0)))) then
 					return i;
 				end if;
 			end if;
