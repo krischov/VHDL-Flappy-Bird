@@ -461,7 +461,7 @@ begin
 				end if;		
 		
 				if (initial_lclick = '1') then
-					if (collision_flag = '0' and game_mode = MODE_GAME) then
+					if (collision_flag = '0' and game_mode = MODE_GAME and game_mode = MODE_TRAIN) then
 						if (bottompipe(i).x0 <= 640) then
 							bottompipe(i).underflow <= false;
 							bottompipe(i).x0 <= bottompipe(i).x0 - 2;
@@ -497,7 +497,7 @@ begin
 									((bird(0).y0 + bird(0).size - 6 >= bottompipe(i).y0) and (bird(0).y0 + bird(0).size - 8 <= bottompipe(i).y0 + bottompipe(1).size*bottompipe(i).scaling_factor_y - 1)))) then
 									health_flag <= '1';
 									enable_collision := '0';
-									if (health - 1 = 0) then
+									if (health - 1 = 0 and game_mode = MODE_GAME) then
 										collision_flag := '1';
 									end if;
 								else
@@ -513,7 +513,7 @@ begin
 										if (bird_transparency(to_integer(bird_pos)) /= '1' and top_pipe_transparency(to_integer(toppipe_pos)) /= '1') then
 											health_flag <= '1';
 											enable_collision := '0';
-											if (health - 1 = 0) then
+											if (health - 1 = 0 and game_mode = MODE_GAME) then
 												collision_flag := '1';
 											end if;
 										end if;
@@ -530,7 +530,7 @@ begin
 										if (bird_transparency(to_integer(bird_pos)) /= '1' and top_pipe_transparency(to_integer(toppipe_pos)) /= '1') then
 											health_flag <= '1';
 											enable_collision := '0';
-											if (health - 1 = 0) then
+											if (health - 1 = 0 and game_mode = MODE_GAME) then
 												collision_flag := '1';
 											end if;
 										end if;
@@ -547,7 +547,7 @@ begin
 										if (bird_transparency(to_integer(bird_pos)) /= '1' and top_pipe_transparency(to_integer(toppipe_pos)) /= '1') then
 											health_flag <= '1';
 											enable_collision := '0';
-											if (health - 1 = 0) then
+											if (health - 1 = 0 and game_mode = MODE_GAME) then
 												collision_flag := '1';
 											end if;
 										end if;
@@ -564,7 +564,7 @@ begin
 										if (bird_transparency(to_integer(bird_pos)) /= '1' and top_pipe_transparency(to_integer(toppipe_pos)) /= '1') then
 											health_flag <= '1';
 											enable_collision := '0';
-											if (health - 1 = 0) then
+											if (health - 1 = 0 and game_mode = MODE_GAME) then
 												collision_flag := '1';
 											end if;
 										end if;
@@ -642,6 +642,11 @@ begin
 				collision_flag := '0';
 			end if;
 			
+			if (game_mode = MODE_TRAIN) then
+				hearts(0).visible <= FALSE;
+				hearts(1).visible <= FALSE;
+				hearts(2).visible <= FALSE;
+			end if;	
 		end if; 
 	end process;
 	
