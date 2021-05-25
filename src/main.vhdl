@@ -159,7 +159,7 @@ begin
 	
 	-- Game Mode Screen Text Vector
 	
-	str2text(tvec_mode_game, 1, 5, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
+	str2text(tvec_mode_game, 4, 2, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
 	
 	-- =================
 	
@@ -328,7 +328,7 @@ begin
 	variable collision_flag : std_logic := '0';
 	variable enable_collision : std_logic := '1';
 	variable frame : natural range 0 to 60 := 0;
-	variable ticks : natural range 0 to 60 := 0;
+	variable ticks : natural range 0 to 255 := 0;
 	variable qtr_seconds : natural range 0 to 3 := 0;	
 	-- total number of pixels to shift bird up by per mouse click
 	constant h_boost : natural range 0 to 256 := 60;
