@@ -165,6 +165,8 @@ begin
 	
 	str2text(tvec_mode_over, 9, 3, 8, 8, "0011", "0100", "1010", "Game Over");
 	
+	--==================
+	
 	-- Set the text vector depending on game mode
 	
 
@@ -350,6 +352,13 @@ begin
 			end if;
 				
 			for i in 0 to (bottompipe'length - 1) loop
+				if (game_mode = MODE_TITLE) then
+					bottompipe(i).visible <= FALSE;
+					toppipes(i).visible <= FALSE;
+				else
+					bottompipe(i).visible <= TRUE;
+					toppipes(i).visible <= TRUE;
+				end if;
 
 				if (collision_flag = '0' and game_mode = MODE_GAME) then
 					if (bottompipe(i).underflow = false) then
@@ -471,7 +480,7 @@ begin
 			if (mouse_lbtn = '0' and mouse_flag = '1') then
 				mouse_flag := '0';
 			end if;
-			if (game_mode = MODE_GAME) then
+			if (game_mode = MODE_GAME or game_mode = MODE_TITLE or game_mode = MODE_TRAIN) then
 				for i in 0 to (tree0s'length - 1) loop
 					if (tree0s(i).underflow = false) then
 						tree0s(i).x0 <= tree0s(i).x0 - 2;
@@ -501,9 +510,7 @@ begin
 				end loop;
 			end if;
 			
-			--if (game_mode = MODE_OVER) then
-			
-				
+
 		end if; 
 	end process;
 	
