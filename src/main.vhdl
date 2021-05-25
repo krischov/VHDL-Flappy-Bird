@@ -467,6 +467,8 @@ begin
 						elsif (bottompipe(i).x0 < 1023 - bottompipe(i).size * bottompipe(i).scaling_factor_x) then
 							bottompipe(i).underflow <= false;
 							bottompipe(i).x0 <= to_unsigned(640, 10); 
+							-- the pipe is being recycled, it should gives points again
+							bottompipe(i).passed_pipe <= true;
 						end if;
 							
 						if (toppipes(i).x0 <= 640) then
