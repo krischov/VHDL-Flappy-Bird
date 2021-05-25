@@ -167,7 +167,8 @@ begin
 	
 	str2text(tvec_mode_over, 9, 3, 8, 8, "0011", "0100", "1010", "Game");
 	str2text(tvec_mode_over, 17, 3, 8, 8, "0011", "0100", "1010", "Over");
-	
+	str2text(tvec_mode_over, 30, 4, 4, 4, "0001", "0000", "0001", "You've Scored");
+	str2text(tvec_mode_over, 35, 4, 4, 4, "0001", "0000", "0001", int2str(pipe_points) & "Points !");
 	
 	--==================
 	
