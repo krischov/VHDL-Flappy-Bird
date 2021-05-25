@@ -31,8 +31,13 @@ architecture x of main is
 			);
 	end component spriteengine;
 	-- signals -- 
-	
-
+	component randomNumGen is
+		port(
+			clk							: 		in std_logic;
+			seed          				:   	in natural range 1 to 1023;
+			randNum  					: 		out std_logic_vector(3 downto 0)
+		);
+	end component randomNumGen;
 	
 	signal text_vector: textengine_vector := (others => init_textengine_row);
 	
@@ -125,7 +130,8 @@ architecture x of main is
 	
 	
 	signal game_mode : integer range 0 to 7 := MODE_TITLE;
-	
+	signal seed : natural range 1 to 1023;
+	signal randNum : std_logic_vector(3 downto 0);
 	-- ========================
 	
 	-- Player Stats
@@ -139,6 +145,7 @@ begin
 
 	spriteengine0 : spriteengine port map (clk, vga_row, vga_col, sprites_addrs, sprites_out);
 	textengine0: textengine port map(clk, text_vector, vga_row, vga_col, txt_r, txt_g, txt_b, txt_not_a);
+	randomNumGen0 : randomNumGen port map(clk, seed, randNum);
 		
 --	str2text(text_vector, 0, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, " __  __           _      _     _            __  __       _         _");
 --	str2text(text_vector, 1, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|  \/  |         | |    | |   (_)          |  \/  |     | |       | |");
@@ -277,6 +284,8 @@ begin
 	
 	process(clk)
 		variable ticks : integer := 0;
+		variable seedTicks : natural range 1 to 1023;
+		variable seedDone : boolean := false;
 	begin
 		if (rising_edge(clk)) then
 			ticks := ticks + 1;
@@ -285,6 +294,10 @@ begin
 				
 				sec <= sec + 1;
 				ticks := 0;
+			end if;
+			
+			if(initial_lclick = '0' and seedDone = false and (game_mode = MODE_GAME or game_mode = MODE_TRAIN)) then
+				seedTicks := seedTicks + 1;
 			end if;
 			
 			if (mouse_col <= 624) then
@@ -298,6 +311,8 @@ begin
 				mouse_btn <= var_len_str("Left Mouse button Pressed", mouse_btn'length);
 				if (game_mode = GAME_MODE) then
 					initial_lclick <= '1';
+					seedDone := True;
+					seed <= seedTicks;					
 				end if;
 			elsif (mouse_rbtn = '1') then
 				mouse_btn <= var_len_str("Right Mouse button Pressed", mouse_btn'length);
