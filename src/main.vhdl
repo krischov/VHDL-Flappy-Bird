@@ -64,17 +64,18 @@ architecture x of main is
 		(32, to_unsigned(195, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
 		(32, to_unsigned(150, 10), to_unsigned(50,10), "000000000000", bird0, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE)
 	);
-	signal grassplane : all_sprites(0 to 9) := (
-		(32, to_unsigned(448, 10), to_unsigned(0,10), "000000000000", grass, "0000000000000000", false, 2, 1, FALSE, FALSE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(64,10), "000000000000", grass, "0000000000000000", false, 2, 1, FALSE, FALSE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(128,10), "000000000000", grass, "0000000000000000", false, 2, 1, FALSE, FALSE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(192,10), "000000000000", grass, "0000000000000000", false, 2, 1, FALSE, FALSE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(256,10), "000000000000", grass, "0000000000000000", false, 2, 1, FALSE, FALSE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(320,10), "000000000000", grass, "0000000000000000", false, 2, 1, FALSE, FALSE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(384,10), "000000000000", grass, "0000000000000000", false, 2, 1, FALSE, FALSE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(448,10), "000000000000", grass, "0000000000000000", false, 2, 1, FALSE, FALSE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(512,10), "000000000000", grass, "0000000000000000", false, 2, 1, FALSE, FALSE, FALSE),
-		(32, to_unsigned(448, 10), to_unsigned(576,10), "000000000000", grass, "0000000000000000", false, 2, 1, FALSE, FALSE, FALSE)
+	signal grassplane : all_sprites(0 to 10) := (
+		(32, to_unsigned(448, 10), to_unsigned(0,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(64,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(128,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(192,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(256,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(320,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(384,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(448,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(512,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(576,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(448, 10), to_unsigned(640,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE)
 	);
 
 	signal bottompipe : all_sprites(0 to 1) := (
@@ -89,9 +90,9 @@ architecture x of main is
 
 	
 	signal tree0s : all_sprites(0 to 2) := (
-		(64, to_unsigned(380, 10), to_unsigned(80, 10), "000000000000", tree0, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE),
-		(64, to_unsigned(380, 10), to_unsigned(200, 10), "000000000000", tree0, "0000000000000000", false, 1, 2, FALSE, FALSE, FALSE),
-		(64, to_unsigned(380, 10), to_unsigned(400, 10), "000000000000", tree0, "0000000000000000", false, 2, 2, FALSE, FALSE, FALSE)
+		(64, to_unsigned(380, 10), to_unsigned(80, 10), "000000000000", tree0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(64, to_unsigned(380, 10), to_unsigned(200, 10), "000000000000", tree0, "0000000000000000", false, 1, 2, TRUE, FALSE, FALSE),
+		(64, to_unsigned(380, 10), to_unsigned(400, 10), "000000000000", tree0, "0000000000000000", false, 2, 2, TRUE, FALSE, FALSE)
 	);
 	
 	signal mousecursor : all_sprites(0 to 1) := (
@@ -123,7 +124,7 @@ architecture x of main is
 	constant MODE_OVER : integer range 0 to 7 := 4;
 	
 	
-	signal game_mode : integer range 0 to 7 := MODE_GAME;
+	signal game_mode : integer range 0 to 7 := MODE_TITLE;
 	
 	-- ========================
 	
@@ -160,7 +161,6 @@ begin
 	
 	str2text(tvec_mode_game, 1, 65, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
 	str2text(tvec_mode_game, 3, 65, 1, 1, "0011", "0100", "1010", "x0 " & int2str(resize(grassplane(2).x0, 14)));
-	str2text(tvec_mode_game, 5, 65, 1, 1, "0011", "0100", "1010", "Points " & int2str(health));
 	
 	-- =================
 	
@@ -297,17 +297,14 @@ begin
 			
 			if (mouse_lbtn = '1') then
 				mouse_btn <= var_len_str("Left Mouse button Pressed", mouse_btn'length);
-				initial_lclick <= '1';
+				if (game_mode = GAME_MODE) then
+					initial_lclick <= '1';
+				end if;
 			elsif (mouse_rbtn = '1') then
 				mouse_btn <= var_len_str("Right Mouse button Pressed", mouse_btn'length);
 			else
 				mouse_btn <= var_len_str("No Mouse button Pressed", mouse_btn'length);
 			end if;
-			
-			if (pb_0 = '1') then
-			
-			end if;
-			
 		
 			if (game_mode = MODE_TITLE) then
 				text_vector <= tvec_mode_title;
@@ -343,6 +340,11 @@ begin
 	variable apply_h_boost : natural range 0 to 8 := 0; 
 	begin
 		if (rising_edge(v_sync)) then
+			if (pb_0 = '1') then
+				if (game_mode = MODE_TITLE) then
+					game_mode <= MODE_GAME;
+				end if;
+			end if;			
 			
 			frame := frame + 1;
 			if (frame > 59) then
@@ -385,29 +387,31 @@ begin
 				if (initial_lclick = '1')then
 
 					if (collision_flag = '0' and game_mode = MODE_GAME and health_flag = '0') then
-						if (bottompipe(i).underflow = false) then
-							bottompipe(i).x0 <= bottompipe(i).x0 - 2;
-							if (bottompipe(i).x0 > 640) then
-								bottompipe(i).underflow <= true;
-							end if;
-						elsif (bottompipe(i).underflow = true and (1023 - bottompipe(i).x0 <= (bottompipe(i).size * bottompipe(i).scaling_factor_x))) then
-							bottompipe(i).x0 <= bottompipe(i).x0 - 2;
-						elsif (bottompipe(i).underflow = true and (1023 - bottompipe(i).x0 > (bottompipe(i).size * bottompipe(i).scaling_factor_x))) then
-							bottompipe(i).x0 <= to_unsigned(640, 10);
-							bottompipe(i).underflow <= false;
+					if (bottompipe(i).x0 <= 640) then
+						bottompipe(i).underflow <= false;
+						bottompipe(i).x0 <= bottompipe(i).x0 - 2;
+						if (bottompipe(i).x0 < 1) then
+							bottompipe(i).underflow <= true;
 						end if;
+					elsif (bottompipe(i).x0 >= 1023 - bottompipe(i).size * bottompipe(i).scaling_factor_x) then
+						bottompipe(i).x0 <= bottompipe(i).x0 - 2;
+					elsif (bottompipe(i).x0 < 1023 - bottompipe(i).size * bottompipe(i).scaling_factor_x) then
+						bottompipe(i).underflow <= false;
+						bottompipe(i).x0 <= to_unsigned(640, 10); 
+					end if;
 						
-						if (toppipes(i).underflow = false) then
-							toppipes(i).x0 <= toppipes(i).x0 - 2;
-							if (toppipes(i).x0 > 640) then
-								toppipes(i).underflow <= true;
-							end if;
-						elsif (toppipes(i).underflow = true and (1023 - toppipes(i).x0 <= (toppipes(i).size * toppipes(i).scaling_factor_x))) then
-							toppipes(i).x0 <= toppipes(i).x0 - 2;
-						elsif (toppipes(i).underflow = true and (1023 - toppipes(i).x0 > (toppipes(i).size * toppipes(i).scaling_factor_x))) then
-							toppipes(i).x0 <= to_unsigned(640, 10);
-							toppipes(i).underflow <= false;
+					if (toppipes(i).x0 <= 640) then
+						toppipes(i).underflow <= false;
+						toppipes(i).x0 <= toppipes(i).x0 - 2;
+						if (toppipes(i).x0 < 1) then
+							toppipes(i).underflow <= true;
 						end if;
+					elsif (toppipes(i).x0 >= 1023 - toppipes(i).size * toppipes(i).scaling_factor_x) then
+						toppipes(i).x0 <= toppipes(i).x0 - 2;
+					elsif (toppipes(i).x0 < 1023 - toppipes(i).size * toppipes(i).scaling_factor_x) then
+						toppipes(i).underflow <= false;
+						toppipes(i).x0 <= to_unsigned(640, 10); 
+					end if;
 					
 						if (bird(0).visible = true) then
 							-- Do collision and point detection here
@@ -516,31 +520,33 @@ begin
 			end if;
 			if (game_mode = MODE_GAME or game_mode = MODE_TITLE or game_mode = MODE_TRAIN) then
 				for i in 0 to (tree0s'length - 1) loop
-					if (tree0s(i).underflow = false) then
-						tree0s(i).x0 <= tree0s(i).x0 - 2;
-						if (tree0s(i).x0 > 640) then
-							tree0s(i).underflow <= true;
+					if (tree0s(i).x0 <= 640) then
+							tree0s(i).underflow <= false;
+							tree0s(i).x0 <= tree0s(i).x0 - 2;
+							if (tree0s(i).x0 < 1) then
+								tree0s(i).underflow <= true;
+							end if;
+						elsif (tree0s(i).x0 >= 1023 - tree0s(i).size * tree0s(i).scaling_factor_x) then
+							tree0s(i).x0 <= tree0s(i).x0 - 2;
+						elsif (tree0s(i).x0 < 1023 - tree0s(i).size * tree0s(i).scaling_factor_x) then
+							tree0s(i).underflow <= false;
+							tree0s(i).x0 <= to_unsigned(640, 10); 
 						end if;
-					elsif (tree0s(i).underflow = true and (1023 - tree0s(i).x0 <= (tree0s(i).size * tree0s(i).scaling_factor_x))) then
-						tree0s(i).x0 <= tree0s(i).x0 - 2;
-					elsif (tree0s(i).underflow = true and (1023 - tree0s(i).x0 > (tree0s(i).size * tree0s(i).scaling_factor_x))) then
-						tree0s(i).x0 <= to_unsigned(640, 10);
-						tree0s(i).underflow <= false;
-					end if;
 				end loop;
 				
 				for i in 0 to (grassplane'length - 1) loop
-					if (grassplane(i).underflow = false) then
-						grassplane(i).x0 <= grassplane(i).x0 - 2;
-						if (grassplane(i).x0 > 640) then
-							grassplane(i).underflow <= true;
+					if (grassplane(i).x0 <= 640) then
+							grassplane(i).underflow <= false;
+							grassplane(i).x0 <= grassplane(i).x0 - 2;
+							if (grassplane(i).x0 < 1) then
+								grassplane(i).underflow <= true;
+							end if;
+						elsif (grassplane(i).x0 >= 1023 - grassplane(i).size * grassplane(i).scaling_factor_x) then
+							grassplane(i).x0 <= grassplane(i).x0 - 2;
+						elsif (grassplane(i).x0 < 1023 - grassplane(i).size * grassplane(i).scaling_factor_x) then
+							grassplane(i).underflow <= false;
+							grassplane(i).x0 <= to_unsigned(640, 10); 
 						end if;
-					elsif (grassplane(i).underflow = true and (1023 - grassplane(i).x0 <= (grassplane(i).size * grassplane(i).scaling_factor_x))) then
-						grassplane(i).x0 <= grassplane(i).x0 - 2;
-					elsif (grassplane(i).underflow = true and (1023 - grassplane(i).x0 > (grassplane(i).size * grassplane(i).scaling_factor_x))) then
-						grassplane(i).x0 <= to_unsigned(640, 10);
-						grassplane(i).underflow <= false;
-					end if;
 				end loop;
 			end if;
 			
