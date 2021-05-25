@@ -341,6 +341,8 @@ begin
 
 		
 			if (health_flag = '1') then
+				health <= health - 1;
+				hearts(health - 1).visible <= FALSE;
 				ticks := ticks + 1;
 				if (ticks = 15) then
 					bird(0).visible <= FALSE;
@@ -366,6 +368,7 @@ begin
 					bird(0).visible <= FALSE;
 				elsif (ticks = 180) then
 					bird(0).visible <= TRUE;
+					health_flag <= '0';
 				end if;
 			end if;
 
@@ -383,16 +386,11 @@ begin
 			end if;
 			
 			-- Pipe Collision Detection, and Pipe Movement
-			if (health_flag = '1') then
-				if (health = 0) then
-					game_mode <= MODE_OVER;
-				elsif (health > 0) then
-					health <= health - 1;
-					hearts(health - 1).visible <= FALSE;
-					health_flag <= '0';
-				end if;
+	
+			if (health = 0) then
+				game_mode <= MODE_OVER;
 			end if;
-				
+
 			for i in 0 to (bottompipe'length - 1) loop
 			
 				if (game_mode = MODE_TITLE) then
