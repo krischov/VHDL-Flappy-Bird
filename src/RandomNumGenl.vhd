@@ -5,7 +5,7 @@ use ieee.numeric_std.all;
 entity randomNumGen is
 	port(
 		clk							: 		in std_logic;
-		seed          :   in natural range 1 to 1023;
+		seed          				:   	in natural range 1 to 1023;
 		randNum  					: 		out std_logic_vector(3 downto 0)
 	);
 end entity randomNumGen;
