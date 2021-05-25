@@ -96,9 +96,9 @@ architecture x of main is
 
 	
 	signal tree0s : all_sprites(0 to 2) := (
-		(64, to_unsigned(420, 10), to_unsigned(80, 10), "000000000000", tree0, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE),
-		(64, to_unsigned(380, 10), to_unsigned(200, 10), "000000000000", tree0, "0000000000000000", false, 1, 2, FALSE, FALSE, FALSE),
-		(64, to_unsigned(380, 10), to_unsigned(400, 10), "000000000000", tree0, "0000000000000000", false, 2, 2, FALSE, FALSE, FALSE)
+		(64, to_unsigned(420, 10), to_unsigned(80, 10), "000000000000", tree0, "0000000000000000", false, 1, 1, true, FALSE, FALSE),
+		(64, to_unsigned(380, 10), to_unsigned(250, 10), "000000000000", tree0, "0000000000000000", false, 1, 2, true, FALSE, FALSE),
+		(64, to_unsigned(380, 10), to_unsigned(500, 10), "000000000000", tree0, "0000000000000000", false, 2, 2, true, FALSE, FALSE)
 	);
 	
 	signal mousecursor : all_sprites(0 to 1) := (
