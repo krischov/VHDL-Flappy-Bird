@@ -568,7 +568,8 @@ begin
 					end if;
 				end if;
 				-- if the user has just passed through this pipe, give them a point
-				if (bottompipe(i).passed_pipe = false and bird(0).x0 > bottompipe(i).x0 + bottompipe(i).size * bottompipe(i).scaling_factor_x) then
+				
+				if (enable_collision = '1' and bottompipe(i).passed_pipe = false and bird(0).x0 > bottompipe(i).x0 + bottompipe(i).size * bottompipe(i).scaling_factor_x) then
 					bottompipe(i).passed_pipe <= true;
 					pipe_points <= pipe_points + 1; 
 				end if;
