@@ -67,18 +67,15 @@ package body spriteengine_package is
 	begin
 		if (s.underflow = false) then
 			return s.visible and ((vga_row >= y0) and (vga_row < y1) and (vga_col >= x0) and (vga_col < x1));
-		elsif (s.visible = true) then
-			-- NOTE: We rely on unsigned 10-bit overflow for x0 and x1 !!
-			return (((vga_row >= y0) and (vga_row < y1)) and (vga_col >= 640 - (1023 - x0(9 downto 0)))) or
-				(((vga_row >= y0) and (vga_row < y1)) and (vga_col <= w - (1023 - x0(9 downto 0))));
 		else
-			return false;
+			-- NOTE: We rely on unsigned 10-bit overflow for x0 and x1 !!
+			return s.visible and ((vga_row < y1) and (vga_row >= y0) and (2**10-1 - w <= x0(9 downto 0)) and (vga_col < x1(9 downto 0)));
 		end if;
 	end function;
 
 	function calc_addr_f (signal s: in sprite; signal vga_row : in unsigned(9 downto 0); signal vga_col : in unsigned(9 downto 0)) return std_logic_vector is
 	variable row : unsigned(11 downto 0) := resize(vga_row, 12) - resize(s.y0, 12);
-	variable col : unsigned(11 downto 0) := to_unsigned(0, 12);
+	variable col : unsigned(11 downto 0) := resize(vga_col, 12) - resize(s.x0, 12);
 	variable scaleY: unsigned(11 downto 0) := to_unsigned(s.scaling_factor_y, 12);
 	variable scaleX: unsigned(11 downto 0) := to_unsigned(s.scaling_factor_x, 12);
 	
@@ -94,37 +91,24 @@ package body spriteengine_package is
 	variable y1: unsigned(11 downto 0) := y0 + h;	
 		
 	begin
-		if (s.underflow = false) then
-			col := resize(vga_col, 12) - resize(s.x0, 12);
+			if (s.underflow = true) then
+				col := vga_col + (1023 - x0);
+				if(s.size = 16) then
+					return STD_LOGIC_VECTOR(shift_left(row / scaleY, 4) + ((col + 1) / scaleX));
+				elsif (s.size = 32) then
+					return STD_LOGIC_VECTOR(shift_left(row / scaleY, 5) + ((col + 1) / scaleX));
+				else -- size is 64
+					return STD_LOGIC_VECTOR(shift_left(row / scaleY, 6) + ((col(9 downto 0) + 1) / scaleX));
+				end if;	
+			end if;
+		
 			if(s.size = 16) then
 				return STD_LOGIC_VECTOR(shift_left(row / scaleY, 4) + ((col + 1) / scaleX));
 			elsif (s.size = 32) then
 				return STD_LOGIC_VECTOR(shift_left(row / scaleY, 5) + ((col + 1) / scaleX));
 			else -- size is 64
 				return STD_LOGIC_VECTOR(shift_left(row / scaleY, 6) + ((col(9 downto 0) + 1) / scaleX));
-			end if;			
-		else
-			-- Drawing Right side of underflow (Scrolling into view)
-			if (vga_col >= 640 - (1023 - x0(9 downto 0))) then
-					col := vga_col - resize(1023 - s.x0, 12);
-			end if;
-			-- Drawing Left side of underflow (Scrolling out of view)
-			if (vga_col <= w - (1023 - x0(9 downto 0))) then
-				col := vga_col + (w - resize(1023 - s.x0, 12));
-			end if;
-			
-			if(s.size = 16) then
-				return STD_LOGIC_VECTOR(shift_left(row / scaleY, 4) + ((col + 1) / scaleX));
-			elsif (s.size = 32) then
-				return STD_LOGIC_VECTOR(shift_left(row / scaleY, 5) + ((col + 1) / scaleX));
-			else -- size is 64
-				return STD_LOGIC_VECTOR(shift_left(row / scaleY, 6) + ((col(9 downto 0) + 1) / scaleX));
-			end if;			
-			
-		end if;
-	
-	
-
+			end if;	
 	end function;
 	
 	
@@ -149,14 +133,12 @@ package body spriteengine_package is
 			y1 := y0 + h;
 		
 			if (not sprites(i).underflow) then
-				if (((vga_row >= y0) and (vga_row < y1) and (vga_col + 1 >= x0) and (vga_col < x1))) then
+				if (sprites(i).visible and ((vga_row >= y0) and (vga_row < y1) and (vga_col + 1 >= x0) and (vga_col < x1))) then
 					return i;
 				end if;
 			else
-				if (((vga_row >= y0) and (vga_row < y1)) and (vga_col >= 640 - (1023 - x0(9 downto 0)))) then
-					return i;
-				end if;
-				if (((vga_row >= y0) and (vga_row < y1)) and (vga_col <= w - (1023 - x0(9 downto 0)))) then
+				-- NOTE: We rely on unsigned 10-bit overflow for x0 and x1 !!
+				if (sprites(i).visible and ((vga_row >= y0) and (vga_row < y1) and (2**10-1 - w <= x0(9 downto 0)) and (vga_col < x1(9 downto 0)))) then
 					return i;
 				end if;
 			end if;
