@@ -90,9 +90,9 @@ architecture x of main is
 
 	
 	signal tree0s : all_sprites(0 to 2) := (
-		(64, to_unsigned(380, 10), to_unsigned(80, 10), "000000000000", tree0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
-		(64, to_unsigned(380, 10), to_unsigned(200, 10), "000000000000", tree0, "0000000000000000", false, 1, 2, TRUE, FALSE, FALSE),
-		(64, to_unsigned(380, 10), to_unsigned(400, 10), "000000000000", tree0, "0000000000000000", false, 2, 2, TRUE, FALSE, FALSE)
+		(64, to_unsigned(420, 10), to_unsigned(80, 10), "000000000000", tree0, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE),
+		(64, to_unsigned(380, 10), to_unsigned(200, 10), "000000000000", tree0, "0000000000000000", false, 1, 2, FALSE, FALSE, FALSE),
+		(64, to_unsigned(380, 10), to_unsigned(400, 10), "000000000000", tree0, "0000000000000000", false, 2, 2, FALSE, FALSE, FALSE)
 	);
 	
 	signal mousecursor : all_sprites(0 to 1) := (
@@ -101,9 +101,9 @@ architecture x of main is
 	);
 	
 	signal hearts: all_sprites(0 to 2) := (
-		(16, to_unsigned(8, 10), to_unsigned(8,10), "000000000000", heart, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
-		(16, to_unsigned(8, 10), to_unsigned(32,10), "000000000000", heart, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
-		(16, to_unsigned(8, 10), to_unsigned(56,10), "000000000000", heart, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
+		(16, to_unsigned(8, 10), to_unsigned(8,10), "000000000000", heart, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE),
+		(16, to_unsigned(8, 10), to_unsigned(32,10), "000000000000", heart, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE),
+		(16, to_unsigned(8, 10), to_unsigned(56,10), "000000000000", heart, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE)
 	);
 	
 	
@@ -375,6 +375,9 @@ begin
 			if (pb_0 = '1') then
 				if (game_mode = MODE_TITLE) then
 					game_mode <= MODE_GAME;
+					hearts(0).visible <= true;
+					hearts(1).visible <= true;
+					hearts(2).visible <= true;
 				end if;
 			end if;			
 			
@@ -570,7 +573,7 @@ begin
 							grassplane(i).x0 <= grassplane(i).x0 - 2;
 						elsif (grassplane(i).x0 < 1023 - grassplane(i).size * grassplane(i).scaling_factor_x) then
 							grassplane(i).underflow <= false;
-							grassplane(i).x0 <= to_unsigned(640, 10); 
+							grassplane(i).x0 <= to_unsigned(640, 10);
 						end if;
 				end loop;
 			end if;
