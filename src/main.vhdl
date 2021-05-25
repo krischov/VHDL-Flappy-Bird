@@ -326,6 +326,7 @@ begin
 	variable bird_pos : unsigned (9 downto 0);
 	variable toppipe_pos : unsigned (11 downto 0);
 	variable collision_flag : std_logic := '0';
+	variable enable_collision : std_logic := '0';
 	variable frame : natural range 0 to 60 := 0;
 	variable ticks : natural range 0 to 60 := 0;
 	variable qtr_seconds : natural range 0 to 3 := 0;	
@@ -343,31 +344,80 @@ begin
 				health <= health - 1;
 				hearts(health - 1).visible <= FALSE;
 				ticks := ticks + 1;
-				if (ticks = 15) then
+				if (ticks = 5) then
+					bird(0).visible <= FALSE;
+				elsif (ticks = 10) then
+					bird(0).visible <= TRUE;
+				elsif (ticks = 15) then
+					bird(0).visible <= FALSE;
+				elsif (ticks = 20) then
+					bird(0).visible <= TRUE;
+				elsif (ticks = 25) then
 					bird(0).visible <= FALSE;
 				elsif (ticks = 30) then
 					bird(0).visible <= TRUE;
-				elsif (ticks = 45) then
+				elsif (ticks = 35) then
+					bird(0).visible <= FALSE;
+				elsif (ticks = 40) then
+					bird(0).visible <= TRUE;
+				elsif (ticks = 45) then 
+					bird(0).visible <= FALSE;	
+				elsif (ticks = 50) then
+					bird(0).visible <= TRUE;
+				elsif (ticks = 55) then
 					bird(0).visible <= FALSE;
 				elsif (ticks = 60) then
 					bird(0).visible <= TRUE;
+				elsif (ticks = 65) then
+					bird(0).visible <= FALSE;
+				elsif (ticks = 70) then
+					bird(0).visible <= TRUE;
 				elsif (ticks = 75) then
+					bird(0).visible <= FALSE;
+				elsif (ticks = 80) then
+					bird(0).visible <= TRUE;
+				elsif (ticks = 85) then
 					bird(0).visible <= FALSE;
 				elsif (ticks = 90) then
 					bird(0).visible <= TRUE;
-				elsif (ticks = 105) then
+				elsif (ticks = 95) then
+					bird(0).visible <= FALSE;
+				elsif (ticks = 100) then
+					bird(0).visible <= TRUE;
+				elsif (ticks = 105) then 
+					bird(0).visible <= FALSE;	
+				elsif (ticks = 110) then
+					bird(0).visible <= TRUE;
+				elsif (ticks = 115) then
 					bird(0).visible <= FALSE;
 				elsif (ticks = 120) then
 					bird(0).visible <= TRUE;
-				elsif (ticks = 135) then 
-					bird(0).visible <= FALSE;	
+				elsif (ticks = 125) then
+					bird(0).visible <= FALSE;
+				elsif (ticks = 130) then
+					bird(0).visible <= TRUE;
+				elsif (ticks = 135) then
+					bird(0).visible <= FALSE;
+				elsif (ticks = 140) then
+					bird(0).visible <= TRUE;
+				elsif (ticks = 145) then
+					bird(0).visible <= FALSE;
 				elsif (ticks = 150) then
 					bird(0).visible <= TRUE;
-				elsif (ticks = 165) then
+				elsif (ticks = 155) then
+					bird(0).visible <= FALSE;
+				elsif (ticks = 160) then
+					bird(0).visible <= TRUE;
+				elsif (ticks = 165) then 
+					bird(0).visible <= FALSE;	
+				elsif (ticks = 170) then
+					bird(0).visible <= TRUE;
+				elsif (ticks = 175) then
 					bird(0).visible <= FALSE;
 				elsif (ticks = 180) then
 					bird(0).visible <= TRUE;
 					health_flag <= '0';
+					enable_collision := '1';
 				end if;
 			end if;
 
@@ -428,12 +478,13 @@ begin
 							toppipes(i).x0 <= to_unsigned(640, 10); 
 						end if;
 					
-							if (bird(0).visible = true and  health_flag = '0') then
+							if (bird(0).visible = true and enable_collision = '1') then
 								-- Do collision and point detection here
 								if (((bird(0).x0 + 2 >= toppipes(i).x0) and ((bird(0).x0 + bird(0).size - 1) <= toppipes(i).x0 + toppipes(i).size - 1)) and 
 									(((bird(0).y0 + 4 >= toppipes(i).y0) and (bird(0).y0 + 4 <= toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y + 1)) or
 									((bird(0).y0 + bird(0).size - 6 >= bottompipe(i).y0) and (bird(0).y0 + bird(0).size - 8 <= bottompipe(i).y0 + bottompipe(1).size*bottompipe(i).scaling_factor_y - 1)))) then
 									health_flag <= '1';
+									enable_collision := '0';
 									if (health - 1 = 0) then
 										collision_flag := '1';
 									end if;
@@ -449,6 +500,7 @@ begin
 										toppipe_pos := resize(pipeypos * 64 + pipeypos, 12);
 										if (bird_transparency(to_integer(bird_pos)) /= '1' and top_pipe_transparency(to_integer(toppipe_pos)) /= '1') then
 											health_flag <= '1';
+											enable_collision := '0';
 											if (health - 1 = 0) then
 												collision_flag := '1';
 											end if;
@@ -465,6 +517,7 @@ begin
 										toppipe_pos := resize(pipeypos * 64 + pipeypos, 12);
 										if (bird_transparency(to_integer(bird_pos)) /= '1' and top_pipe_transparency(to_integer(toppipe_pos)) /= '1') then
 											health_flag <= '1';
+											enable_collision := '0';
 											if (health - 1 = 0) then
 												collision_flag := '1';
 											end if;
@@ -481,6 +534,7 @@ begin
 										toppipe_pos := resize(pipeypos * 64 + pipeypos, 12);
 										if (bird_transparency(to_integer(bird_pos)) /= '1' and top_pipe_transparency(to_integer(toppipe_pos)) /= '1') then
 											health_flag <= '1';
+											enable_collision := '0';
 											if (health - 1 = 0) then
 												collision_flag := '1';
 											end if;
@@ -497,6 +551,7 @@ begin
 										toppipe_pos := resize(pipeypos * 64 + pipeypos, 12);
 										if (bird_transparency(to_integer(bird_pos)) /= '1' and top_pipe_transparency(to_integer(toppipe_pos)) /= '1') then
 											health_flag <= '1';
+											enable_collision := '0';
 											if (health - 1 = 0) then
 												collision_flag := '1';
 											end if;
