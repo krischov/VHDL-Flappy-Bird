@@ -438,6 +438,7 @@ package body textengine_package is
 			when '_' => return o"74";
 			when '|' => return o"75";
 			when '`' => return o"76";
+			when ':' => return o"77";
 			
 			when nul => return o"46"; -- return an ampersand for null
 			when others => return o"41"; -- unknown character is displays exclimation (!)

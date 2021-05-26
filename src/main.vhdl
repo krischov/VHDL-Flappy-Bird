@@ -48,7 +48,7 @@ architecture x of main is
 	signal tvec_mode_game: textengine_vector := (others => init_textengine_row);
 	signal tvec_mode_over: textengine_vector := (others => init_textengine_row);
 	signal tvec_mode_train: textengine_vector := (others=> init_textengine_row);
-	signal show_click2start_text: boolean := false;
+	signal hide_click2start_text: boolean := false;
 
 	
 	
@@ -172,19 +172,19 @@ begin
 	str2text(tvec_mode_title, 9, 3, 8, 8, "0011", "0100", "1010", "Bird");
 	str2text(tvec_mode_title, 40, 8, 2, 2, "0011", "0100", "1010", "Created and Developed by");
 	str2text(tvec_mode_title, 42, 10, 2, 2, "0011", "0100", "1010", "The Modelsim Mobsters");
-	str2text(tvec_mode_title, 50, 16, 1, 1, "0011", "0100", "1010", "Based on the concept of https://flappybird.io/");
+	str2text(tvec_mode_title, 50, 16, 1, 1, "0011", "0100", "1010", "Based on the concept of flappybird.io");
 	
 	
 	-- =================
 	
 	-- Game Mode Screen Text Vector
-	
-	str2text(tvec_mode_game, 4, 1, 1, 1, "0011", "0100", "1010", "Points: " & int2str(pipe_points));
-	str2text(tvec_mode_game, 6, 1, 2, 3, "0011", "0011", "0111", "Ready? Press the mouse to get started!", show_click2start_text);
+	str2text(tvec_mode_game, 4, 1, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
+	str2text(tvec_mode_game, 6, 1, 2, 3, "0011", "0011", "0111", "Ready? Press the mouse to get started!", hide_click2start_text);
 
 	-- Training Mode Text Vector
-	str2text(tvec_mode_train, 2, 3, 4, 4, "0011", "0100", "1010", "Training Mode");
-	str2text(tvec_mode_train, 6, 1, 2, 3, "0011", "0011", "0111", "Ready? Press the mouse to get started!", show_click2start_text);
+	str2text(tvec_mode_train, 2, 1, 1, 1, "0011", "0100", "1010", "Successfully Passed Pipes " & int2str(pipe_points));
+	str2text(tvec_mode_train, 3, 5, 4, 4, "0011", "0100", "1010", "Training Mode");
+	str2text(tvec_mode_train, 8, 1, 2, 3, "0011", "0011", "0111", "Ready? Press the mouse to get started!", hide_click2start_text);
 
 	-- =================
 	
@@ -195,12 +195,6 @@ begin
 	
 	
 	--==================
-
-	-- Training Mode Text Vector
-	str2text(tvec_mode_train, 2, 3, 4, 4, "0011", "0100", "1010", "Training Mode");
-
-	--==================
-
 	
 	-- Set the text vector depending on game mode
 	
@@ -341,11 +335,6 @@ begin
 			
 			if (mouse_lbtn = '1') then
 				mouse_btn <= var_len_str("Left Mouse button Pressed", mouse_btn'length);
-			
-				-- hide the 'click mouse to start' text
-				if ((game_mode = MODE_TITLE or game_mode = MODE_GAME) and initial_lclick = '1') then
-					show_click2start_text <= true;
-				end if;
 	
 				if (game_mode = MODE_GAME or game_mode = MODE_TRAIN) then
 					initial_lclick <= '1';
@@ -394,7 +383,11 @@ begin
 	begin
 		if (rising_edge(v_sync)) then
 			storedRandNum <= randNum;
-		
+			-- hide the 'click mouse to start' text
+			if ((game_mode = MODE_TITLE or game_mode = MODE_GAME) and initial_lclick = '1') then
+				hide_click2start_text <= true;
+			end if;
+
 			if (health_flag = '1') then
 				ticks := ticks + 1;
 				if (ticks = 5) then
