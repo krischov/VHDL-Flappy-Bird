@@ -121,12 +121,6 @@ architecture x of main is
 		(16, to_unsigned(335, 10), to_unsigned(250, 10), "000000000000", coin, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE),
 		(16, to_unsigned(335, 10), to_unsigned(280, 10), "000000000000", coin, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
 	);
-
-	signal menus: all_sprites(0 to 2) := (
-		(16, to_unsigned(150, 10), to_unsigned(256, 10), "000000000000", menu, "0000000000000000", false, 8, 2, TRUE, FALSE, FALSE),
-		(16, to_unsigned(210, 10), to_unsigned(256, 10), "000000000000", menu, "0000000000000000", false, 8, 2, TRUE, FALSE, FALSE),
-		(16, to_unsigned(270, 10), to_unsigned(256, 10), "000000000000", menu, "0000000000000000", false, 8, 2, FALSE, FALSE, FALSE)
-	);
 	
 	signal cloud0s : all_sprites(0 to 1) := (
 		(32, to_unsigned(150, 10), to_unsigned(80, 10), "000000000000", cloud0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
@@ -139,7 +133,7 @@ architecture x of main is
 	
 	signal sprites_addrs : sprite_addr_array := (others => "000000000000");
 	signal sprites_out : sprite_output_array := (others => "0000000000000000");
-	signal grass_idx, bottompipe_idx, bird_idx, tree0_idx, toppipe_idx , mousecursor_idx, heart_idx, coin_idx, menu_idx, cloud0_idx: integer := -1;
+	signal grass_idx, bottompipe_idx, bird_idx, tree0_idx, toppipe_idx , mousecursor_idx, heart_idx, coin_idx, cloud0_idx: integer := -1;
 	
 	-- ========================
 	
@@ -232,9 +226,6 @@ begin
 	coin_idx <= get_active_idx(coins, vga_row, vga_col);
 	coins(coin_idx).address <= calc_addr_f(coins(coin_idx), vga_row, vga_col);
 	
-	menu_idx <= get_active_idx(menus, vga_row, vga_col);
-	menus(menu_idx).address <= calc_addr_f(menus(menu_idx), vga_row, vga_col);
-	
 	cloud0_idx <= get_active_idx(cloud0s, vga_row, vga_col);
 	cloud0s(cloud0_idx).address <= calc_addr_f(cloud0s(cloud0_idx), vga_row, vga_col);
 	
@@ -249,7 +240,6 @@ begin
 	mousecursor(mousecursor_idx).in_range <= return_in_range(mousecursor(mousecursor_idx), vga_row, vga_col) when mousecursor_idx /= -1 else false;
 	hearts(heart_idx).in_range <= return_in_range(hearts(heart_idx), vga_row, vga_col) when heart_idx /= -1 else false;
 	coins(coin_idx).in_range <= return_in_range(coins(coin_idx), vga_row, vga_col) when coin_idx /= -1 else false;
-	menus(menu_idx).in_range <= return_in_range(menus(menu_idx), vga_row, vga_col) when menu_idx /= -1 else false;
 	cloud0s(cloud0_idx).in_range <= return_in_range(cloud0s(cloud0_idx), vga_row, vga_col) when cloud0_idx /= -1 else false;
 	
 
@@ -261,7 +251,6 @@ begin
 	sprites_addrs(cursor) <= mousecursor(mousecursor_idx).address;
 	sprites_addrs(heart) <= hearts(heart_idx).address;
 	sprites_addrs(coin) <= coins(coin_idx).address;
-	sprites_addrs(menu) <= menus(menu_idx).address;
 	sprites_addrs(cloud0) <= cloud0s(cloud0_idx).address;
 	
 	
@@ -273,7 +262,6 @@ begin
 	mousecursor(mousecursor_idx).colours <= sprites_out(cursor);
 	hearts(heart_idx).colours <= sprites_out(heart);
 	coins(coin_idx).colours <= sprites_out(coin);
-	menus(menu_idx).colours <= sprites_out(menu);
 	cloud0s(cloud0_idx).colours <= sprites_out(cloud0);
 	
 	sprite_r <= unsigned(mousecursor(mousecursor_idx).colours(3 downto 0))	when mousecursor(mousecursor_idx).colours(15 downto 12) /= "1111" and mousecursor(mousecursor_idx).in_range else
@@ -284,7 +272,6 @@ begin
 				unsigned(toppipes(toppipe_idx).colours(3 downto 0))			when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
 				unsigned(tree0s(tree0_idx).colours(3 downto 0))				when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range else
 				unsigned(coins(coin_idx).colours(3 downto 0))				when coins(coin_idx).colours(15 downto 12) /= "1111" and coins(coin_idx).in_range else
-				unsigned(menus(menu_idx).colours(3 downto 0))				when menus(menu_idx).colours(15 downto 12) /= "1111" and menus(menu_idx).in_range else
 				unsigned(cloud0s(cloud0_idx).colours(3 downto 0))				when cloud0s(cloud0_idx).colours(15 downto 12) /= "1111" and cloud0s(cloud0_idx).in_range else
 				"1111";
 				
@@ -297,7 +284,6 @@ begin
 				unsigned(toppipes(toppipe_idx).colours(7 downto 4))			when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
 				unsigned(tree0s(tree0_idx).colours(7 downto 4))				when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range else
 				unsigned(coins(coin_idx).colours(7 downto 4))				when coins(coin_idx).colours(15 downto 12) /= "1111" and coins(coin_idx).in_range else
-				unsigned(menus(menu_idx).colours(7 downto 4))				when menus(menu_idx).colours(15 downto 12) /= "1111" and menus(menu_idx).in_range else
 				unsigned(cloud0s(cloud0_idx).colours(7 downto 4))				when cloud0s(cloud0_idx).colours(15 downto 12) /= "1111" and cloud0s(cloud0_idx).in_range else
 				"1111";
 				
@@ -311,7 +297,6 @@ begin
 				unsigned(toppipes(toppipe_idx).colours(11 downto 8))		when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
 				unsigned(tree0s(tree0_idx).colours(11 downto 8))			when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range else
 				unsigned(coins(coin_idx).colours(11 downto 8))				when coins(coin_idx).colours(15 downto 12) /= "1111" and coins(coin_idx).in_range else
-				unsigned(menus(menu_idx).colours(11 downto 8))				when menus(menu_idx).colours(15 downto 12) /= "1111" and menus(menu_idx).in_range else
 				unsigned(cloud0s(cloud0_idx).colours(11 downto 8))				when cloud0s(cloud0_idx).colours(15 downto 12) /= "1111" and cloud0s(cloud0_idx).in_range else
 				"1111";
 				
@@ -324,7 +309,6 @@ begin
 				"0000" when toppipe_idx /= -1 and toppipes(toppipe_idx).in_range and toppipes(toppipe_idx).colours(15 downto 12) /= "1111" else
 				"0000" when tree0_idx /= -1 and tree0s(tree0_idx).in_range and tree0s(tree0_idx).colours(15 downto 12) /= "1111" else
 				"0000" when coin_idx /= -1 and coins(coin_idx).in_range and coins(coin_idx).colours(15 downto 12) /= "1111" else
-				"0000" when menu_idx /= -1 and menus(menu_idx).in_range and menus(menu_idx).colours(15 downto 12) /= "1111" else
 				"0000" when cloud0_idx /= -1 and cloud0s(cloud0_idx).in_range and cloud0s(cloud0_idx).colours(15 downto 12) /= "1111" else
 				"1111";
 				
@@ -386,15 +370,11 @@ begin
 						hearts(0).visible <= TRUE;
 						hearts(1).visible <= TRUE;
 						hearts(2).visible <= TRUE;
-						menus(0).visible <= FALSE;
-						menus(1).visible <= FALSE;
 				elsif (pb_1 = '1') then
 						game_mode <= MODE_TRAIN;
 						hearts(0).visible <= FALSE;
 						hearts(1).visible <= FALSE;
 						hearts(2).visible <= FALSE;
-						menus(0).visible <= FALSE;
-						menus(1).visible <= FALSE;
 				else
 					game_mode <= MODE_TITLE;
 				end if;				
@@ -403,12 +383,6 @@ begin
 			-- hide the 'click mouse to start' text
 			if ((game_mode = MODE_TRAIN or game_mode = MODE_GAME) and initial_lclick = '1') then
 				hide_click2start_text <= true;
-			end if;
-			
-			if (game_mode /= MODE_TITLE) then
-				menus(0).visible <= FALSE;
-				menus(1).visible <= FALSE;
-				menus(2).visible <= FALSE;
 			end if;
 
 			if (health_flag = '1') then
