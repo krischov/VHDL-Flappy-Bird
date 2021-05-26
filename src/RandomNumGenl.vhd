@@ -19,6 +19,7 @@ begin
 	
 	begin
 	if(rising_edge(clk)) then
+
 		-- temp 	  <= std_logic_vector(to_unsigned(seed, 10));
 		temp(0) <= temp(9); 
 		temp(1) <= temp(0);
