@@ -40,5 +40,5 @@ begin
 	rom7 : rom_ctrl generic map ("coin.mif", 8, 256) port map (sprite_addrs(coin)(7 downto 0), clk, sprites_out(coin));
 	rom8 : rom_ctrl generic map ("exit_btn.MIF", 8, 256) port map (sprite_addrs(exit_btn)(7 downto 0), clk, sprites_out(exit_btn));
 	rom9 : rom_ctrl generic map ("orange_menu.MIF", 8, 256) port map (sprite_addrs(orange_menu)(7 downto 0), clk, sprites_out(orange_menu));
-	
+	rom10 : rom_ctrl generic map ("score_screen.MIF", 8, 256) port map (sprite_addrs(score_screen)(7 downto 0), clk, sprites_out(score_screen));
 end architecture a;
