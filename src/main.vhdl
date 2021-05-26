@@ -179,7 +179,7 @@ begin
 	
 	-- Game Mode Screen Text Vector
 	
-	str2text(tvec_mode_game, 4, 2, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
+	str2text(tvec_mode_game, 4, 1, 1, 1, "0011", "0100", "1010", "Points: " & int2str(pipe_points));
 	str2text(tvec_mode_game, 6, 1, 2, 3, "0011", "0011", "0111", "Ready? Press the mouse to get started!", show_click2start_text);
 
 	-- Training Mode Text Vector
@@ -343,7 +343,7 @@ begin
 				mouse_btn <= var_len_str("Left Mouse button Pressed", mouse_btn'length);
 			
 				-- hide the 'click mouse to start' text
-				if ((game_mode = MODE_TITLE or game_mode = MODE_GAME) and show_click2start_text = false) then
+				if ((game_mode = MODE_TITLE or game_mode = MODE_GAME) and initial_lclick = '1') then
 					show_click2start_text <= true;
 				end if;
 	
@@ -393,7 +393,7 @@ begin
 	variable apply_h_boost : natural range 0 to 8 := 0; 
 	begin
 		if (rising_edge(v_sync)) then
-		--	storedRandNum <= randNum;
+			storedRandNum <= randNum;
 		
 			if (health_flag = '1') then
 				ticks := ticks + 1;
