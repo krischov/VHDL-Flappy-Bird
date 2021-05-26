@@ -179,13 +179,7 @@ begin
 
 	-- Training Mode Text Vector
 	str2text(tvec_mode_train, 2, 3, 4, 4, "0011", "0100", "1010", "Training Mode");
-	str2text(tvec_mode_game, 6, 1, 2, 3, "0011", "0011", "0111", "Ready? Press the mouse to get started!", show_click2start_text);
-
-	str2text(tvec_mode_game, 5, 5, 4, 4, "0011", "0100", "1010", "Ready? Press the mouse to get started!", show_click2start_text);
-	str2text(tvec_mode_game, 6, 2, 1, 1, "0011", "0100", "1010", "Seed " & int2str(seed));
-	str2text(tvec_mode_game, 7, 2, 1, 1, "0011", "0100", "1010", "RandNum " & int2str(to_integer(unsigned(storedRandNum))));
-	-- Training Mode Text Vector
-	str2text(tvec_mode_train, 2, 3, 4, 4, "0011", "0100", "1010", "Training Mode");
+	str2text(tvec_mode_train, 6, 1, 2, 3, "0011", "0011", "0111", "Ready? Press the mouse to get started!", show_click2start_text);
 
 	-- =================
 	
@@ -340,10 +334,10 @@ begin
 					show_click2start_text <= true;
 				end if;
 	
-				if (game_mode = GAME_MODE) then
+				if (game_mode = MODE_GAME or game_mode = MODE_TRAIN) then
 					initial_lclick <= '1';
 					seedDone := True;
-					seed <= seedTicks;					
+					seed <= seedTicks;
 				end if;
 			elsif (mouse_rbtn = '1') then
 				mouse_btn <= var_len_str("Right Mouse button Pressed", mouse_btn'length);
