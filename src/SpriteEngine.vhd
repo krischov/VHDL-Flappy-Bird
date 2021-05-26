@@ -35,7 +35,7 @@ begin
 	rom2: rom_ctrl generic map ("toppipe.MIF", 12, 4096) port map (sprite_addrs(toppipe), clk, sprites_out(toppipe));
 	rom3: rom_ctrl generic map ("tree0.MIF", 12, 4096) port map (sprite_addrs(tree0), clk, sprites_out(tree0));
 	rom4: rom_ctrl generic map ("grass.MIF", 10, 1024) port map (sprite_addrs(grass)(9 downto 0), clk, sprites_out(grass));
-	rom5: rom_ctrl generic map ("cursor.MIF", 8, 256) port map (sprite_addrs(cursor)(7 downto 0), clk, sprites_out(cursor)); 	
+	rom5: rom_ctrl generic map ("pointer.MIF", 8, 256) port map (sprite_addrs(cursor)(7 downto 0), clk, sprites_out(cursor)); 	
 	rom6 : rom_ctrl generic map ("heartsprite.MIF", 8, 256) port map (sprite_addrs(heart)(7 downto 0), clk, sprites_out(heart));
 	rom7 : rom_ctrl generic map ("coin.MIF", 8, 256) port map (sprite_addrs(coin)(7 downto 0), clk, sprites_out(coin));
 	rom8 : rom_ctrl generic map ("exit_btn.MIF", 8, 256) port map (sprite_addrs(exitbtn)(7 downto 0), clk, sprites_out(exitbtn));
