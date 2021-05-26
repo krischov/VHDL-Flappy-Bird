@@ -673,17 +673,11 @@ begin
 				elsif (storedRandNum = "0111") then
 				
 				-- new hard setups 
-				elsif (storedRandNum = "1000") then 
+				elsif (storedRandNum = "1000" or storedRandNum = "1001") then 
 				
-				elsif	(storedRandNum = "1001") then 
+				elsif (storedRandNum = "1010" or storedRandNum = "1011") then
 				
-				elsif (storedRandNum = "1010") then
-				
-				elsif (storedRandNum = "1011") then 
-				
-				elsif (storedRandNum = "1100") then 
-
-				elsif (storedRandNum = "1101") then 
+				elsif (storedRandNum = "1100" or storedRandNum = "1101") then 
 				
 				elsif (storedRandNum = "1110") then
 				
