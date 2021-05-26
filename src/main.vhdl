@@ -122,18 +122,43 @@ architecture x of main is
 		(16, to_unsigned(335, 10), to_unsigned(280, 10), "000000000000", coin, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
 	);
 
-	signal menus: all_sprites(0 to 2) := (
+	signal menus: all_sprites(0 to 1) := (
 		(16, to_unsigned(150, 10), to_unsigned(256, 10), "000000000000", menu, "0000000000000000", false, 8, 2, TRUE, FALSE, FALSE),
-		(16, to_unsigned(210, 10), to_unsigned(256, 10), "000000000000", menu, "0000000000000000", false, 8, 2, TRUE, FALSE, FALSE),
-		(16, to_unsigned(270, 10), to_unsigned(256, 10), "000000000000", menu, "0000000000000000", false, 8, 2, TRUE, FALSE, FALSE)
+		(16, to_unsigned(210, 10), to_unsigned(256, 10), "000000000000", menu, "0000000000000000", false, 8, 2, TRUE, FALSE, FALSE)
 	);
+
+	signal cloud0s: all_sprites(0 to 1) := (
+		(32, to_unsigned(180, 10), to_unsigned(156, 10), "000000000000", cloud0, "0000000000000000", false, 8, 2, FALSE, FALSE, FALSE),
+		(32, to_unsigned(210, 10), to_unsigned(256, 10), "000000000000", cloud0, "0000000000000000", false, 8, 2, FALSE, FALSE, FALSE)
+	);
+
+	-- signal clouds1: all_sprites(0 to 1) := (
+	-- 	(32, to_unsigned(150, 10), to_unsigned(256, 10), "000000000000", cloud1, "0000000000000000", false, 8, 2, FALSE, FALSE, FALSE),
+	-- 	(32, to_unsigned(210, 10), to_unsigned(256, 10), "000000000000", cloud1, "0000000000000000", false, 8, 2, FALSE, FALSE, FALSE)
+	-- );
+
+	signal tree2s: all_sprites(0 to 1) := (
+		(64, to_unsigned(150, 10), to_unsigned(256, 10), "000000000000", tree2, "0000000000000000", false, 8, 2, FALSE, FALSE, FALSE),
+		(64, to_unsigned(210, 10), to_unsigned(256, 10), "000000000000", tree2, "0000000000000000", false, 8, 2, FALSE, FALSE, FALSE)
+	);
+	
+	-- signal healthpickup: all_sprites(0 to 1) := (
+	-- 	(64, to_unsigned(150, 10), to_unsigned(256, 10), "000000000000", heart, "0000000000000000", false, 8, 2, FALSE, FALSE, FALSE),
+	-- 	(64, to_unsigned(210, 10), to_unsigned(256, 10), "000000000000", heart, "0000000000000000", false, 8, 2, FALSE, FALSE, FALSE)
+	-- );
+
+
+
+
+
 	
 	
 	-- Sprite Indexes
 	
 	signal sprites_addrs : sprite_addr_array := (others => "000000000000");
 	signal sprites_out : sprite_output_array := (others => "0000000000000000");
-	signal grass_idx, bottompipe_idx, bird_idx, tree0_idx, toppipe_idx , mousecursor_idx, heart_idx, coin_idx, menu_idx: integer := -1;
+	signal grass_idx, bottompipe_idx, bird_idx, tree0_idx, toppipe_idx , mousecursor_idx, heart_idx, coin_idx, menu_idx, tree2_idx, healthpickup_idx,
+		cloud0_idx, cloud1_idx: integer := -1;
 	
 	-- ========================
 	
@@ -236,6 +261,18 @@ begin
 	menu_idx <= get_active_idx(menus, vga_row, vga_col);
 	menus(menu_idx).address <= calc_addr_f(menus(menu_idx), vga_row, vga_col);
 	
+	tree2_idx <= get_active_idx(tree2s, vga_row, vga_col);
+	tree2s(tree2_idx).address <= calc_addr_f(tree2s(menu_idx), vga_row, vga_col);
+	
+	cloud0_idx <= get_active_idx(cloud0s, vga_row, vga_col);
+	cloud0s(cloud0_idx).address <= calc_addr_f(cloud0s(cloud0_idx), vga_row, vga_col);
+
+	-- menu_idx <= get_active_idx(menus, vga_row, vga_col);
+	-- menus(menu_idx).address <= calc_addr_f(menus(menu_idx), vga_row, vga_col);
+
+	-- menu_idx <= get_active_idx(menus, vga_row, vga_col);
+	-- menus(menu_idx).address <= calc_addr_f(menus(menu_idx), vga_row, vga_col);
+	
 	
 	
 	bird(bird_idx).in_range <= return_in_range(bird(bird_idx), vga_row, vga_col) when bird_idx /= -1 else false;
@@ -243,32 +280,38 @@ begin
 	bottompipe(bottompipe_idx).in_range <= return_in_range(bottompipe(bottompipe_idx), vga_row, vga_col) when bottompipe_idx /= -1 else false;
 	toppipes(toppipe_idx).in_range <= return_in_range(toppipes(toppipe_idx), vga_row, vga_col) when toppipe_idx /= -1 else false;
 	tree0s(tree0_idx).in_range <= return_in_range(tree0s(tree0_idx), vga_row, vga_col) when tree0_idx /= -1 else false;
+	tree2s(tree2_idx).in_range <= return_in_range(tree2s(tree2_idx), vga_row, vga_col) when tree2_idx /= -1 else false;
 	mousecursor(mousecursor_idx).in_range <= return_in_range(mousecursor(mousecursor_idx), vga_row, vga_col) when mousecursor_idx /= -1 else false;
 	hearts(heart_idx).in_range <= return_in_range(hearts(heart_idx), vga_row, vga_col) when heart_idx /= -1 else false;
 	coins(coin_idx).in_range <= return_in_range(coins(coin_idx), vga_row, vga_col) when coin_idx /= -1 else false;
 	menus(menu_idx).in_range <= return_in_range(menus(menu_idx), vga_row, vga_col) when menu_idx /= -1 else false;
+	cloud0s(cloud0_idx).in_range <= return_in_range(cloud0s(cloud0_idx), vga_row, vga_col) when cloud0_idx /= -1 else false;
 	
 
 	sprites_addrs(grass) <= grassplane(grass_idx).address;	
 	sprites_addrs(crackpipe) <= bottompipe(bottompipe_idx).address;
 	sprites_addrs(toppipe) <= toppipes(toppipe_idx).address;
 	sprites_addrs(tree0) <= tree0s(tree0_idx).address;
+	sprites_addrs(tree2) <= tree2s(tree2_idx).address;
 	sprites_addrs(bird0) <= bird(bird_idx).address;
 	sprites_addrs(cursor) <= mousecursor(mousecursor_idx).address;
 	sprites_addrs(heart) <= hearts(heart_idx).address;
 	sprites_addrs(coin) <= coins(coin_idx).address;
 	sprites_addrs(menu) <= menus(menu_idx).address;
+	sprites_addrs(cloud0) <= cloud0s(cloud0_idx).address;
 	
 	
 	bird(bird_idx).colours <= sprites_out(bird0);
 	grassplane(grass_idx).colours <= sprites_out(grass);
 	tree0s(tree0_idx).colours <= sprites_out(tree0);
+	tree2s(tree2_idx).colours <= sprites_out(tree2);
 	bottompipe(bottompipe_idx).colours <= sprites_out(crackpipe);
 	toppipes(toppipe_idx).colours <= sprites_out(toppipe);
 	mousecursor(mousecursor_idx).colours <= sprites_out(cursor);
 	hearts(heart_idx).colours <= sprites_out(heart);
 	coins(coin_idx).colours <= sprites_out(coin);
 	menus(menu_idx).colours <= sprites_out(menu);
+	cloud0s(cloud0_idx).colours <= sprites_out(cloud0);
 
 	
 	sprite_r <= unsigned(mousecursor(mousecursor_idx).colours(3 downto 0))	when mousecursor(mousecursor_idx).colours(15 downto 12) /= "1111" and mousecursor(mousecursor_idx).in_range else
@@ -278,8 +321,10 @@ begin
 				unsigned(bottompipe(bottompipe_idx).colours(3 downto 0))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
 				unsigned(toppipes(toppipe_idx).colours(3 downto 0))			when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
 				unsigned(tree0s(tree0_idx).colours(3 downto 0))				when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range else
+				unsigned(tree2s(tree2_idx).colours(3 downto 0))				when tree2s(tree2_idx).colours(15 downto 12) /= "1111" and tree2s(tree2_idx).in_range else
 				unsigned(coins(coin_idx).colours(3 downto 0))				when coins(coin_idx).colours(15 downto 12) /= "1111" and coins(coin_idx).in_range else
 				unsigned(menus(menu_idx).colours(3 downto 0))				when menus(menu_idx).colours(15 downto 12) /= "1111" and menus(menu_idx).in_range else
+				unsigned(cloud0s(cloud0_idx).colours(3 downto 0))			when cloud0s(cloud0_idx).colours(15 downto 12) /= "1111" and cloud0s(cloud0_idx).in_range else
 				"1111";
 				
 	
@@ -290,8 +335,10 @@ begin
 				unsigned(bottompipe(bottompipe_idx).colours(7 downto 4))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
 				unsigned(toppipes(toppipe_idx).colours(7 downto 4))			when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
 				unsigned(tree0s(tree0_idx).colours(7 downto 4))				when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range else
+				unsigned(tree2s(tree2_idx).colours(7 downto 4))				when tree2s(tree2_idx).colours(15 downto 12) /= "1111" and tree2s(tree2_idx).in_range else
 				unsigned(coins(coin_idx).colours(7 downto 4))				when coins(coin_idx).colours(15 downto 12) /= "1111" and coins(coin_idx).in_range else
 				unsigned(menus(menu_idx).colours(7 downto 4))				when menus(menu_idx).colours(15 downto 12) /= "1111" and menus(menu_idx).in_range else
+				unsigned(cloud0s(cloud0_idx).colours(7 downto 4))			when cloud0s(cloud0_idx).colours(15 downto 12) /= "1111" and cloud0s(cloud0_idx).in_range else
 				"1111";
 				
 				
@@ -303,8 +350,10 @@ begin
 				unsigned(bottompipe(bottompipe_idx).colours(11 downto 8))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
 				unsigned(toppipes(toppipe_idx).colours(11 downto 8))		when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
 				unsigned(tree0s(tree0_idx).colours(11 downto 8))			when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range else
+				unsigned(tree2s(tree2_idx).colours(11 downto 8))			when tree2s(tree2_idx).colours(15 downto 12) /= "1111" and tree2s(tree2_idx).in_range else
 				unsigned(coins(coin_idx).colours(11 downto 8))				when coins(coin_idx).colours(15 downto 12) /= "1111" and coins(coin_idx).in_range else
 				unsigned(menus(menu_idx).colours(11 downto 8))				when menus(menu_idx).colours(15 downto 12) /= "1111" and menus(menu_idx).in_range else
+				unsigned(cloud0s(cloud0_idx).colours(11 downto 8))			when cloud0s(cloud0_idx).colours(15 downto 12) /= "1111" and cloud0s(cloud0_idx).in_range else
 				"1111";
 				
 
@@ -315,8 +364,10 @@ begin
 				"0000" when bottompipe_idx /= -1 and bottompipe(bottompipe_idx).in_range and bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" else
 				"0000" when toppipe_idx /= -1 and toppipes(toppipe_idx).in_range and toppipes(toppipe_idx).colours(15 downto 12) /= "1111" else
 				"0000" when tree0_idx /= -1 and tree0s(tree0_idx).in_range and tree0s(tree0_idx).colours(15 downto 12) /= "1111" else
+				"0000" when tree2_idx /= -1 and tree2s(tree2_idx).in_range and tree2s(tree2_idx).colours(15 downto 12) /= "1111" else
 				"0000" when coin_idx /= -1 and coins(coin_idx).in_range and coins(coin_idx).colours(15 downto 12) /= "1111" else
 				"0000" when menu_idx /= -1 and menus(menu_idx).in_range and menus(menu_idx).colours(15 downto 12) /= "1111" else
+				"0000" when menu_idx /= -1 and cloud0s(cloud0_idx).in_range and cloud0s(cloud0_idx).colours(15 downto 12) /= "1111" else
 				"1111";
 	
 	red_out		<=	txt_r when txt_not_a = "1111" else sprite_r when sprite_z = "0000" else "0111"; -- 0111
@@ -418,18 +469,16 @@ begin
 			if (game_mode /= MODE_TITLE) then
 				menus(0).visible <= FALSE;
 				menus(1).visible <= FALSE;
-				menus(2).visible <= FALSE;
 			end if;
 
 			--Menu navigation. If any range of x and y coordinate is overlapping with the menu button while the mouse is clicked, will act as a button click. 
 
 			if (mouse_lbtn = '1') then
-				if (menus(0).visible = TRUE and menus(1).visible = TRUE and menus(2).visible = TRUE) then
+				if (menus(0).visible = TRUE and menus(1).visible = TRUE) then
 					if (((mousecursor(0).x0 >= menus(0).x0 and mousecursor(0).x0 <= menus(0).x0 + menus(0).size * menus(0).scaling_factor_x - 1) or
 						(mousecursor(0).x0 + 9 >= menus(0).x0 and mousecursor(0).x0 + 9 <= menus(0).x0 + menus(0).size * menus(0).scaling_factor_x - 1)) and
 						((mousecursor(0).y0 >= menus(0).y0 and mousecursor(0).y0 <= menus(0).y0 + menus(0).size * menus(0).scaling_factor_y - 1) or
 						(mousecursor(0).y0 + mousecursor(0).size - 1 >= menus(0).y0 and mousecursor(0).y0 + mousecursor(0).size - 1 <= menus(0).y0 * menus(0).scaling_factor_y - 1))) then
-							
 							game_flag := '1';
 					elsif (((mousecursor(0).x0 >= menus(1).x0 and mousecursor(0).x0 <= menus(1).x0 + menus(1).size * menus(1).scaling_factor_x - 1) or
 						(mousecursor(0).x0 + 9 >= menus(1).x0 and mousecursor(0).x0 + 9 <= menus(1).x0 + menus(1).size * menus(1).scaling_factor_x - 1)) and
@@ -439,6 +488,16 @@ begin
 					end if;
 				end if;
 			end if;
+
+			if (game_mode = MODE_GAME) then					
+				if (((coins(0).x0 >= bird(0).x0 and coins(0).x0 <= bird(0).x0 + bird(0).size - 1) or
+					(coins(0).x0 + coins(0).size - 1 >=  bird(0).x0 and coins(0).x0 + coins(0).size - 1 <= bird(0).x0 + bird(0).size - 1)) and
+					((coins(0).y0 >= bird(0).y0 and coins(0).y0 <= bird(0).y0 + bird(0).size - 1) or
+					(coins(0).y0 + coins(0).size - 1 >= bird(0).y0 and coins(0).y0 + coins(0).size - 1 <= bird(0).y0 + bird(0).size - 1))) then
+						pipe_points <= pipe_points + 1;
+				end if;
+			end if;
+
 
 			if (health_flag = '1') then
 				ticks := ticks + 1;

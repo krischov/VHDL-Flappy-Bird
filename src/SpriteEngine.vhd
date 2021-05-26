@@ -41,4 +41,6 @@ begin
 	rom8 : rom_ctrl generic map ("exit_btn.MIF", 8, 256) port map (sprite_addrs(exitbtn)(7 downto 0), clk, sprites_out(exitbtn));
 	rom9 : rom_ctrl generic map ("menu.MIF", 8, 256) port map (sprite_addrs(menu)(7 downto 0), clk, sprites_out(menu));
 	rom10 : rom_ctrl generic map ("score_screen.MIF", 8, 256) port map (sprite_addrs(scrorescreen)(7 downto 0), clk, sprites_out(scrorescreen));
+	rom11: rom_ctrl generic map ("tree2.MIF", 12, 4096) port map (sprite_addrs(tree2), clk, sprites_out(tree2));
+	rom12: rom_ctrl generic map ("cloud0.MIF", 10, 1024) port map (sprite_addrs(cloud0)(9 downto 0), clk, sprites_out(cloud0));
 end architecture a;
