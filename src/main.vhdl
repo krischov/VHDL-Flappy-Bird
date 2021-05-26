@@ -118,9 +118,14 @@ architecture x of main is
 	);
 	
 	signal coins: all_sprites(0 to 1) := (
-		(16, to_unsigned(335, 10), to_unsigned(250, 10), "000000000000", coin, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE),
-		(16, to_unsigned(335, 10), to_unsigned(280, 10), "000000000000", coin, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
+		(16, to_unsigned(80, 10), to_unsigned(300, 10), "000000000000", coin, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(16, to_unsigned(400, 10), to_unsigned(400, 10), "000000000000", coin, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
 	);
+	
+	signal heart_pickups: all_sprites(0 to 1) := (
+		(16, to_unsigned(80, 10), to_unsigned(300, 10), "000000000000", heart, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(16, to_unsigned(400, 10), to_unsigned(400, 10), "000000000000", heart, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
+	);	
 	
 	signal cloud0s : all_sprites(0 to 1) := (
 		(32, to_unsigned(150, 10), to_unsigned(80, 10), "000000000000", cloud0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
@@ -133,7 +138,7 @@ architecture x of main is
 	
 	signal sprites_addrs : sprite_addr_array := (others => "000000000000");
 	signal sprites_out : sprite_output_array := (others => "0000000000000000");
-	signal grass_idx, bottompipe_idx, bird_idx, tree0_idx, toppipe_idx , mousecursor_idx, heart_idx, coin_idx, cloud0_idx: integer := -1;
+	signal grass_idx, bottompipe_idx, bird_idx, tree0_idx, toppipe_idx , mousecursor_idx, heart_idx, coin_idx, heart_pickup_idx, cloud0_idx: integer := -1;
 	
 	-- ========================
 	
@@ -469,7 +474,7 @@ begin
 				end if;
 			end if;
 			
-			--Random Number States
+		--Random Number States
 			
 		if((bottompipe(d_state).x0 < (1023 - bottompipe(d_state).size * bottompipe(d_state).scaling_factor_x)) and bottompipe(d_state).underflow = true) then
 			if ((game_mode = MODE_GAME and difficulty = 0) or game_mode = MODE_TRAIN) then 
@@ -1143,9 +1148,6 @@ begin
 				end if;	
 			end loop;
 		
-		
-		
-		
 			if (game_mode = MODE_OVER) then
 				if (bird(0).y0 + 5 <= 512) then
 					bird(0).y0 <= bird(0).y0 + 5;
@@ -1156,6 +1158,8 @@ begin
 					game_mode <= MODE_TITLE;
 					initial_lclick <= '0';
 					pipe_points <= 0;
+					bird(0).x0 <= to_unsigned(195, 10);
+					bird(0).y0 <= to_unsigned(50, 10);
 				else
 					game_mode <= MODE_OVER;
 				end if;
@@ -1210,6 +1214,21 @@ begin
 					end if;
 			end loop;
 			
+			for i in 0 to (coins'length - 1) loop
+				if (coins(i).x0 <= 640) then
+						coins(i).underflow <= false;
+						coins(i).x0 <= coins(i).x0 - p_speed;
+						if (coins(i).x0 < 1) then
+							coins(i).underflow <= true;
+						end if;
+					elsif (coins(i).x0 >= 1023 - coins(i).size * coins(i).scaling_factor_x) then
+						coins(i).x0 <= coins(i).x0 - p_speed;
+					elsif (coins(i).x0 < 1023 - coins(i).size * coins(i).scaling_factor_x) then
+						coins(i).underflow <= false;
+						coins(i).x0 <= to_unsigned(640, 10);
+					end if;
+			end loop;			
+			
 			for i in 0 to (cloud0s'length - 1) loop
 				if (cloud0s(i).x0 <= 640) then
 						cloud0s(i).underflow <= false;
@@ -1239,6 +1258,7 @@ begin
 						grassplane(i).x0 <= to_unsigned(640, 10);
 					end if;
 			end loop;
+			
 		end if; 
 	end process;
 end architecture;
