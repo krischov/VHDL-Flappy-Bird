@@ -16,7 +16,7 @@ package spriteengine_package is
 	constant heart 	: natural range 0 to 31 := 10;
 	constant coin : natural range 0 to 31 := 11;
 	constant exitbtn : natural range 0 to 31 := 12;
-	constant orangemenu : natural range 0 to 31 := 13;
+	constant menu : natural range 0 to 31 := 13;
 	constant scrorescreen : natural range 0 to 31 := 14;
 	
     
