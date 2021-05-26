@@ -530,7 +530,7 @@ begin
 				p_speed := 2;
 				
 				if((bottompipe(d_state).x0 < (1023 - bottompipe(d_state).size * bottompipe(d_state).scaling_factor_x)) and bottompipe(d_state).underflow = true) then
-					if (storedRandNum = "0000"or storedRandNum = "0001" or storedRandNum = "0010" or storedRandNum = "0011") then
+					if (storedRandNum = "0000" or storedRandNum = "0001" or storedRandNum = "0010" or storedRandNum = "0011") then
 						if(d_state = 0) then 
 						  bottompipe(d_state).x0 <= to_unsigned(640,10);
 						  bottompipe(d_state).scaling_factor_y <= 2;
@@ -555,10 +555,77 @@ begin
 						  d_state := 0;
 						end if;
 					elsif (storedRandNum = "0100" or storedRandNum = "0101" or storedRandNum = "0110" or storedRandNum = "0111") then
-												
+						if(d_state = 0) then 
+						  bottompipe(d_state).x0 <= to_unsigned(640,10);
+						  bottompipe(d_state).scaling_factor_y <= 1;
+						  bottompipe(d_state).y0 <= to_unsigned(480 - (1 * bottompipe(d_state).size), 10);
+						  bottompipe(d_state).underflow <= false;
+						  
+						  toppipes(d_state).x0 <= to_unsigned(640,10);
+						  toppipes(d_state).scaling_factor_y <= 3;
+						  toppipes(d_state).underflow <= false;
+						  
+						  d_state := 1;
+						else
+						  bottompipe(d_state).x0 <= to_unsigned(640,10);
+						  bottompipe(d_state).scaling_factor_y <= 3;
+						  bottompipe(d_state).y0 <= to_unsigned(480 - (3 * bottompipe(d_state).size), 10);
+						  bottompipe(d_state).underflow <= false;
+						  
+						  toppipes(d_state).x0 <= to_unsigned(640,10);
+						  toppipes(d_state).scaling_factor_y <= 1;
+						  toppipes(d_state).underflow <= false;
+						  
+						  d_state := 0;
+						 end if;
 					elsif (storedRandNum = "1000" or storedRandNum = "1001" or storedRandNum = "1010" or storedRandNum = "1011") then 
-						
-					elsif (storedRandNum = "1100" or storedRandNum = "1101" or storedRandNum = "1110" or storedRandNum = "1111") then 
+						if(d_state = 0) then 
+						  bottompipe(d_state).x0 <= to_unsigned(640,10);
+						  bottompipe(d_state).scaling_factor_y <= 2;
+						  bottompipe(d_state).y0 <= to_unsigned(480 - (2 * bottompipe(d_state).size), 10);
+						  bottompipe(d_state).underflow <= false;
+						  
+						  toppipes(d_state).x0 <= to_unsigned(640,10);
+						  toppipes(d_state).scaling_factor_y <= 3;
+						  toppipes(d_state).underflow <= false;
+						  
+						  d_state := 1;
+						else
+						  bottompipe(d_state).x0 <= to_unsigned(640,10);
+						  bottompipe(d_state).scaling_factor_y <= 2;
+						  bottompipe(d_state).y0 <= to_unsigned(480 - (2 * bottompipe(d_state).size), 10);
+						  bottompipe(d_state).underflow <= false;
+						  
+						  toppipes(d_state).x0 <= to_unsigned(640,10);
+						  toppipes(d_state).scaling_factor_y <= 2;
+						  toppipes(d_state).underflow <= false;
+						  
+						  d_state := 0;					
+						 end if;						
+					elsif (storedRandNum = "1100" or storedRandNum = "1101" or storedRandNum = "1110" or storedRandNum = "1111") then
+						if(d_state = 0) then 
+						  bottompipe(d_state).x0 <= to_unsigned(640,10);
+						  bottompipe(d_state).scaling_factor_y <= 2;
+						  bottompipe(d_state).y0 <= to_unsigned(480 - (2 * bottompipe(d_state).size), 10);
+						  bottompipe(d_state).underflow <= false;
+						  
+						  toppipes(d_state).x0 <= to_unsigned(640,10);
+						  toppipes(d_state).scaling_factor_y <= 3;
+						  toppipes(d_state).underflow <= false;
+						  
+						  d_state := 1;
+						else
+						  bottompipe(d_state).x0 <= to_unsigned(640,10);
+						  bottompipe(d_state).scaling_factor_y <= 4;
+						  bottompipe(d_state).y0 <= to_unsigned(480 - (4 * bottompipe(d_state).size), 10);
+						  bottompipe(d_state).underflow <= false;
+						  
+						  toppipes(d_state).x0 <= to_unsigned(640,10);
+						  toppipes(d_state).scaling_factor_y <= 1;
+						  toppipes(d_state).underflow <= false;
+						  
+						  d_state := 0;								
+						end if;
 					end if;
 				end if;
 
