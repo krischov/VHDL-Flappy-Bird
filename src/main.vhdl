@@ -531,6 +531,7 @@ begin
 				
 				if((bottompipe(d_state).x0 < (1023 - bottompipe(d_state).size * bottompipe(d_state).scaling_factor_x)) and bottompipe(d_state).underflow = true) then
 					if (storedRandNum = "0000"or storedRandNum = "0001" or storedRandNum = "0010" or storedRandNum = "0011") then
+						-- four unique pipe height setups for easy 
 						if(d_state = 0) then 
 						  bottompipe(d_state).x0 <= to_unsigned(640,10);
 						  bottompipe(d_state).scaling_factor_y <= 2;
@@ -558,48 +559,38 @@ begin
 												
 					elsif (storedRandNum = "1000" or storedRandNum = "1001" or storedRandNum = "1010" or storedRandNum = "1011") then 
 						
-					elsif (storedRandNum = "1100" or storedRandNum = "1101" or storedRandNum = "1110" or storedRandNum = "1111") then 
+					else
 					end if;
 				end if;
 
 			elsif (game_mode = MODE_GAME and difficulty = 1) then
 				--p_speed := 3;
-				if (storedRandNum = "0000") then
+				-- four new pipe setups for medium, plus previous setups from easy (8 total)
+				-- easy setups 
+				if (storedRandNum = "0000" or storedRandNum = "0001") then
 				
-				elsif (storedRandNum = "0001") then
+				elsif (storedRandNum = "0010" or storedRandNum = "0011") then
 				
-				elsif (storedRandNum = "0010") then
+				elsif (storedRandNum = "0100" or storedRandNum = "0101") then
 				
-				elsif (storedRandNum = "0011") then 
+				elsif (storedRandNum = "0110" or storedRandNum = "0111") then 
 				
-				elsif (storedRandNum = "0100") then
+				-- new setups 
 				
-				elsif (storedRandNum = "0101") then 
+				elsif (storedRandNum = "1000" or storedRandNum = "1001") then 
 				
-				elsif (storedRandNum = "0110") then 
+				elsif (storedRandNum = "1010" or storedRandNum = "1011") then
 				
-				elsif (storedRandNum = "0111") then
+				elsif (storedRandNum = "1100" or storedRandNum = "1101") then 
 				
-				elsif (storedRandNum = "1000") then 
-				
-				elsif	(storedRandNum = "1001") then 
-				
-				elsif (storedRandNum = "1010") then
-				
-				elsif (storedRandNum = "1011") then 
-				
-				elsif (storedRandNum = "1100") then 
-
-				elsif (storedRandNum = "1101") then 
-				
-				elsif (storedRandNum = "1110") then
-				
-				elsif (storedRandNum = "1111") then
+				else
 				
 				end if;
 			
 			elsif (game_mode = MODE_GAME and difficulty = 2) then
 				--p_speed := 4;
+				-- eight new pipe setups for hard, plus previous setups from easy and medium (16 total)
+				-- easy 
 				if (storedRandNum = "0000") then
 				
 				elsif (storedRandNum = "0001") then
@@ -608,6 +599,7 @@ begin
 				
 				elsif (storedRandNum = "0011") then 
 				
+				-- medium
 				elsif (storedRandNum = "0100") then
 				
 				elsif (storedRandNum = "0101") then 
@@ -616,6 +608,7 @@ begin
 				
 				elsif (storedRandNum = "0111") then
 				
+				-- new hard setups 
 				elsif (storedRandNum = "1000") then 
 				
 				elsif	(storedRandNum = "1001") then 
@@ -630,10 +623,9 @@ begin
 				
 				elsif (storedRandNum = "1110") then
 				
-				elsif (storedRandNum = "1111") then
+				else (storedRandNum = "1111") then
 				
 				end if;
-				
 			else 
 			--Do nothing
 			end if;
