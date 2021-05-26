@@ -121,6 +121,12 @@ architecture x of main is
 		(16, to_unsigned(335, 10), to_unsigned(250, 10), "000000000000", coin, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE),
 		(16, to_unsigned(335, 10), to_unsigned(280, 10), "000000000000", coin, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
 	);
+
+	signal menu_options: all_sprites(0 to 2) := (
+		(16, to_unsigned(150, 10), to_unsigned(208, 10), "000000000000", orange_menu, "0000000000000000", false, 4, 2, TRUE, FALSE, FALSE),
+		(16, to_unsigned(210, 10), to_unsigned(208, 10), "000000000000", orange_menu, "0000000000000000", false, 4, 2, TRUE, FALSE, FALSE),
+		(16, to_unsigned(270, 10), to_unsigned(208, 10), "000000000000", orange_menu, "0000000000000000", false, 4, 2, TRUE, FALSE, FALSE)
+	)
 	
 	
 	-- Sprite Indexes
