@@ -380,7 +380,7 @@ begin
 	variable apply_h_boost : natural range 0 to 8 := 0; 
 	begin
 		if (rising_edge(v_sync)) then
-			storedRandNum <= randNum;
+		--	storedRandNum <= randNum;
 		
 			if (health_flag = '1') then
 				ticks := ticks + 1;
@@ -630,9 +630,13 @@ begin
 			-- Boost the bird up on mouse click, otherwise make it fall 
 			-- Don't let the bird flap if we have detected a collision (remember we are drawing the next frame here)
 			if (collision_flag = '0' and initial_lclick = '1') then
-				if (apply_h_boost > 0 and bird(0).y0 - h_boost_per_frame >= 0) then
-						bird(0).y0 <= bird(0).y0 - h_boost_per_frame;
-						apply_h_boost := apply_h_boost - 1;
+				if (apply_h_boost > 0) then
+						if (bird(0).y0 - h_boost_per_frame >= 0 and bird(0).y0 - h_boost_per_frame < 480) then
+							bird(0).y0 <= bird(0).y0 - h_boost_per_frame;
+							apply_h_boost := apply_h_boost - 1;
+						else
+							apply_h_boost := 0;
+						end if;
 				else
 					-- lower bird by 3 pixels (make it 'fall' 3 pixels)
 					if (bird(0).y0 + 3 <= 452)	then
@@ -686,7 +690,7 @@ begin
 			end if;
 			
 			if (game_mode = MODE_OVER) then
-				if (bird(0).y0 + 5 <= 672) then
+				if (bird(0).y0 + 5 <= 512) then
 					bird(0).y0 <= bird(0).y0 + 5;
 				end if;
 				collision_flag := '0';
