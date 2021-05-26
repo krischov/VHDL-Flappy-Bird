@@ -406,10 +406,13 @@ begin
 	variable apply_h_boost : natural range 0 to 8 := 0; 
 	variable difficulty : natural range 0 to 2;
 	variable p_speed : natural range 2 to 4;
+	variable d_state : natural range 0 to 3 := 0;
 	
 	begin
 		if (rising_edge(v_sync)) then
-			storedRandNum <= randNum;
+			if(d_state = 0) then
+				storedRandNum <= randNum;
+			end if;
 			-- hide the 'click mouse to start' text
 			if ((game_mode = MODE_TITLE or game_mode = MODE_GAME) and initial_lclick = '1') then
 				hide_click2start_text <= true;
@@ -509,39 +512,90 @@ begin
 			
 			if ((game_mode = MODE_GAME and difficulty = 0) or game_mode = MODE_TRAIN) then 
 				p_speed := 2;
-				if (storedRandNum = "0000") then
 				
-				elsif (storedRandNum = "0001") then
+			
+				for i in 0 to bottompipe'length -1 loop
+					if((bottompipe(i).x0 < (1023 - bottompipe(i).size * bottompipe(i).scaling_factor_x)) and bottompipe(i).underflow = true) then
+						next;
+					end if;
 				
-				elsif (storedRandNum = "0010") then
-				
-				elsif (storedRandNum = "0011") then 
-				
-				elsif (storedRandNum = "0100") then
-				
-				elsif (storedRandNum = "0101") then 
-				
-				elsif (storedRandNum = "0110") then 
-				
-				elsif (storedRandNum = "0111") then
-				
-				elsif (storedRandNum = "1000") then 
-				
-				elsif	(storedRandNum = "1001") then 
-				
-				elsif (storedRandNum = "1010") then
-				
-				elsif (storedRandNum = "1011") then 
-				
-				elsif (storedRandNum = "1100") then 
-
-				elsif (storedRandNum = "1101") then 
-				
-				elsif (storedRandNum = "1110") then
-				
-				elsif (storedRandNum = "1111") then
-				
-				end if;
+					if (storedRandNum = "0000") then
+						if(d_state = 0) then 
+						  bottompipe(i).x0 <= to_unsigned(650,10);
+						  bottompipe(i).underflow <= false;
+						  d_state := 1;
+						elsif(d_state = 1) then
+						  bottompipe(i).x0 <= to_unsigned(680,10);
+						  bottompipe(i).underflow <= false;
+						  d_state := 2;
+						elsif(d_state = 2) then
+						  bottompipe(i).x0 <= to_unsigned(710,10);
+						  bottompipe(i).underflow <= false;
+						  d_state := 0;
+						end if;
+						
+					elsif (storedRandNum = "0001") then
+						bottompipe(i).x0 <= to_unsigned(640, 10);
+						
+						
+					elsif (storedRandNum = "0010") then
+						bottompipe(i).x0 <= to_unsigned(640, 10);
+						
+						
+					elsif (storedRandNum = "0011") then 
+						bottompipe(i).x0 <= to_unsigned(640, 10);
+						
+						
+					elsif (storedRandNum = "0100") then
+						bottompipe(i).x0 <= to_unsigned(640, 10);
+						
+						
+					elsif (storedRandNum = "0101") then 
+						bottompipe(i).x0 <= to_unsigned(640, 10);
+						
+						
+					elsif (storedRandNum = "0110") then 
+						bottompipe(i).x0 <= to_unsigned(640, 10);
+						
+						
+					elsif (storedRandNum = "0111") then
+						bottompipe(i).x0 <= to_unsigned(640, 10);
+						
+						
+					elsif (storedRandNum = "1000") then 
+						bottompipe(i).x0 <= to_unsigned(640, 10);
+						
+						
+					elsif	(storedRandNum = "1001") then 
+						bottompipe(i).x0 <= to_unsigned(640, 10);
+						
+						
+					elsif (storedRandNum = "1010") then
+						bottompipe(i).x0 <= to_unsigned(640, 10);
+						
+						
+					elsif (storedRandNum = "1011") then 
+						bottompipe(i).x0 <= to_unsigned(640, 10);
+						
+						
+					elsif (storedRandNum = "1100") then 
+						bottompipe(i).x0 <= to_unsigned(640, 10);
+						
+						
+					elsif (storedRandNum = "1101") then 
+						bottompipe(i).x0 <= to_unsigned(640, 10);
+						
+					elsif (storedRandNum = "1110") then
+						bottompipe(i).x0 <= to_unsigned(640, 10);
+						
+						
+					elsif (storedRandNum = "1111") then
+						bottompipe(i).x0 <= to_unsigned(640, 10);
+						
+						
+					end if;
+					
+				end loop;
 
 			elsif (game_mode = MODE_GAME and difficulty = 1) then
 				--p_speed := 3;
@@ -619,7 +673,8 @@ begin
 			--Do nothing
 			end if;
 			
-			storedRandNum <= randNum;
+			--storedRandNum <= randNum;
+			storedRandNum <= "0000";
 			
 			
 			if (pb_0 = '1') then
@@ -686,7 +741,7 @@ begin
 							bottompipe(i).x0 <= bottompipe(i).x0 - p_speed;
 						elsif (bottompipe(i).x0 < 1023 - bottompipe(i).size * bottompipe(i).scaling_factor_x) then
 							bottompipe(i).underflow <= false;
-							bottompipe(i).x0 <= to_unsigned(640, 10);
+							--bottompipe(i).x0 <= to_unsigned(640, 10);
 							-- the pipe is being recycled, it should gives points again
 							bottompipe(i).passed_pipe <= false;
 						end if;
