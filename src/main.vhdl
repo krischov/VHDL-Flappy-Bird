@@ -530,7 +530,7 @@ begin
 				p_speed := 2;
 				
 				if((bottompipe(d_state).x0 < (1023 - bottompipe(d_state).size * bottompipe(d_state).scaling_factor_x)) and bottompipe(d_state).underflow = true) then
-					if (storedRandNum = "0000") then
+					if (storedRandNum = "0000"or storedRandNum = "0001" or storedRandNum = "0010" or storedRandNum = "0011") then
 						if(d_state = 0) then 
 						  bottompipe(d_state).x0 <= to_unsigned(640,10);
 						  bottompipe(d_state).scaling_factor_y <= 2;
@@ -554,46 +554,11 @@ begin
 						  
 						  d_state := 0;
 						end if;
-					elsif (storedRandNum = "0001") then						
+					elsif (storedRandNum = "0100" or storedRandNum = "0101" or storedRandNum = "0110" or storedRandNum = "0111") then
+												
+					elsif (storedRandNum = "1000" or storedRandNum = "1001" or storedRandNum = "1010" or storedRandNum = "1011") then 
 						
-					elsif (storedRandNum = "0010") then
-								
-					elsif (storedRandNum = "0011") then 
-						
-						
-					elsif (storedRandNum = "0100") then
-						
-						
-					elsif (storedRandNum = "0101") then 
-						
-						
-					elsif (storedRandNum = "0110") then 
-						
-						
-					elsif (storedRandNum = "0111") then
-						
-						
-					elsif (storedRandNum = "1000") then 
-						
-						
-					elsif	(storedRandNum = "1001") then 
-						
-						
-					elsif (storedRandNum = "1010") then
-						
-						
-					elsif (storedRandNum = "1011") then 
-						
-						
-					elsif (storedRandNum = "1100") then 
-						
-						
-					elsif (storedRandNum = "1101") then 
-						
-					elsif (storedRandNum = "1110") then
-						
-						
-					elsif (storedRandNum = "1111") then
+					elsif (storedRandNum = "1100" or storedRandNum = "1101" or storedRandNum = "1110" or storedRandNum = "1111") then 
 					end if;
 				end if;
 
