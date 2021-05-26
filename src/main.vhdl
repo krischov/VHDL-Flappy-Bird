@@ -407,9 +407,11 @@ begin
 	begin
 		if (rising_edge(v_sync)) then
 			if(d_state = 0) then
-				--storedRandNum <= randNum;
-				storedRandNum <= "0000";
+				storedRandNum <= randNum;
+			else
+				storedRandNum <= storedRandNum;
 			end if;
+			
 			-- hide the 'click mouse to start' text
 			if ((game_mode = MODE_TITLE or game_mode = MODE_GAME) and initial_lclick = '1') then
 				hide_click2start_text <= true;
@@ -694,7 +696,7 @@ begin
 				
 				end if;
 			else 
-			--Do nothing
+				d_state := d_state;
 			end if;
 			debug_print0 <= d_state;
 			
