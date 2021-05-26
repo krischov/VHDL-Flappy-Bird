@@ -45,6 +45,7 @@ architecture x of main is
 	signal tvec_mode_game: textengine_vector := (others => init_textengine_row);
 	signal tvec_mode_over: textengine_vector := (others => init_textengine_row);
 	signal tvec_mode_train: textengine_vector := (others=> init_textengine_row);
+	signal show_click2start_text: boolean := true;
 	
 	
 	signal txt_r : unsigned(3 downto 0) := "0000";
@@ -168,6 +169,10 @@ begin
 	-- Game Mode Screen Text Vector
 	
 	str2text(tvec_mode_game, 4, 2, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
+	str2text(tvec_mode_game, 5, 5, 4, 4, "0011", "0100", "1010", "Ready? Press the mouse to get started!", show_click2start_text);
+
+	-- Training Mode Text Vector
+	str2text(tvec_mode_train, 2, 3, 4, 4, "0011", "0100", "1010", "Training Mode");
 	
 	-- =================
 	
@@ -180,10 +185,6 @@ begin
 	
 	--==================
 
-	-- Training Mode Text Vector
-	str2text(tvec_mode_train, 2, 3, 4, 4, "0011", "0100", "1010", "Training Mode");
-
-	--==================
 
 	
 	-- Set the text vector depending on game mode
@@ -288,7 +289,6 @@ begin
 	red_out		<=	txt_r when txt_not_a = "1111" else sprite_r when sprite_z = "0000" else "0111"; -- 0111
 	green_out	<=	txt_g when txt_not_a = "1111" else sprite_g when sprite_z = "0000" else "1100"; -- 1100
 	blue_out	<= 	txt_b when txt_not_a = "1111" else sprite_b when sprite_z = "0000" else "1100"; -- 1100
-	
 	
 	process(clk)
 		variable ticks : integer := 0;
@@ -494,6 +494,7 @@ begin
 				end if;		
 		
 				if (initial_lclick = '1') then
+					show_click2start_text <= true;
 					if (collision_flag = '0' and (game_mode = MODE_GAME or game_mode = MODE_TRAIN)) then
 						if (bottompipe(i).x0 <= 640) then
 							bottompipe(i).underflow <= false;
@@ -607,22 +608,7 @@ begin
 					end if;
 				end if;	
 			end loop;
-		
-			-- Boost the bird up on mouse click, otherwise make it fall 
-			-- Don't let the bird flap if we have detected a collision (remember we are drawing the next frame here)
---			if (collision_flag = '0' and initial_lclick = '1') then
---				if (apply_h_boost > 0) then
---					if (bird(0).y0 - h_boost_per_frame >= 0 and bird(0).y0 - h_boost_per_frame < 480) then
---						bird(0).y0 <= bird(0).y0 - h_boost_per_frame;
---						apply_h_boost := apply_h_boost - 1;
---					end if;
---				else
---					-- lower bird by 3 pixels (make it 'fall' 3 pixels)
---					if (bird(0).y0 + 3 <= 452)	then
---						bird(0).y0 <= bird(0).y0 + 3;
---					end if;
---				end if;
---			end if;
+
 			if (collision_flag = '0' and initial_lclick = '1') then
 				if (apply_h_boost > 0 and bird(0).y0 - h_boost_per_frame >= 0 and bird(0).y0 - h_boost_per_frame < 480) then
 					bird(0).y0 <= bird(0).y0 - h_boost_per_frame;
