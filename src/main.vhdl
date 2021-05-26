@@ -131,9 +131,9 @@ architecture x of main is
 	);
 
 	signal menus: all_sprites(0 to 2) := (
-		(16, to_unsigned(150, 10), to_unsigned(208, 10), "000000000000", menu, "0000000000000000", false, 4, 2, TRUE, FALSE, FALSE),
-		(16, to_unsigned(210, 10), to_unsigned(208, 10), "000000000000", menu, "0000000000000000", false, 4, 2, TRUE, FALSE, FALSE),
-		(16, to_unsigned(270, 10), to_unsigned(208, 10), "000000000000", menu, "0000000000000000", false, 4, 2, TRUE, FALSE, FALSE)
+		(16, to_unsigned(150, 10), to_unsigned(256, 10), "000000000000", menu, "0000000000000000", false, 8, 2, TRUE, FALSE, FALSE),
+		(16, to_unsigned(210, 10), to_unsigned(256, 10), "000000000000", menu, "0000000000000000", false, 8, 2, TRUE, FALSE, FALSE),
+		(16, to_unsigned(270, 10), to_unsigned(256, 10), "000000000000", menu, "0000000000000000", false, 8, 2, TRUE, FALSE, FALSE)
 	);
 	
 	
@@ -420,7 +420,7 @@ begin
 				menus(1).visible <= FALSE;
 				menus(2).visible <= FALSE;
 			end if;
-			
+
 			if (health_flag = '1') then
 				ticks := ticks + 1;
 				if (ticks = 5) then
