@@ -121,11 +121,13 @@ architecture x of main is
 		(16, to_unsigned(80, 10), to_unsigned(300, 10), "000000000000", coin, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
 		(16, to_unsigned(400, 10), to_unsigned(400, 10), "000000000000", coin, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
 	);
-	
-	signal cloud0s : all_sprites(0 to 2) := (
-		(32, to_unsigned(150, 10), to_unsigned(80, 10), "000000000000", cloud0, "0000000000000000", false, 4, 2, TRUE, FALSE, FALSE),
-		(32, to_unsigned(220, 10), to_unsigned(200, 10), "000000000000", cloud0, "0000000000000000", false, 4, 2, TRUE, FALSE, FALSE),
-		(32, to_unsigned(300, 10), to_unsigned(60, 10), "000000000000", cloud0, "0000000000000000", false, 4, 2, TRUE, FALSE, FALSE)
+
+	signal cloud0s : all_sprites(0 to 4) := (
+		(32, to_unsigned(150, 10), to_unsigned(80, 10), "000000000000", cloud0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(220, 10), to_unsigned(200, 10), "000000000000", cloud0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(300, 10), to_unsigned(60, 10), "000000000000", cloud0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(80, 10), to_unsigned(200, 10), "000000000000", cloud0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(120, 10), to_unsigned(400, 10), "000000000000", cloud0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
 	);
 	
 	signal tree2s : all_sprites(0 to 2) := (
