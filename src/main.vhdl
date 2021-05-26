@@ -125,7 +125,7 @@ architecture x of main is
 	signal menus: all_sprites(0 to 2) := (
 		(16, to_unsigned(150, 10), to_unsigned(256, 10), "000000000000", menu, "0000000000000000", false, 8, 2, TRUE, FALSE, FALSE),
 		(16, to_unsigned(210, 10), to_unsigned(256, 10), "000000000000", menu, "0000000000000000", false, 8, 2, TRUE, FALSE, FALSE),
-		(16, to_unsigned(270, 10), to_unsigned(256, 10), "000000000000", menu, "0000000000000000", false, 8, 2, TRUE, FALSE, FALSE)
+		(16, to_unsigned(270, 10), to_unsigned(256, 10), "000000000000", menu, "0000000000000000", false, 8, 2, FALSE, FALSE, FALSE)
 	);
 	
 	
@@ -424,7 +424,7 @@ begin
 			--Menu navigation. If any range of x and y coordinate is overlapping with the menu button while the mouse is clicked, will act as a button click. 
 
 			if (mouse_lbtn = '1') then
-				if (menus(0).visible = TRUE and menus(1).visible = TRUE and menus(2).visible = TRUE) then
+				if (menus(0).visible = TRUE and menus(1).visible = TRUE) then
 					if (((mousecursor(0).x0 >= menus(0).x0 and mousecursor(0).x0 <= menus(0).x0 + menus(0).size * menus(0).scaling_factor_x - 1) or
 						(mousecursor(0).x0 + 9 >= menus(0).x0 and mousecursor(0).x0 + 9 <= menus(0).x0 + menus(0).size * menus(0).scaling_factor_x - 1)) and
 						((mousecursor(0).y0 >= menus(0).y0 and mousecursor(0).y0 <= menus(0).y0 + menus(0).size * menus(0).scaling_factor_y - 1) or
@@ -436,7 +436,13 @@ begin
 						((mousecursor(0).y0 >= menus(1).y0 and mousecursor(0).y0 <= menus(1).y0 + menus(1).size * menus(1).scaling_factor_y - 1) or
 						(mousecursor(0).y0 + mousecursor(0).size - 1 >= menus(1).y0 and mousecursor(0).y0 + mousecursor(0).size - 1 <= menus(1).y0 * menus(1).scaling_factor_y - 1))) then
 							train_flag := '1';
+					else
+						game_flag := '0';
+						train_flag := '0';
 					end if;
+				else
+					game_flag := '0';
+					train_flag := '0';
 				end if;
 			end if;
 
