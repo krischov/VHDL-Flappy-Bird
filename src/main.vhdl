@@ -117,12 +117,17 @@ architecture x of main is
 		(16, to_unsigned(8, 10), to_unsigned(56,10), "000000000000", heart, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE)
 	);
 	
+	signal coins: all_sprites(0 to 1) := (
+		(16, to_unsigned(335, 10), to_unsigned(250, 10), "000000000000", coin, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE),
+		(16, to_unsigned(335, 10), to_unsigned(280, 10), "000000000000", coin, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
+	);
+	
 	
 	-- Sprite Indexes
 	
 	signal sprites_addrs : sprite_addr_array := (others => "000000000000");
 	signal sprites_out : sprite_output_array := (others => "0000000000000000");
-	signal grass_idx, bottompipe_idx, bird_idx, tree0_idx, toppipe_idx , mousecursor_idx, heart_idx : integer := -1;
+	signal grass_idx, bottompipe_idx, bird_idx, tree0_idx, toppipe_idx , mousecursor_idx, heart_idx, coin_idx: integer := -1;
 	
 	-- ========================
 	
@@ -225,6 +230,9 @@ begin
 	heart_idx <= get_active_idx(hearts, vga_row, vga_col);	
 	hearts(heart_idx).address <= calc_addr_f(hearts(heart_idx), vga_row, vga_col);
 	
+	coin_idx <= get_active_idx(coins, vga_row, vga_col);
+	coins(heart_idx).address <= calc_addr_f(coins(coin_idx), vga_row, vga_col);
+	
 	
 	
 	bird(bird_idx).in_range <= return_in_range(bird(bird_idx), vga_row, vga_col) when bird_idx /= -1 else false;
@@ -234,7 +242,7 @@ begin
 	tree0s(tree0_idx).in_range <= return_in_range(tree0s(tree0_idx), vga_row, vga_col) when tree0_idx /= -1 else false;
 	mousecursor(mousecursor_idx).in_range <= return_in_range(mousecursor(mousecursor_idx), vga_row, vga_col) when mousecursor_idx /= -1 else false;
 	hearts(heart_idx).in_range <= return_in_range(hearts(heart_idx), vga_row, vga_col) when heart_idx /= -1 else false;
-	
+	coins(coin_idx).in_range <= return_in_range(coins(coin_idx), vga_row, vga_col) when coin_idx /= -1 else false;
 	
 
 	sprites_addrs(grass) <= grassplane(grass_idx).address;	
@@ -244,6 +252,7 @@ begin
 	sprites_addrs(bird0) <= bird(bird_idx).address;
 	sprites_addrs(cursor) <= mousecursor(mousecursor_idx).address;
 	sprites_addrs(heart) <= hearts(heart_idx).address;
+	sprites_addrs(coin) <= coins(coin_idx).address;
 	
 	
 	bird(bird_idx).colours <= sprites_out(bird0);
@@ -253,7 +262,7 @@ begin
 	toppipes(toppipe_idx).colours <= sprites_out(toppipe);
 	mousecursor(mousecursor_idx).colours <= sprites_out(cursor);
 	hearts(heart_idx).colours <= sprites_out(heart);
-
+	coins(coin_idx).colours <= sprites_out(coin);
 
 	
 	sprite_r <= unsigned(mousecursor(mousecursor_idx).colours(3 downto 0))	when mousecursor(mousecursor_idx).colours(15 downto 12) /= "1111" and mousecursor(mousecursor_idx).in_range else
@@ -263,6 +272,7 @@ begin
 				unsigned(bottompipe(bottompipe_idx).colours(3 downto 0))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
 				unsigned(toppipes(toppipe_idx).colours(3 downto 0))			when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
 				unsigned(tree0s(tree0_idx).colours(3 downto 0))				when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range else
+				unsigned(coins(coin_idx).colours(3 downto 0))				when coins(coin_idx).colours(15 downto 12) /= "1111" and coins(coin_idx).in_range else
 				"1111";
 				
 	
@@ -273,6 +283,7 @@ begin
 				unsigned(bottompipe(bottompipe_idx).colours(7 downto 4))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
 				unsigned(toppipes(toppipe_idx).colours(7 downto 4))			when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
 				unsigned(tree0s(tree0_idx).colours(7 downto 4))				when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range else
+				unsigned(coins(coin_idx).colours(7 downto 4))				when coins(coin_idx).colours(15 downto 12) /= "1111" and coins(coin_idx).in_range else
 				"1111";
 				
 				
@@ -284,6 +295,7 @@ begin
 				unsigned(bottompipe(bottompipe_idx).colours(11 downto 8))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
 				unsigned(toppipes(toppipe_idx).colours(11 downto 8))		when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
 				unsigned(tree0s(tree0_idx).colours(11 downto 8))			when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range else
+				unsigned(coins(coin_idx).colours(11 downto 8))				when coins(coin_idx).colours(15 downto 12) /= "1111" and coins(coin_idx).in_range else
 				"1111";
 				
 
@@ -294,6 +306,7 @@ begin
 				"0000" when bottompipe_idx /= -1 and bottompipe(bottompipe_idx).in_range and bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" else
 				"0000" when toppipe_idx /= -1 and toppipes(toppipe_idx).in_range and toppipes(toppipe_idx).colours(15 downto 12) /= "1111" else
 				"0000" when tree0_idx /= -1 and tree0s(tree0_idx).in_range and tree0s(tree0_idx).colours(15 downto 12) /= "1111" else
+				"0000" when coin_idx /= -1 and coins(coin_idx).in_range and coins(coin_idx).colours(15 downto 12) /= "1111" else
 				"1111";
 	
 	red_out		<=	txt_r when txt_not_a = "1111" else sprite_r when sprite_z = "0000" else "0111"; -- 0111
@@ -630,11 +643,9 @@ begin
 			-- Boost the bird up on mouse click, otherwise make it fall 
 			-- Don't let the bird flap if we have detected a collision (remember we are drawing the next frame here)
 			if (collision_flag = '0' and initial_lclick = '1') then
-				if (apply_h_boost > 0) then
-					if (bird(0).y0 - h_boost_per_frame >= 0) then
+				if (apply_h_boost > 0 and bird(0).y0 - h_boost_per_frame >= 0) then
 						bird(0).y0 <= bird(0).y0 - h_boost_per_frame;
 						apply_h_boost := apply_h_boost - 1;
-					end if;
 				else
 					-- lower bird by 3 pixels (make it 'fall' 3 pixels)
 					if (bird(0).y0 + 3 <= 452)	then
