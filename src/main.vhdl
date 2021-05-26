@@ -95,8 +95,8 @@ architecture x of main is
 	);
 	
 	signal toppipes : all_sprites(0 to 1) := (
-		(64, to_unsigned(0, 10), to_unsigned(128, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
-		(64, to_unsigned(0, 10), to_unsigned(500, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE)
+		(64, to_unsigned(0, 10), to_unsigned(128, 10), "000000000000", toppipe, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(64, to_unsigned(0, 10), to_unsigned(500, 10), "000000000000", toppipe, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
 	);
 
 	
@@ -550,8 +550,8 @@ begin
 						  d_state := 1;
 						else
 						  bottompipe(d_state).x0 <= to_unsigned(640,10);
-						  bottompipe(d_state).scaling_factor_y <= 4;
-						  bottompipe(d_state).y0 <= to_unsigned(480 - (4 * bottompipe(d_state).size), 10);
+						  bottompipe(d_state).scaling_factor_y <= 3;
+						  bottompipe(d_state).y0 <= to_unsigned(480 - (3 * bottompipe(d_state).size), 10);
 						  bottompipe(d_state).underflow <= false;
 						  
 						  toppipes(d_state).x0 <= to_unsigned(640,10);
@@ -592,7 +592,7 @@ begin
 						  bottompipe(d_state).underflow <= false;
 						  
 						  toppipes(d_state).x0 <= to_unsigned(640,10);
-						  toppipes(d_state).scaling_factor_y <= 3;
+						  toppipes(d_state).scaling_factor_y <= 1;
 						  toppipes(d_state).underflow <= false;
 						  
 						  d_state := 1;
@@ -767,7 +767,7 @@ begin
 					  bottompipe(d_state).underflow <= false;
 					  
 					  toppipes(d_state).x0 <= to_unsigned(640,10);
-					  toppipes(d_state).scaling_factor_y <= 3;
+					  toppipes(d_state).scaling_factor_y <= 2;
 					  toppipes(d_state).underflow <= false;
 					  
 					  d_state := 1;
@@ -786,8 +786,8 @@ begin
 				elsif (storedRandNum = "1100" or storedRandNum = "1101") then 
 					if(d_state = 0) then 
 					  bottompipe(d_state).x0 <= to_unsigned(640,10);
-					  bottompipe(d_state).scaling_factor_y <= 1;
-					  bottompipe(d_state).y0 <= to_unsigned(480 - (1 * bottompipe(d_state).size), 10);
+					  bottompipe(d_state).scaling_factor_y <= 2;
+					  bottompipe(d_state).y0 <= to_unsigned(480 - (2 * bottompipe(d_state).size), 10);
 					  bottompipe(d_state).underflow <= false;
 					  
 					  toppipes(d_state).x0 <= to_unsigned(640,10);
@@ -802,7 +802,7 @@ begin
 					  bottompipe(d_state).underflow <= false;
 					  
 					  toppipes(d_state).x0 <= to_unsigned(640,10);
-					  toppipes(d_state).scaling_factor_y <= 5;
+					  toppipes(d_state).scaling_factor_y <= 4;
 					  toppipes(d_state).underflow <= false;
 					  
 					  d_state := 0;
@@ -810,8 +810,8 @@ begin
 				else
 					if(d_state = 0) then 
 					  bottompipe(d_state).x0 <= to_unsigned(640,10);
-					  bottompipe(d_state).scaling_factor_y <= 5;
-					  bottompipe(d_state).y0 <= to_unsigned(480 - (5 * bottompipe(d_state).size), 10);
+					  bottompipe(d_state).scaling_factor_y <= 4;
+					  bottompipe(d_state).y0 <= to_unsigned(480 - (4 * bottompipe(d_state).size), 10);
 					  bottompipe(d_state).underflow <= false;
 					  
 					  toppipes(d_state).x0 <= to_unsigned(640,10);
@@ -840,8 +840,8 @@ begin
 				if (storedRandNum = "0000" or storedRandNum = "0001") then
 					if(d_state = 0) then 
 					  bottompipe(d_state).x0 <= to_unsigned(640,10);
-					  bottompipe(d_state).scaling_factor_y <= 5;
-					  bottompipe(d_state).y0 <= to_unsigned(480 - (5 * bottompipe(d_state).size), 10);
+					  bottompipe(d_state).scaling_factor_y <= 3;
+					  bottompipe(d_state).y0 <= to_unsigned(480 - (3 * bottompipe(d_state).size), 10);
 					  bottompipe(d_state).underflow <= false;
 					  
 					  toppipes(d_state).x0 <= to_unsigned(640,10);
@@ -856,7 +856,7 @@ begin
 					  bottompipe(d_state).underflow <= false;
 					  
 					  toppipes(d_state).x0 <= to_unsigned(640,10);
-					  toppipes(d_state).scaling_factor_y <= 5;
+					  toppipes(d_state).scaling_factor_y <= 2;
 					  toppipes(d_state).underflow <= false;
 					  
 					  d_state := 0;
@@ -869,14 +869,14 @@ begin
 					  bottompipe(d_state).underflow <= false;
 					  
 					  toppipes(d_state).x0 <= to_unsigned(640,10);
-					  toppipes(d_state).scaling_factor_y <= 6;
+					  toppipes(d_state).scaling_factor_y <= 2;
 					  toppipes(d_state).underflow <= false;
 					  
 					  d_state := 1;
 					else
 					  bottompipe(d_state).x0 <= to_unsigned(640,10);
-					  bottompipe(d_state).scaling_factor_y <= 7;
-					  bottompipe(d_state).y0 <= to_unsigned(480 - (7 * bottompipe(d_state).size), 10);
+					  bottompipe(d_state).scaling_factor_y <= 3;
+					  bottompipe(d_state).y0 <= to_unsigned(480 - (3 * bottompipe(d_state).size), 10);
 					  bottompipe(d_state).underflow <= false;
 					  
 					  toppipes(d_state).x0 <= to_unsigned(640,10);
@@ -893,7 +893,31 @@ begin
 					  bottompipe(d_state).underflow <= false;
 					  
 					  toppipes(d_state).x0 <= to_unsigned(640,10);
+					  toppipes(d_state).scaling_factor_y <= 2;
+					  toppipes(d_state).underflow <= false;
+					  
+					  d_state := 1;
+					else
+					  bottompipe(d_state).x0 <= to_unsigned(640,10);
+					  bottompipe(d_state).scaling_factor_y <= 2;
+					  bottompipe(d_state).y0 <= to_unsigned(480 - (2 * bottompipe(d_state).size), 10);
+					  bottompipe(d_state).underflow <= false;
+					  
+					  toppipes(d_state).x0 <= to_unsigned(640,10);
 					  toppipes(d_state).scaling_factor_y <= 4;
+					  toppipes(d_state).underflow <= false;
+					  
+					  d_state := 0;
+					 end if;									
+				elsif (storedRandNum = "0110" or storedRandNum = "0111") then 
+					if(d_state = 0) then 
+					  bottompipe(d_state).x0 <= to_unsigned(640,10);
+					  bottompipe(d_state).scaling_factor_y <= 3;
+					  bottompipe(d_state).y0 <= to_unsigned(480 - (3 * bottompipe(d_state).size), 10);
+					  bottompipe(d_state).underflow <= false;
+					  
+					  toppipes(d_state).x0 <= to_unsigned(640,10);
+					  toppipes(d_state).scaling_factor_y <= 2;
 					  toppipes(d_state).underflow <= false;
 					  
 					  d_state := 1;
@@ -904,31 +928,7 @@ begin
 					  bottompipe(d_state).underflow <= false;
 					  
 					  toppipes(d_state).x0 <= to_unsigned(640,10);
-					  toppipes(d_state).scaling_factor_y <= 5;
-					  toppipes(d_state).underflow <= false;
-					  
-					  d_state := 0;
-					 end if;									
-				elsif (storedRandNum = "0110" or storedRandNum = "0111") then 
-					if(d_state = 0) then 
-					  bottompipe(d_state).x0 <= to_unsigned(640,10);
-					  bottompipe(d_state).scaling_factor_y <= 7;
-					  bottompipe(d_state).y0 <= to_unsigned(480 - (7 * bottompipe(d_state).size), 10);
-					  bottompipe(d_state).underflow <= false;
-					  
-					  toppipes(d_state).x0 <= to_unsigned(640,10);
-					  toppipes(d_state).scaling_factor_y <= 1;
-					  toppipes(d_state).underflow <= false;
-					  
-					  d_state := 1;
-					else
-					  bottompipe(d_state).x0 <= to_unsigned(640,10);
-					  bottompipe(d_state).scaling_factor_y <= 4;
-					  bottompipe(d_state).y0 <= to_unsigned(480 - (4 * bottompipe(d_state).size), 10);
-					  bottompipe(d_state).underflow <= false;
-					  
-					  toppipes(d_state).x0 <= to_unsigned(640,10);
-					  toppipes(d_state).scaling_factor_y <= 5;
+					  toppipes(d_state).scaling_factor_y <= 3;
 					  toppipes(d_state).underflow <= false;
 					  
 					  d_state := 0;
@@ -942,7 +942,7 @@ begin
 					  bottompipe(d_state).underflow <= false;
 					  
 					  toppipes(d_state).x0 <= to_unsigned(640,10);
-					  toppipes(d_state).scaling_factor_y <= 3;
+					  toppipes(d_state).scaling_factor_y <= 1;
 					  toppipes(d_state).underflow <= false;
 					  
 					  d_state := 1;
@@ -966,14 +966,14 @@ begin
 					  bottompipe(d_state).underflow <= false;
 					  
 					  toppipes(d_state).x0 <= to_unsigned(640,10);
-					  toppipes(d_state).scaling_factor_y <= 8;
+					  toppipes(d_state).scaling_factor_y <= 4;
 					  toppipes(d_state).underflow <= false;
 					  
 					  d_state := 1;
 					else
 					  bottompipe(d_state).x0 <= to_unsigned(640,10);
-					  bottompipe(d_state).scaling_factor_y <= 5;
-					  bottompipe(d_state).y0 <= to_unsigned(480 - (5 * bottompipe(d_state).size), 10);
+					  bottompipe(d_state).scaling_factor_y <= 1;
+					  bottompipe(d_state).y0 <= to_unsigned(480 - (1 * bottompipe(d_state).size), 10);
 					  bottompipe(d_state).underflow <= false;
 					  
 					  toppipes(d_state).x0 <= to_unsigned(640,10);
@@ -985,23 +985,23 @@ begin
 				elsif (storedRandNum = "1100" or storedRandNum = "1101") then 
 					if(d_state = 0) then 
 					  bottompipe(d_state).x0 <= to_unsigned(640,10);
-					  bottompipe(d_state).scaling_factor_y <= 6;
-					  bottompipe(d_state).y0 <= to_unsigned(480 - (6 * bottompipe(d_state).size), 10);
+					  bottompipe(d_state).scaling_factor_y <= 4;
+					  bottompipe(d_state).y0 <= to_unsigned(480 - (4 * bottompipe(d_state).size), 10);
 					  bottompipe(d_state).underflow <= false;
 					  
 					  toppipes(d_state).x0 <= to_unsigned(640,10);
-					  toppipes(d_state).scaling_factor_y <= 3;
+					  toppipes(d_state).scaling_factor_y <= 2;
 					  toppipes(d_state).underflow <= false;
 					  
 					  d_state := 1;
 					else
 					  bottompipe(d_state).x0 <= to_unsigned(640,10);
-					  bottompipe(d_state).scaling_factor_y <= 8;
-					  bottompipe(d_state).y0 <= to_unsigned(480 - (8 * bottompipe(d_state).size), 10);
+					  bottompipe(d_state).scaling_factor_y <= 2;
+					  bottompipe(d_state).y0 <= to_unsigned(480 - (2 * bottompipe(d_state).size), 10);
 					  bottompipe(d_state).underflow <= false;
 					  
 					  toppipes(d_state).x0 <= to_unsigned(640,10);
-					  toppipes(d_state).scaling_factor_y <= 5;
+					  toppipes(d_state).scaling_factor_y <= 4;
 					  toppipes(d_state).underflow <= false;
 					  
 					  d_state := 0;
@@ -1025,7 +1025,7 @@ begin
 					  bottompipe(d_state).underflow <= false;
 					  
 					  toppipes(d_state).x0 <= to_unsigned(640,10);
-					  toppipes(d_state).scaling_factor_y <= 9;
+					  toppipes(d_state).scaling_factor_y <= 4;
 					  toppipes(d_state).underflow <= false;
 					  
 					  d_state := 0;
@@ -1106,9 +1106,9 @@ begin
 				-- if the user has just passed through this pipe, give them a point			
 				if (enable_collision = '1' and bottompipe(i).passed_pipe = false and bird(0).x0 > bottompipe(i).x0 + bottompipe(i).size * bottompipe(i).scaling_factor_x) then
 					bottompipe(i).passed_pipe <= true;
-					if(pipe_points < 2) then 
+					if(pipe_points < 15) then 
 						difficulty := 0;
-					elsif(pipe_points = 2) then
+					elsif(pipe_points > 25 and pipe_points < 35) then
 						difficulty := 1;
 					else
 						difficulty := 2;
