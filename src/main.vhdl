@@ -122,11 +122,11 @@ architecture x of main is
 		(16, to_unsigned(335, 10), to_unsigned(280, 10), "000000000000", coin, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
 	);
 
-	signal menu_options: all_sprites(0 to 2) := (
-		(16, to_unsigned(150, 10), to_unsigned(208, 10), "000000000000", orange_menu, "0000000000000000", false, 4, 2, TRUE, FALSE, FALSE),
-		(16, to_unsigned(210, 10), to_unsigned(208, 10), "000000000000", orange_menu, "0000000000000000", false, 4, 2, TRUE, FALSE, FALSE),
-		(16, to_unsigned(270, 10), to_unsigned(208, 10), "000000000000", orange_menu, "0000000000000000", false, 4, 2, TRUE, FALSE, FALSE)
-	)
+	signal menus: all_sprites(0 to 2) := (
+		(16, to_unsigned(150, 10), to_unsigned(208, 10), "000000000000", menu, "0000000000000000", false, 4, 2, TRUE, FALSE, FALSE),
+		(16, to_unsigned(210, 10), to_unsigned(208, 10), "000000000000", menu, "0000000000000000", false, 4, 2, TRUE, FALSE, FALSE),
+		(16, to_unsigned(270, 10), to_unsigned(208, 10), "000000000000", menu, "0000000000000000", false, 4, 2, TRUE, FALSE, FALSE)
+	);
 	
 	
 	-- Sprite Indexes
@@ -237,7 +237,10 @@ begin
 	hearts(heart_idx).address <= calc_addr_f(hearts(heart_idx), vga_row, vga_col);
 	
 	coin_idx <= get_active_idx(coins, vga_row, vga_col);
-	coins(heart_idx).address <= calc_addr_f(coins(coin_idx), vga_row, vga_col);
+	coins(coin_idx).address <= calc_addr_f(coins(coin_idx), vga_row, vga_col);
+	
+--	menu_idx <= get_active_idx(menus, vga_row, vga_col);
+--	menus(menu_idx).address <= calc_addr_f(menus(menu_idx), vga_row, vga_col);
 	
 	
 	
