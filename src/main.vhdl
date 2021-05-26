@@ -89,22 +89,14 @@ architecture x of main is
 		(32, to_unsigned(448, 10), to_unsigned(640,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE)
 	);
 
-	signal bottompipe : all_sprites(0 to 5) := (
-		(64, to_unsigned(288, 10), to_unsigned(340, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
-		(64, to_unsigned(288, 10), to_unsigned(540, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
-		(64, to_unsigned(288, 10), to_unsigned(540, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
-		(64, to_unsigned(288, 10), to_unsigned(540, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, FALSE, FALSE, FALSE),
-		(64, to_unsigned(288, 10), to_unsigned(540, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, FALSE, FALSE, FALSE),
-		(64, to_unsigned(288, 10), to_unsigned(540, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, FALSE, FALSE, FALSE)
+	signal bottompipe : all_sprites(0 to 1) := (
+		(64, to_unsigned(288, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
+		(64, to_unsigned(288, 10), to_unsigned(500, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE)
 	);
 	
-	signal toppipes : all_sprites(0 to 5) := (
+	signal toppipes : all_sprites(0 to 1) := (
 		(64, to_unsigned(0, 10), to_unsigned(340, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
-		(64, to_unsigned(0, 10), to_unsigned(540, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
-		(64, to_unsigned(0, 10), to_unsigned(340, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
-		(64, to_unsigned(0, 10), to_unsigned(540, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, FALSE, FALSE, FALSE),
-		(64, to_unsigned(0, 10), to_unsigned(340, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, FALSE, FALSE, FALSE),
-		(64, to_unsigned(0, 10), to_unsigned(540, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, FALSE, FALSE, FALSE)
+		(64, to_unsigned(0, 10), to_unsigned(540, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE)
 	);
 
 	
@@ -168,6 +160,7 @@ architecture x of main is
 	
 	
 	-- ========================
+	signal debug_print0 : natural range 0 to 3;
 begin
 
 	spriteengine0 : spriteengine port map (clk, vga_row, vga_col, sprites_addrs, sprites_out);
@@ -194,6 +187,7 @@ begin
 	-- Game Mode Screen Text Vector
 	str2text(tvec_mode_game, 4, 1, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
 	str2text(tvec_mode_game, 6, 1, 2, 3, "0011", "0011", "0111", "Ready? Press the mouse to get started!", hide_click2start_text);
+	str2text(tvec_mode_game, 10, 1, 2, 3, "0011", "0011", "0111", "dstate " & int2str(debug_print0));
 
 	-- Training Mode Text Vector
 	str2text(tvec_mode_train, 2, 1, 1, 1, "0011", "0100", "1010", "Successfully Passed Pipes " & int2str(pipe_points));
@@ -406,8 +400,8 @@ begin
 	variable apply_h_boost : natural range 0 to 8 := 0; 
 	variable difficulty : natural range 0 to 2;
 	variable p_speed : natural range 2 to 4;
-	variable d_state : natural range 0 to 3 := 0;
 	variable game_flag : std_logic := '0';
+	variable d_state : natural range 0 to 3 := 0; -- dynamic state of RnG of sprites
 	
 	begin
 		if (rising_edge(v_sync)) then
@@ -533,89 +527,59 @@ begin
 			if ((game_mode = MODE_GAME and difficulty = 0) or game_mode = MODE_TRAIN) then 
 				p_speed := 2;
 				
-			
-				for i in 0 to bottompipe'length -1 loop
-					if((bottompipe(i).x0 < (1023 - bottompipe(i).size * bottompipe(i).scaling_factor_x)) and bottompipe(i).underflow = true) then
-						next;
-					end if;
-				
+				if((bottompipe(d_state).x0 < (1023 - bottompipe(d_state).size * bottompipe(d_state).scaling_factor_x)) and bottompipe(d_state).underflow = true) then
 					if (storedRandNum = "0000") then
 						if(d_state = 0) then 
-						  bottompipe(i).x0 <= to_unsigned(650,10);
-						  bottompipe(i).underflow <= false;
+						  bottompipe(d_state).x0 <= to_unsigned(650,10);
+						  bottompipe(d_state).underflow <= false;
 						  d_state := 1;
 						elsif(d_state = 1) then
-						  bottompipe(i).x0 <= to_unsigned(680,10);
-						  bottompipe(i).underflow <= false;
-						  d_state := 2;
-						elsif(d_state = 2) then
-						  bottompipe(i).x0 <= to_unsigned(710,10);
-						  bottompipe(i).underflow <= false;
+						  bottompipe(d_state).x0 <= to_unsigned(800,10);
+						  bottompipe(d_state).underflow <= false;
 						  d_state := 0;
 						end if;
-						
-					elsif (storedRandNum = "0001") then
-						bottompipe(i).x0 <= to_unsigned(640, 10);
-						
+					elsif (storedRandNum = "0001") then						
 						
 					elsif (storedRandNum = "0010") then
-						bottompipe(i).x0 <= to_unsigned(640, 10);
-						
-						
+								
 					elsif (storedRandNum = "0011") then 
-						bottompipe(i).x0 <= to_unsigned(640, 10);
 						
 						
 					elsif (storedRandNum = "0100") then
-						bottompipe(i).x0 <= to_unsigned(640, 10);
 						
 						
 					elsif (storedRandNum = "0101") then 
-						bottompipe(i).x0 <= to_unsigned(640, 10);
 						
 						
 					elsif (storedRandNum = "0110") then 
-						bottompipe(i).x0 <= to_unsigned(640, 10);
 						
 						
 					elsif (storedRandNum = "0111") then
-						bottompipe(i).x0 <= to_unsigned(640, 10);
 						
 						
 					elsif (storedRandNum = "1000") then 
-						bottompipe(i).x0 <= to_unsigned(640, 10);
 						
 						
 					elsif	(storedRandNum = "1001") then 
-						bottompipe(i).x0 <= to_unsigned(640, 10);
 						
 						
 					elsif (storedRandNum = "1010") then
-						bottompipe(i).x0 <= to_unsigned(640, 10);
 						
 						
 					elsif (storedRandNum = "1011") then 
-						bottompipe(i).x0 <= to_unsigned(640, 10);
 						
 						
 					elsif (storedRandNum = "1100") then 
-						bottompipe(i).x0 <= to_unsigned(640, 10);
 						
 						
 					elsif (storedRandNum = "1101") then 
-						bottompipe(i).x0 <= to_unsigned(640, 10);
 						
 					elsif (storedRandNum = "1110") then
-						bottompipe(i).x0 <= to_unsigned(640, 10);
 						
 						
 					elsif (storedRandNum = "1111") then
-						bottompipe(i).x0 <= to_unsigned(640, 10);
-						
-						
 					end if;
-					
-				end loop;
+				end if;
 
 			elsif (game_mode = MODE_GAME and difficulty = 1) then
 				--p_speed := 3;
@@ -692,7 +656,7 @@ begin
 			else 
 			--Do nothing
 			end if;
-			
+			debug_print0 <= d_state;
 			
 			if (pb_0 = '1' or game_flag = '1') then
 				if (game_mode = MODE_TITLE) then
@@ -752,8 +716,7 @@ begin
 		
 				if (initial_lclick = '1') then
 					if (collision_flag = '0' and (game_mode = MODE_GAME or game_mode = MODE_TRAIN)) then
-						if (bottompipe(i).x0 <= 640) then
-							bottompipe(i).underflow <= false;
+						if (bottompipe(i).underflow = false) then
 							bottompipe(i).x0 <= bottompipe(i).x0 - p_speed;
 							if (bottompipe(i).x0 < 1) then
 								bottompipe(i).underflow <= true;
@@ -761,7 +724,7 @@ begin
 						elsif (bottompipe(i).x0 >= 1023 - bottompipe(i).size * bottompipe(i).scaling_factor_x) then
 							bottompipe(i).x0 <= bottompipe(i).x0 - p_speed;
 						elsif (bottompipe(i).x0 < 1023 - bottompipe(i).size * bottompipe(i).scaling_factor_x) then
-							bottompipe(i).underflow <= false;
+							--bottompipe(i).underflow <= false;
 							--bottompipe(i).x0 <= to_unsigned(640, 10);
 							-- the pipe is being recycled, it should gives points again
 							bottompipe(i).passed_pipe <= false;
@@ -780,7 +743,7 @@ begin
 							toppipes(i).x0 <= to_unsigned(640, 10); 
 						end if;
 					
-							if (bird(0).visible = true and enable_collision = '1') then
+							if (bottompipe(i).visible = true and toppipes(i).visible = true and bird(0).visible = true and enable_collision = '1') then
 								-- Do collision and point detection here
 								if (((bird(0).x0 + 2 >= toppipes(i).x0) and ((bird(0).x0 + bird(0).size - 1) <= toppipes(i).x0 + toppipes(i).size - 1)) and 
 									(((bird(0).y0 + 4 >= toppipes(i).y0) and (bird(0).y0 + 4 <= toppipes(i).y0 + toppipes(i).size*toppipes(i).scaling_factor_y + 1)) or
