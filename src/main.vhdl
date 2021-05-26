@@ -95,8 +95,8 @@ architecture x of main is
 	);
 	
 	signal toppipes : all_sprites(0 to 1) := (
-		(64, to_unsigned(0, 10), to_unsigned(340, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
-		(64, to_unsigned(0, 10), to_unsigned(540, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE)
+		(64, to_unsigned(0, 10), to_unsigned(300, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
+		(64, to_unsigned(0, 10), to_unsigned(500, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE)
 	);
 
 	
@@ -421,22 +421,22 @@ begin
 			end if;
 
 			--Menu navigation. If any range of x and y coordinate is overlapping with the menu button while the mouse is clicked, will act as a button click. 
-			if (mouse_lbtn = '1') then
-				if (menus(0).visible = TRUE and menus(1).visible = TRUE and menus(2).visible = TRUE) then
-					if (((mousecursor(0).x0 >= menus(0).x0 and mousecursor(0).x0 <= menus(0).x0 + menus(0).size * menus(0).scaling_factor_x - 1) or
-						(mousecursor(0).x0 + 9 >= menus(0).x0 and mousecursor(0).x0 + 9 <= menus(0).x0 + menus(0).size * menus(0).scaling_factor_x - 1)) and
-						((mousecursor(0).y0 >= menus(0).y0 and mousecursor(0).y0 <= menus(0).y0 + menus(0).size * menus(0).scaling_factor_y - 1) or
-						(mousecursor(0).y0 + mousecursor(0).size - 1 >= menus(0).y0 and mousecursor(0).y0 + mousecursor(0).size - 1 <= menus(0).y0 * menus(0).scaling_factor_y - 1))) then
-							game_mode <= MODE_GAME;
-							game_flag := '1';
-					elsif (((mousecursor(0).x0 >= menus(1).x0 and mousecursor(0).x0 <= menus(1).x0 + menus(1).size * menus(1).scaling_factor_x - 1) or
-						(mousecursor(0).x0 + 9 >= menus(1).x0 and mousecursor(0).x0 + 9 <= menus(1).x0 + menus(1).size * menus(1).scaling_factor_x - 1)) and
-						((mousecursor(0).y0 >= menus(1).y0 and mousecursor(0).y0 <= menus(1).y0 + menus(1).size * menus(1).scaling_factor_y - 1) or
-						(mousecursor(0).y0 + mousecursor(0).size - 1 >= menus(1).y0 and mousecursor(0).y0 + mousecursor(0).size - 1 <= menus(1).y0 * menus(1).scaling_factor_y - 1))) then
-							game_mode <= MODE_TRAIN;
-					end if;
-				end if;
-			end if;
+--			if (mouse_lbtn = '1') then
+--				if (menus(0).visible = TRUE and menus(1).visible = TRUE and menus(2).visible = TRUE) then
+--					if (((mousecursor(0).x0 >= menus(0).x0 and mousecursor(0).x0 <= menus(0).x0 + menus(0).size * menus(0).scaling_factor_x - 1) or
+--						(mousecursor(0).x0 + 9 >= menus(0).x0 and mousecursor(0).x0 + 9 <= menus(0).x0 + menus(0).size * menus(0).scaling_factor_x - 1)) and
+--						((mousecursor(0).y0 >= menus(0).y0 and mousecursor(0).y0 <= menus(0).y0 + menus(0).size * menus(0).scaling_factor_y - 1) or
+--						(mousecursor(0).y0 + mousecursor(0).size - 1 >= menus(0).y0 and mousecursor(0).y0 + mousecursor(0).size - 1 <= menus(0).y0 * menus(0).scaling_factor_y - 1))) then
+--							game_mode <= MODE_GAME;
+--							game_flag := '1';
+--					elsif (((mousecursor(0).x0 >= menus(1).x0 and mousecursor(0).x0 <= menus(1).x0 + menus(1).size * menus(1).scaling_factor_x - 1) or
+--						(mousecursor(0).x0 + 9 >= menus(1).x0 and mousecursor(0).x0 + 9 <= menus(1).x0 + menus(1).size * menus(1).scaling_factor_x - 1)) and
+--						((mousecursor(0).y0 >= menus(1).y0 and mousecursor(0).y0 <= menus(1).y0 + menus(1).size * menus(1).scaling_factor_y - 1) or
+--						(mousecursor(0).y0 + mousecursor(0).size - 1 >= menus(1).y0 and mousecursor(0).y0 + mousecursor(0).size - 1 <= menus(1).y0 * menus(1).scaling_factor_y - 1))) then
+--							game_mode <= MODE_TRAIN;
+--					end if;
+--				end if;
+--			end if;
 
 			if (health_flag = '1') then
 				ticks := ticks + 1;
@@ -530,12 +530,26 @@ begin
 				if((bottompipe(d_state).x0 < (1023 - bottompipe(d_state).size * bottompipe(d_state).scaling_factor_x)) and bottompipe(d_state).underflow = true) then
 					if (storedRandNum = "0000") then
 						if(d_state = 0) then 
-						  bottompipe(d_state).x0 <= to_unsigned(650,10);
+						  bottompipe(d_state).x0 <= to_unsigned(640,10);
+						  bottompipe(d_state).scaling_factor_y <= 2;
+						  bottompipe(d_state).y0 <= to_unsigned(480 - (2 * bottompipe(d_state).size), 10);
 						  bottompipe(d_state).underflow <= false;
+						  
+						  toppipes(d_state).x0 <= to_unsigned(640,10);
+						  toppipes(d_state).scaling_factor_y <= 2;
+						  toppipes(d_state).underflow <= false;
+						  
 						  d_state := 1;
 						elsif(d_state = 1) then
-						  bottompipe(d_state).x0 <= to_unsigned(800,10);
+						  bottompipe(d_state).x0 <= to_unsigned(640,10);
+						  bottompipe(d_state).scaling_factor_y <= 4;
+						  bottompipe(d_state).y0 <= to_unsigned(480 - (4 * bottompipe(d_state).size), 10);
 						  bottompipe(d_state).underflow <= false;
+						  
+						  toppipes(d_state).x0 <= to_unsigned(640,10);
+						  toppipes(d_state).scaling_factor_y <= 2;
+						  toppipes(d_state).underflow <= false;
+						  
 						  d_state := 0;
 						end if;
 					elsif (storedRandNum = "0001") then						
@@ -729,9 +743,8 @@ begin
 							-- the pipe is being recycled, it should gives points again
 							bottompipe(i).passed_pipe <= false;
 						end if;
-							
-						if (toppipes(i).x0 <= 640) then
-							toppipes(i).underflow <= false;
+						
+						if (toppipes(i).underflow = false) then
 							toppipes(i).x0 <= toppipes(i).x0 - p_speed;
 							if (toppipes(i).x0 < 1) then
 								toppipes(i).underflow <= true;
@@ -739,10 +752,10 @@ begin
 						elsif (toppipes(i).x0 >= 1023 - toppipes(i).size * toppipes(i).scaling_factor_x) then
 							toppipes(i).x0 <= toppipes(i).x0 - p_speed;
 						elsif (toppipes(i).x0 < 1023 - toppipes(i).size * toppipes(i).scaling_factor_x) then
-							toppipes(i).underflow <= false;
-							toppipes(i).x0 <= to_unsigned(640, 10); 
+							--toppipes(i).underflow <= false;
+							--toppipes(i).x0 <= to_unsigned(640, 10); 
 						end if;
-					
+
 							if (bottompipe(i).visible = true and toppipes(i).visible = true and bird(0).visible = true and enable_collision = '1') then
 								-- Do collision and point detection here
 								if (((bird(0).x0 + 2 >= toppipes(i).x0) and ((bird(0).x0 + bird(0).size - 1) <= toppipes(i).x0 + toppipes(i).size - 1)) and 
