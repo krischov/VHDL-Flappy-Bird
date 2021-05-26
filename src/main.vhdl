@@ -128,12 +128,18 @@ architecture x of main is
 		(16, to_unsigned(270, 10), to_unsigned(256, 10), "000000000000", menu, "0000000000000000", false, 8, 2, FALSE, FALSE, FALSE)
 	);
 	
+	signal cloud0s : all_sprites(0 to 1) := (
+		(32, to_unsigned(150, 10), to_unsigned(80, 10), "000000000000", cloud0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(32, to_unsigned(220, 10), to_unsigned(200, 10), "000000000000", cloud0, "0000000000000000", false, 1, 2, TRUE, FALSE, FALSE)
+	);
+	
+	
 	
 	-- Sprite Indexes
 	
 	signal sprites_addrs : sprite_addr_array := (others => "000000000000");
 	signal sprites_out : sprite_output_array := (others => "0000000000000000");
-	signal grass_idx, bottompipe_idx, bird_idx, tree0_idx, toppipe_idx , mousecursor_idx, heart_idx, coin_idx, menu_idx: integer := -1;
+	signal grass_idx, bottompipe_idx, bird_idx, tree0_idx, toppipe_idx , mousecursor_idx, heart_idx, coin_idx, menu_idx, cloud0_idx: integer := -1;
 	
 	-- ========================
 	
@@ -165,12 +171,6 @@ begin
 	textengine0: textengine port map(clk, text_vector, vga_row, vga_col, txt_r, txt_g, txt_b, txt_not_a);
 	randomNumGen0 : randomNumGen port map(clk, seed, randNum);
 		
---	str2text(text_vector, 0, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, " __  __           _      _     _            __  __       _         _");
---	str2text(text_vector, 1, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|  \/  |         | |    | |   (_)          |  \/  |     | |       | |");
---	str2text(text_vector, 2, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| \  / | ___   __| | ___| |___ _ _ __ ___  | \  / | ___ | |__  ___| |_ ___ _ __");
---	str2text(text_vector, 3, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| |\/| |/ _ \ / _` |/ _ \ / __| | '_ ` _ \ | |\/| |/ _ \| '_ \/ __| __/ _ \ '__|");
---	str2text(text_vector, 4, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "| |  | | (_) | (_| |  __/ \__ \ | | | | | || |  | | (_) | |_) \__ \ ||  __/ |");
---	str2text(text_vector, 5, 0, 1, 1, '1' & red_in, '0' & green_in, '1' & blue_in, "|_|  |_|\___/ \__,_|\___|_|___/_|_| |_| |_||_|  |_|\___/|_.__/|___/\__\___|_|");
 	
 	-- Title Screen Text Vector 
 	str2text(tvec_mode_title, 1, 2, 8, 8, "0011", "0100", "1010", "Flappy");
@@ -235,6 +235,10 @@ begin
 	menu_idx <= get_active_idx(menus, vga_row, vga_col);
 	menus(menu_idx).address <= calc_addr_f(menus(menu_idx), vga_row, vga_col);
 	
+	cloud0_idx <= get_active_idx(cloud0s, vga_row, vga_col);
+	cloud0s(cloud0_idx).address <= calc_addr_f(cloud0s(cloud0_idx), vga_row, vga_col);
+	
+	
 	
 	
 	bird(bird_idx).in_range <= return_in_range(bird(bird_idx), vga_row, vga_col) when bird_idx /= -1 else false;
@@ -246,6 +250,7 @@ begin
 	hearts(heart_idx).in_range <= return_in_range(hearts(heart_idx), vga_row, vga_col) when heart_idx /= -1 else false;
 	coins(coin_idx).in_range <= return_in_range(coins(coin_idx), vga_row, vga_col) when coin_idx /= -1 else false;
 	menus(menu_idx).in_range <= return_in_range(menus(menu_idx), vga_row, vga_col) when menu_idx /= -1 else false;
+	cloud0s(cloud0_idx).in_range <= return_in_range(cloud0s(cloud0_idx), vga_row, vga_col) when cloud0_idx /= -1 else false;
 	
 
 	sprites_addrs(grass) <= grassplane(grass_idx).address;	
@@ -257,6 +262,7 @@ begin
 	sprites_addrs(heart) <= hearts(heart_idx).address;
 	sprites_addrs(coin) <= coins(coin_idx).address;
 	sprites_addrs(menu) <= menus(menu_idx).address;
+	sprites_addrs(cloud0) <= cloud0s(cloud0_idx).address;
 	
 	
 	bird(bird_idx).colours <= sprites_out(bird0);
@@ -268,7 +274,7 @@ begin
 	hearts(heart_idx).colours <= sprites_out(heart);
 	coins(coin_idx).colours <= sprites_out(coin);
 	menus(menu_idx).colours <= sprites_out(menu);
-
+	cloud0s(cloud0_idx).colours <= sprites_out(cloud0);
 	
 	sprite_r <= unsigned(mousecursor(mousecursor_idx).colours(3 downto 0))	when mousecursor(mousecursor_idx).colours(15 downto 12) /= "1111" and mousecursor(mousecursor_idx).in_range else
 				unsigned(bird(bird_idx).colours(3 downto 0))				when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
@@ -279,6 +285,7 @@ begin
 				unsigned(tree0s(tree0_idx).colours(3 downto 0))				when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range else
 				unsigned(coins(coin_idx).colours(3 downto 0))				when coins(coin_idx).colours(15 downto 12) /= "1111" and coins(coin_idx).in_range else
 				unsigned(menus(menu_idx).colours(3 downto 0))				when menus(menu_idx).colours(15 downto 12) /= "1111" and menus(menu_idx).in_range else
+				unsigned(cloud0s(cloud0_idx).colours(3 downto 0))				when cloud0s(cloud0_idx).colours(15 downto 12) /= "1111" and cloud0s(cloud0_idx).in_range else
 				"1111";
 				
 	
@@ -291,6 +298,7 @@ begin
 				unsigned(tree0s(tree0_idx).colours(7 downto 4))				when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range else
 				unsigned(coins(coin_idx).colours(7 downto 4))				when coins(coin_idx).colours(15 downto 12) /= "1111" and coins(coin_idx).in_range else
 				unsigned(menus(menu_idx).colours(7 downto 4))				when menus(menu_idx).colours(15 downto 12) /= "1111" and menus(menu_idx).in_range else
+				unsigned(cloud0s(cloud0_idx).colours(7 downto 4))				when cloud0s(cloud0_idx).colours(15 downto 12) /= "1111" and cloud0s(cloud0_idx).in_range else
 				"1111";
 				
 				
@@ -304,6 +312,7 @@ begin
 				unsigned(tree0s(tree0_idx).colours(11 downto 8))			when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range else
 				unsigned(coins(coin_idx).colours(11 downto 8))				when coins(coin_idx).colours(15 downto 12) /= "1111" and coins(coin_idx).in_range else
 				unsigned(menus(menu_idx).colours(11 downto 8))				when menus(menu_idx).colours(15 downto 12) /= "1111" and menus(menu_idx).in_range else
+				unsigned(cloud0s(cloud0_idx).colours(11 downto 8))				when cloud0s(cloud0_idx).colours(15 downto 12) /= "1111" and cloud0s(cloud0_idx).in_range else
 				"1111";
 				
 
@@ -316,7 +325,9 @@ begin
 				"0000" when tree0_idx /= -1 and tree0s(tree0_idx).in_range and tree0s(tree0_idx).colours(15 downto 12) /= "1111" else
 				"0000" when coin_idx /= -1 and coins(coin_idx).in_range and coins(coin_idx).colours(15 downto 12) /= "1111" else
 				"0000" when menu_idx /= -1 and menus(menu_idx).in_range and menus(menu_idx).colours(15 downto 12) /= "1111" else
+				"0000" when cloud0_idx /= -1 and cloud0s(cloud0_idx).in_range and cloud0s(cloud0_idx).colours(15 downto 12) /= "1111" else
 				"1111";
+				
 	
 	red_out		<=	txt_r when txt_not_a = "1111" else sprite_r when sprite_z = "0000" else "0111"; -- 0111
 	green_out	<=	txt_g when txt_not_a = "1111" else sprite_g when sprite_z = "0000" else "1100"; -- 1100
@@ -1204,6 +1215,21 @@ begin
 						elsif (tree0s(i).x0 < 1023 - tree0s(i).size * tree0s(i).scaling_factor_x) then
 							tree0s(i).underflow <= false;
 							tree0s(i).x0 <= to_unsigned(640, 10); 
+						end if;
+				end loop;
+				
+				for i in 0 to (cloud0s'length - 1) loop
+					if (cloud0s(i).x0 <= 640) then
+							cloud0s(i).underflow <= false;
+							cloud0s(i).x0 <= cloud0s(i).x0 - p_speed;
+							if (cloud0s(i).x0 < 1) then
+								cloud0s(i).underflow <= true;
+							end if;
+						elsif (cloud0s(i).x0 >= 1023 - cloud0s(i).size * cloud0s(i).scaling_factor_x) then
+							cloud0s(i).x0 <= cloud0s(i).x0 - p_speed;
+						elsif (cloud0s(i).x0 < 1023 - cloud0s(i).size * cloud0s(i).scaling_factor_x) then
+							cloud0s(i).underflow <= false;
+							cloud0s(i).x0 <= to_unsigned(640, 10); 
 						end if;
 				end loop;
 				
