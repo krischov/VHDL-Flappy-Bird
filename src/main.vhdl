@@ -90,12 +90,12 @@ architecture x of main is
 	);
 
 	signal bottompipe : all_sprites(0 to 1) := (
-		(64, to_unsigned(288, 10), to_unsigned(300, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
+		(64, to_unsigned(288, 10), to_unsigned(128, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
 		(64, to_unsigned(288, 10), to_unsigned(500, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE)
 	);
 	
 	signal toppipes : all_sprites(0 to 1) := (
-		(64, to_unsigned(0, 10), to_unsigned(300, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
+		(64, to_unsigned(0, 10), to_unsigned(256, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
 		(64, to_unsigned(0, 10), to_unsigned(500, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE)
 	);
 
@@ -542,7 +542,7 @@ begin
 						  toppipes(d_state).underflow <= false;
 						  
 						  d_state := 1;
-						elsif(d_state = 1) then
+						else
 						  bottompipe(d_state).x0 <= to_unsigned(640,10);
 						  bottompipe(d_state).scaling_factor_y <= 4;
 						  bottompipe(d_state).y0 <= to_unsigned(480 - (4 * bottompipe(d_state).size), 10);
