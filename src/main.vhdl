@@ -48,7 +48,7 @@ architecture x of main is
 	signal tvec_mode_game: textengine_vector := (others => init_textengine_row);
 	signal tvec_mode_over: textengine_vector := (others => init_textengine_row);
 	signal tvec_mode_train: textengine_vector := (others=> init_textengine_row);
-	signal show_click2start_text: boolean := false;
+	signal hide_click2start_text: boolean := false;
 
 	
 	
@@ -89,14 +89,22 @@ architecture x of main is
 		(32, to_unsigned(448, 10), to_unsigned(640,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE)
 	);
 
-	signal bottompipe : all_sprites(0 to 1) := (
+	signal bottompipe : all_sprites(0 to 5) := (
 		(64, to_unsigned(288, 10), to_unsigned(340, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
-		(64, to_unsigned(288, 10), to_unsigned(540, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE)
+		(64, to_unsigned(288, 10), to_unsigned(540, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
+		(64, to_unsigned(288, 10), to_unsigned(540, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
+		(64, to_unsigned(288, 10), to_unsigned(540, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, FALSE, FALSE, FALSE),
+		(64, to_unsigned(288, 10), to_unsigned(540, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, FALSE, FALSE, FALSE),
+		(64, to_unsigned(288, 10), to_unsigned(540, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, FALSE, FALSE, FALSE)
 	);
 	
-	signal toppipes : all_sprites(0 to 1) := (
+	signal toppipes : all_sprites(0 to 5) := (
 		(64, to_unsigned(0, 10), to_unsigned(340, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
-		(64, to_unsigned(0, 10), to_unsigned(540, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE)
+		(64, to_unsigned(0, 10), to_unsigned(540, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
+		(64, to_unsigned(0, 10), to_unsigned(340, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
+		(64, to_unsigned(0, 10), to_unsigned(540, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, FALSE, FALSE, FALSE),
+		(64, to_unsigned(0, 10), to_unsigned(340, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, FALSE, FALSE, FALSE),
+		(64, to_unsigned(0, 10), to_unsigned(540, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, FALSE, FALSE, FALSE)
 	);
 
 	
@@ -178,19 +186,19 @@ begin
 	str2text(tvec_mode_title, 9, 3, 8, 8, "0011", "0100", "1010", "Bird");
 	str2text(tvec_mode_title, 40, 8, 2, 2, "0011", "0100", "1010", "Created and Developed by");
 	str2text(tvec_mode_title, 42, 10, 2, 2, "0011", "0100", "1010", "The Modelsim Mobsters");
-	str2text(tvec_mode_title, 50, 16, 1, 1, "0011", "0100", "1010", "Based on the concept of https://flappybird.io/");
+	str2text(tvec_mode_title, 50, 16, 1, 1, "0011", "0100", "1010", "Based on the concept of flappybird.io");
 	
 	
 	-- =================
 	
 	-- Game Mode Screen Text Vector
-	
-	str2text(tvec_mode_game, 4, 2, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
-	str2text(tvec_mode_game, 6, 1, 2, 3, "0011", "0011", "0111", "Ready? Press the mouse to get started!", show_click2start_text);
+	str2text(tvec_mode_game, 4, 1, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
+	str2text(tvec_mode_game, 6, 1, 2, 3, "0011", "0011", "0111", "Ready? Press the mouse to get started!", hide_click2start_text);
 
 	-- Training Mode Text Vector
-	str2text(tvec_mode_train, 2, 3, 4, 4, "0011", "0100", "1010", "Training Mode");
-	str2text(tvec_mode_train, 6, 1, 2, 3, "0011", "0011", "0111", "Ready? Press the mouse to get started!", show_click2start_text);
+	str2text(tvec_mode_train, 2, 1, 1, 1, "0011", "0100", "1010", "Successfully Passed Pipes " & int2str(pipe_points));
+	str2text(tvec_mode_train, 3, 5, 4, 4, "0011", "0100", "1010", "Training Mode");
+	str2text(tvec_mode_train, 8, 1, 2, 3, "0011", "0011", "0111", "Ready? Press the mouse to get started!", hide_click2start_text);
 
 	-- =================
 	
@@ -201,12 +209,6 @@ begin
 	
 	
 	--==================
-
-	-- Training Mode Text Vector
-	str2text(tvec_mode_train, 2, 3, 4, 4, "0011", "0100", "1010", "Training Mode");
-
-	--==================
-
 	
 	-- Set the text vector depending on game mode
 	
@@ -350,11 +352,6 @@ begin
 			
 			if (mouse_lbtn = '1') then
 				mouse_btn <= var_len_str("Left Mouse button Pressed", mouse_btn'length);
-			
-				-- hide the 'click mouse to start' text
-				if ((game_mode = MODE_TITLE or game_mode = MODE_GAME) and show_click2start_text = false) then
-					show_click2start_text <= true;
-				end if;
 	
 				if (game_mode = MODE_GAME or game_mode = MODE_TRAIN) then
 					initial_lclick <= '1';
@@ -400,10 +397,17 @@ begin
 	constant h_boost_per_frame : natural range 0 to 8 := h_boost / 8; 
 	-- If > 0 the mouse bird should be boosted this frame. Decremented by 1 each frame a hboost is applied
 	variable apply_h_boost : natural range 0 to 8 := 0; 
+	variable difficulty : natural range 0 to 2;
+	variable p_speed : natural range 2 to 4;
+	
 	begin
 		if (rising_edge(v_sync)) then
 			storedRandNum <= randNum;
-		
+			-- hide the 'click mouse to start' text
+			if ((game_mode = MODE_TITLE or game_mode = MODE_GAME) and initial_lclick = '1') then
+				hide_click2start_text <= true;
+			end if;
+
 			if (health_flag = '1') then
 				ticks := ticks + 1;
 				if (ticks = 5) then
@@ -487,8 +491,124 @@ begin
 					ticks := 0;
 				end if;
 			end if;
+			
+			--Random Number States
+			
+			if ((game_mode = MODE_GAME and difficulty = 0) or game_mode = MODE_TRAIN) then 
+				p_speed := 2;
+				if (storedRandNum = "0000") then
+				
+				elsif (storedRandNum = "0001") then
+				
+				elsif (storedRandNum = "0010") then
+				
+				elsif (storedRandNum = "0011") then 
+				
+				elsif (storedRandNum = "0100") then
+				
+				elsif (storedRandNum = "0101") then 
+				
+				elsif (storedRandNum = "0110") then 
+				
+				elsif (storedRandNum = "0111") then
+				
+				elsif (storedRandNum = "1000") then 
+				
+				elsif	(storedRandNum = "1001") then 
+				
+				elsif (storedRandNum = "1010") then
+				
+				elsif (storedRandNum = "1011") then 
+				
+				elsif (storedRandNum = "1100") then 
 
+				elsif (storedRandNum = "1101") then 
+				
+				elsif (storedRandNum = "1110") then
+				
+				elsif (storedRandNum = "1111") then
+				
+				end if;
 
+			elsif (game_mode = MODE_GAME and difficulty = 1) then
+				--p_speed := 3;
+				if (storedRandNum = "0000") then
+				
+				elsif (storedRandNum = "0001") then
+				
+				elsif (storedRandNum = "0010") then
+				
+				elsif (storedRandNum = "0011") then 
+				
+				elsif (storedRandNum = "0100") then
+				
+				elsif (storedRandNum = "0101") then 
+				
+				elsif (storedRandNum = "0110") then 
+				
+				elsif (storedRandNum = "0111") then
+				
+				elsif (storedRandNum = "1000") then 
+				
+				elsif	(storedRandNum = "1001") then 
+				
+				elsif (storedRandNum = "1010") then
+				
+				elsif (storedRandNum = "1011") then 
+				
+				elsif (storedRandNum = "1100") then 
+
+				elsif (storedRandNum = "1101") then 
+				
+				elsif (storedRandNum = "1110") then
+				
+				elsif (storedRandNum = "1111") then
+				
+				end if;
+			
+			elsif (game_mode = MODE_GAME and difficulty = 2) then
+				--p_speed := 4;
+				if (storedRandNum = "0000") then
+				
+				elsif (storedRandNum = "0001") then
+				
+				elsif (storedRandNum = "0010") then
+				
+				elsif (storedRandNum = "0011") then 
+				
+				elsif (storedRandNum = "0100") then
+				
+				elsif (storedRandNum = "0101") then 
+				
+				elsif (storedRandNum = "0110") then 
+				
+				elsif (storedRandNum = "0111") then
+				
+				elsif (storedRandNum = "1000") then 
+				
+				elsif	(storedRandNum = "1001") then 
+				
+				elsif (storedRandNum = "1010") then
+				
+				elsif (storedRandNum = "1011") then 
+				
+				elsif (storedRandNum = "1100") then 
+
+				elsif (storedRandNum = "1101") then 
+				
+				elsif (storedRandNum = "1110") then
+				
+				elsif (storedRandNum = "1111") then
+				
+				end if;
+				
+			else 
+			--Do nothing
+			end if;
+			
+			storedRandNum <= randNum;
+			
+			
 			if (pb_0 = '1') then
 				if (game_mode = MODE_TITLE) then
 					game_mode <= MODE_GAME;
@@ -531,6 +651,13 @@ begin
 				-- if the user has just passed through this pipe, give them a point			
 				if (enable_collision = '1' and bottompipe(i).passed_pipe = false and bird(0).x0 > bottompipe(i).x0 + bottompipe(i).size * bottompipe(i).scaling_factor_x) then
 					bottompipe(i).passed_pipe <= true;
+					if(pipe_points < 2) then 
+						difficulty := 0;
+					elsif(pipe_points = 2) then
+						difficulty := 1;
+					else
+						difficulty := 2;
+					end if;
 					pipe_points <= pipe_points + 1; 
 				end if;		
 		
@@ -538,12 +665,12 @@ begin
 					if (collision_flag = '0' and (game_mode = MODE_GAME or game_mode = MODE_TRAIN)) then
 						if (bottompipe(i).x0 <= 640) then
 							bottompipe(i).underflow <= false;
-							bottompipe(i).x0 <= bottompipe(i).x0 - 2;
+							bottompipe(i).x0 <= bottompipe(i).x0 - p_speed;
 							if (bottompipe(i).x0 < 1) then
 								bottompipe(i).underflow <= true;
 							end if;
 						elsif (bottompipe(i).x0 >= 1023 - bottompipe(i).size * bottompipe(i).scaling_factor_x) then
-							bottompipe(i).x0 <= bottompipe(i).x0 - 2;
+							bottompipe(i).x0 <= bottompipe(i).x0 - p_speed;
 						elsif (bottompipe(i).x0 < 1023 - bottompipe(i).size * bottompipe(i).scaling_factor_x) then
 							bottompipe(i).underflow <= false;
 							bottompipe(i).x0 <= to_unsigned(640, 10);
@@ -553,12 +680,12 @@ begin
 							
 						if (toppipes(i).x0 <= 640) then
 							toppipes(i).underflow <= false;
-							toppipes(i).x0 <= toppipes(i).x0 - 2;
+							toppipes(i).x0 <= toppipes(i).x0 - p_speed;
 							if (toppipes(i).x0 < 1) then
 								toppipes(i).underflow <= true;
 							end if;
 						elsif (toppipes(i).x0 >= 1023 - toppipes(i).size * toppipes(i).scaling_factor_x) then
-							toppipes(i).x0 <= toppipes(i).x0 - 2;
+							toppipes(i).x0 <= toppipes(i).x0 - p_speed;
 						elsif (toppipes(i).x0 < 1023 - toppipes(i).size * toppipes(i).scaling_factor_x) then
 							toppipes(i).underflow <= false;
 							toppipes(i).x0 <= to_unsigned(640, 10); 
@@ -652,9 +779,13 @@ begin
 			-- Boost the bird up on mouse click, otherwise make it fall 
 			-- Don't let the bird flap if we have detected a collision (remember we are drawing the next frame here)
 			if (collision_flag = '0' and initial_lclick = '1') then
-				if (apply_h_boost > 0 and bird(0).y0 - h_boost_per_frame >= 0) then
-						bird(0).y0 <= bird(0).y0 - h_boost_per_frame;
-						apply_h_boost := apply_h_boost - 1;
+				if (apply_h_boost > 0) then
+						if (bird(0).y0 - h_boost_per_frame >= 0 and bird(0).y0 - h_boost_per_frame < 480) then
+							bird(0).y0 <= bird(0).y0 - h_boost_per_frame;
+							apply_h_boost := apply_h_boost - 1;
+						else
+							apply_h_boost := 0;
+						end if;
 				else
 					-- lower bird by 3 pixels (make it 'fall' 3 pixels)
 					if (bird(0).y0 + 3 <= 452)	then
@@ -679,12 +810,12 @@ begin
 				for i in 0 to (tree0s'length - 1) loop
 					if (tree0s(i).x0 <= 640) then
 							tree0s(i).underflow <= false;
-							tree0s(i).x0 <= tree0s(i).x0 - 2;
+							tree0s(i).x0 <= tree0s(i).x0 - p_speed;
 							if (tree0s(i).x0 < 1) then
 								tree0s(i).underflow <= true;
 							end if;
 						elsif (tree0s(i).x0 >= 1023 - tree0s(i).size * tree0s(i).scaling_factor_x) then
-							tree0s(i).x0 <= tree0s(i).x0 - 2;
+							tree0s(i).x0 <= tree0s(i).x0 - p_speed;
 						elsif (tree0s(i).x0 < 1023 - tree0s(i).size * tree0s(i).scaling_factor_x) then
 							tree0s(i).underflow <= false;
 							tree0s(i).x0 <= to_unsigned(640, 10); 
@@ -694,12 +825,12 @@ begin
 				for i in 0 to (grassplane'length - 1) loop
 					if (grassplane(i).x0 <= 640) then
 							grassplane(i).underflow <= false;
-							grassplane(i).x0 <= grassplane(i).x0 - 2;
+							grassplane(i).x0 <= grassplane(i).x0 - p_speed;
 							if (grassplane(i).x0 < 1) then
 								grassplane(i).underflow <= true;
 							end if;
 						elsif (grassplane(i).x0 >= 1023 - grassplane(i).size * grassplane(i).scaling_factor_x) then
-							grassplane(i).x0 <= grassplane(i).x0 - 2;
+							grassplane(i).x0 <= grassplane(i).x0 - p_speed;
 						elsif (grassplane(i).x0 < 1023 - grassplane(i).size * grassplane(i).scaling_factor_x) then
 							grassplane(i).underflow <= false;
 							grassplane(i).x0 <= to_unsigned(640, 10);
@@ -708,7 +839,7 @@ begin
 			end if;
 			
 			if (game_mode = MODE_OVER) then
-				if (bird(0).y0 + 5 <= 672) then
+				if (bird(0).y0 + 5 <= 512) then
 					bird(0).y0 <= bird(0).y0 + 5;
 				end if;
 				collision_flag := '0';
