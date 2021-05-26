@@ -411,7 +411,8 @@ begin
 	begin
 		if (rising_edge(v_sync)) then
 			if(d_state = 0) then
-				storedRandNum <= randNum;
+				--storedRandNum <= randNum;
+				storedRandNum <= "0000";
 			end if;
 			-- hide the 'click mouse to start' text
 			if ((game_mode = MODE_TITLE or game_mode = MODE_GAME) and initial_lclick = '1') then
@@ -672,9 +673,6 @@ begin
 			else 
 			--Do nothing
 			end if;
-			
-			--storedRandNum <= randNum;
-			storedRandNum <= "0000";
 			
 			
 			if (pb_0 = '1') then
