@@ -45,7 +45,6 @@ architecture x of main is
 	signal tvec_mode_game: textengine_vector := (others => init_textengine_row);
 	signal tvec_mode_over: textengine_vector := (others => init_textengine_row);
 	signal tvec_mode_train: textengine_vector := (others=> init_textengine_row);
-	signal show_click2start_text: boolean := true;
 	
 	
 	signal txt_r : unsigned(3 downto 0) := "0000";
@@ -97,9 +96,9 @@ architecture x of main is
 
 	
 	signal tree0s : all_sprites(0 to 2) := (
-		(64, to_unsigned(420, 10), to_unsigned(80, 10), "000000000000", tree0, "0000000000000000", false, 1, 1, true, FALSE, FALSE),
-		(64, to_unsigned(380, 10), to_unsigned(250, 10), "000000000000", tree0, "0000000000000000", false, 1, 2, true, FALSE, FALSE),
-		(64, to_unsigned(380, 10), to_unsigned(500, 10), "000000000000", tree0, "0000000000000000", false, 2, 2, true, FALSE, FALSE)
+		(64, to_unsigned(420, 10), to_unsigned(80, 10), "000000000000", tree0, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE),
+		(64, to_unsigned(380, 10), to_unsigned(200, 10), "000000000000", tree0, "0000000000000000", false, 1, 2, FALSE, FALSE, FALSE),
+		(64, to_unsigned(380, 10), to_unsigned(400, 10), "000000000000", tree0, "0000000000000000", false, 2, 2, FALSE, FALSE, FALSE)
 	);
 	
 	signal mousecursor : all_sprites(0 to 1) := (
@@ -183,11 +182,14 @@ begin
 	
 	str2text(tvec_mode_over, 9, 3, 8, 8, "0011", "0100", "1010", "Game");
 	str2text(tvec_mode_over, 17, 3, 8, 8, "0011", "0100", "1010", "Over");
-	str2text(tvec_mode_over, 30, 4, 4, 4, "0001", "0000", "0001", "You've Scored");
-	str2text(tvec_mode_over, 35, 4, 4, 4, "0001", "0000", "0001", int2str(pipe_points) & "Points !");
+	
 	
 	--==================
 
+	-- Training Mode Text Vector
+	str2text(tvec_mode_train, 2, 3, 4, 4, "0011", "0100", "1010", "Training Mode");
+
+	--==================
 
 	
 	-- Set the text vector depending on game mode
@@ -293,6 +295,7 @@ begin
 	green_out	<=	txt_g when txt_not_a = "1111" else sprite_g when sprite_z = "0000" else "1100"; -- 1100
 	blue_out	<= 	txt_b when txt_not_a = "1111" else sprite_b when sprite_z = "0000" else "1100"; -- 1100
 	
+	
 	process(clk)
 		variable ticks : integer := 0;
 		variable seedTicks : natural range 1 to 1023;
@@ -368,12 +371,14 @@ begin
 		if (rising_edge(v_sync)) then
 			storedRandNum <= randNum;
 		
-			if (health_flag = '1' and game_mode = MODE_GAME) then
+			if (health_flag = '1') then
 				ticks := ticks + 1;
 				if (ticks = 5) then
-					health <= health - 1;
-					hearts(health - 1).visible <= FALSE;
-					bird(0).visible <= FALSE;
+					if (game_mode = MODE_GAME) then
+						health <= health - 1;
+						hearts(health - 1).visible <= FALSE;
+						bird(0).visible <= FALSE;
+					end if;
 				elsif (ticks = 10) then
 					bird(0).visible <= TRUE;
 				elsif (ticks = 15) then
@@ -497,7 +502,6 @@ begin
 				end if;		
 		
 				if (initial_lclick = '1') then
-					show_click2start_text <= true;
 					if (collision_flag = '0' and (game_mode = MODE_GAME or game_mode = MODE_TRAIN)) then
 						if (bottompipe(i).x0 <= 640) then
 							bottompipe(i).underflow <= false;
@@ -611,25 +615,22 @@ begin
 					end if;
 				end if;	
 			end loop;
-
+		
+			-- Boost the bird up on mouse click, otherwise make it fall 
+			-- Don't let the bird flap if we have detected a collision (remember we are drawing the next frame here)
 			if (collision_flag = '0' and initial_lclick = '1') then
-				if (apply_h_boost > 0 and bird(0).y0 - h_boost_per_frame >= 0 and bird(0).y0 - h_boost_per_frame < 480) then
-					bird(0).y0 <= bird(0).y0 - h_boost_per_frame;
-					apply_h_boost := apply_h_boost - 1;
+				if (apply_h_boost > 0) then
+					if (bird(0).y0 - h_boost_per_frame >= 0) then
+						bird(0).y0 <= bird(0).y0 - h_boost_per_frame;
+						apply_h_boost := apply_h_boost - 1;
+					end if;
 				else
 					-- lower bird by 3 pixels (make it 'fall' 3 pixels)
 					if (bird(0).y0 + 3 <= 452)	then
 						bird(0).y0 <= bird(0).y0 + 3;
-					else
-						hearts(0).visible <= false;
-						hearts(1).visible <= false;
-						hearts(2).visible <= false;
-						game_mode <= MODE_OVER;
-						collision_flag := '1';
 					end if;
 				end if;
 			end if;
-
 			
 			-- Mouse input (make the bird flap)
 			-- Don't let the bird flap if we have detected a collision (remember we are drawing the next frame here)
