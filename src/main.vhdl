@@ -136,8 +136,10 @@ architecture x of main is
 	
 	
 	signal game_mode : integer range 0 to 7 := MODE_TITLE;
+	
 	signal seed : natural range 1 to 1023;
 	signal randNum : std_logic_vector(3 downto 0);
+	signal storedRandNum : std_logic_vector(3 downto 0) := "1111";
 	-- ========================
 	
 	-- Player Stats
@@ -179,6 +181,11 @@ begin
 	str2text(tvec_mode_train, 2, 3, 4, 4, "0011", "0100", "1010", "Training Mode");
 	str2text(tvec_mode_game, 6, 1, 2, 3, "0011", "0011", "0111", "Ready? Press the mouse to get started!", show_click2start_text);
 
+	str2text(tvec_mode_game, 5, 5, 4, 4, "0011", "0100", "1010", "Ready? Press the mouse to get started!", show_click2start_text);
+	str2text(tvec_mode_game, 6, 2, 1, 1, "0011", "0100", "1010", "Seed " & int2str(seed));
+	str2text(tvec_mode_game, 7, 2, 1, 1, "0011", "0100", "1010", "RandNum " & int2str(to_integer(unsigned(storedRandNum))));
+	-- Training Mode Text Vector
+	str2text(tvec_mode_train, 2, 3, 4, 4, "0011", "0100", "1010", "Training Mode");
 
 	-- =================
 	
@@ -379,7 +386,7 @@ begin
 	variable apply_h_boost : natural range 0 to 8 := 0; 
 	begin
 		if (rising_edge(v_sync)) then
-
+			storedRandNum <= randNum;
 		
 			if (health_flag = '1') then
 				ticks := ticks + 1;
