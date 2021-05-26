@@ -118,8 +118,8 @@ architecture x of main is
 	);
 	
 	signal coins: all_sprites(0 to 1) := (
-		(16, to_unsigned(80, 10), to_unsigned(300, 10), "000000000000", coin, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
-		(16, to_unsigned(400, 10), to_unsigned(400, 10), "000000000000", coin, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
+		(16, to_unsigned(80, 10), to_unsigned(300, 10), "000000000000", coin, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE),
+		(16, to_unsigned(400, 10), to_unsigned(400, 10), "000000000000", coin, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE)
 	);
 
 	signal cloud0s : all_sprites(0 to 4) := (
@@ -127,7 +127,7 @@ architecture x of main is
 		(32, to_unsigned(220, 10), to_unsigned(200, 10), "000000000000", cloud0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
 		(32, to_unsigned(300, 10), to_unsigned(60, 10), "000000000000", cloud0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
 		(32, to_unsigned(80, 10), to_unsigned(200, 10), "000000000000", cloud0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
-		(32, to_unsigned(120, 10), to_unsigned(400, 10), "000000000000", cloud0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
+		(32, to_unsigned(120, 10), to_unsigned(400, 10), "000000000000", cloud0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)		
 	);
 	
 	signal tree2s : all_sprites(0 to 2) := (
@@ -166,7 +166,6 @@ architecture x of main is
 	signal health: natural range 0 to 3 := 3;
 	signal pipe_points: natural range 0 to 8000 := 0;
 	
-	
 	-- ========================
 begin
 
@@ -178,6 +177,8 @@ begin
 	-- Title Screen Text Vector 
 	str2text(tvec_mode_title, 1, 2, 8, 8, "0011", "0100", "1010", "Flappy");
 	str2text(tvec_mode_title, 9, 3, 8, 8, "0011", "0100", "1010", "Bird");
+	str2text(tvec_mode_title, 20, 3, 2, 2, "0011", "0100", "1010", "PB0 ... Play Game");
+	str2text(tvec_mode_title, 22, 3, 2, 2, "0011", "0100", "1010", "PB1 ... Training Mode");
 	str2text(tvec_mode_title, 40, 8, 2, 2, "0011", "0100", "1010", "Created and Developed by");
 	str2text(tvec_mode_title, 42, 10, 2, 2, "0011", "0100", "1010", "The Modelsim Mobsters");
 	str2text(tvec_mode_title, 44, 23, 1, 1, "0011", "0100", "1010", "Based on the concept of flappybird.io");
@@ -187,12 +188,12 @@ begin
 	
 	-- Game Mode Screen Text Vector
 	str2text(tvec_mode_game, 4, 1, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
-	str2text(tvec_mode_game, 6, 1, 2, 3, "0011", "0011", "0111", "Ready? Press the mouse to get started!", hide_click2start_text);
+	str2text(tvec_mode_game, 10, 1, 2, 3, "0011", "0011", "0111", "Ready? Press the mouse to get started!", hide_click2start_text);
 
 	-- Training Mode Text Vector
 	str2text(tvec_mode_train, 0, 0, 4, 4, "1111", "0000", "0000", "Training Mode");
 	str2text(tvec_mode_train, 5, 1, 1, 1, "0011", "0100", "1010", "Successfully Passed Pipes " & int2str(pipe_points));
-	str2text(tvec_mode_train, 8, 1, 2, 3, "0011", "0011", "0111", "Ready? Press the mouse to get started!", hide_click2start_text);
+	str2text(tvec_mode_train, 10, 1, 2, 3, "0011", "0011", "0111", "Ready? Press the mouse to get started!", hide_click2start_text);
 
 	-- =================
 	
@@ -200,14 +201,10 @@ begin
 	
 	str2text(tvec_mode_over, 9, 3, 8, 8, "0011", "0100", "1010", "Game");
 	str2text(tvec_mode_over, 17, 3, 8, 8, "0011", "0100", "1010", "Over");
-	
+	str2text(tvec_mode_over, 25, 3, 4, 4, "0011", "0100", "1010", "Score " & int2str(pipe_points));
+	str2text(tvec_mode_over, 30, 3, 2, 2, "0011", "0100", "1010", "PB0 ... reset");
 	
 	--==================
-	
-	-- Set the text vector depending on game mode
-	
-
-	
 	
 	--Sprites
 
@@ -356,10 +353,12 @@ begin
 	variable p_speed : natural range 2 to 4;
 	variable d_state : natural range 0 to 3 := 0; -- dynamic state of RnG of sprites
 	
-	
+	variable frames : natural range 0 to 60 := 0;
 	
 	variable seconds : natural range 0 to 60 := 0;
-	variable pickup_timer : natural range 0 to 20 := 0;
+	variable pickup_timer : natural range 0 to 10 := 0;
+	
+	variable pb0_debounce, pb1_debounce : boolean := false;
 	begin
 		if (rising_edge(v_sync)) then
 			if(d_state = 0) then
@@ -384,23 +383,22 @@ begin
 				end if;
 			end if;
 			
-			seconds := seconds + 1;
-			if (seconds > 59) then
-				seconds := 0;
-			end if;
-	
-			pickup_timer := pickup_timer + 1;
-			if (pickup_timer > 20) then
-				pickup_timer := 0;
+			frames := frames + 1;
+			if (frames > 59) then
+				seconds := seconds + 1;
+				pickup_timer := pickup_timer + 1;
+				frames := 0;
 			end if;
 	
 			if (game_mode = MODE_TITLE) then
-				if (pb_0 = '1') then
+				if (pb_0 = '1' and pb0_debounce = false) then
+						pb0_debounce := true;
 						game_mode <= MODE_GAME;
 						hearts(0).visible <= TRUE;
 						hearts(1).visible <= TRUE;
 						hearts(2).visible <= TRUE;
-				elsif (pb_1 = '1') then
+				elsif (pb_1 = '1' and pb1_debounce = false) then
+						pb1_debounce := true;
 						game_mode <= MODE_TRAIN;
 						hearts(0).visible <= FALSE;
 						hearts(1).visible <= FALSE;
@@ -408,6 +406,14 @@ begin
 				else
 					game_mode <= MODE_TITLE;
 				end if;				
+			end if;
+			
+			if (pb_0 = '0' and pb0_debounce = true) then
+				pb0_debounce := false;
+			end if;
+			
+			if (pb_1 = '0' and pb1_debounce = true) then
+				pb1_debounce := false;
 			end if;
 			
 			-- hide the 'click mouse to start' text
@@ -1030,12 +1036,6 @@ begin
 		else
 			d_state := d_state;
 		end if;
-			
-			frame := frame + 1;
-			if (frame > 59) then
-				frame := 0;
-			end if;
-			
 			-- Pipe Collision Detection, and Pipe Movement
 	
 			if (health = 0) then
@@ -1079,14 +1079,6 @@ begin
 						difficulty := 2;
 					end if;
 					pipe_points <= pipe_points + 1;
-					
-					if (pickup_timer = 20) then
-						if (bird(0).y0 < 240) then
-							coins(1).visible <= true;
-						else
-							coins(0).visible <= true;
-						end if;
-					end if;
 				end if;		
 
 				if (initial_lclick = '1') then
@@ -1202,7 +1194,7 @@ begin
 				end if;
 				collision_flag := '0';
 				
-				if (pb_0 = '1') then 
+				if (pb_0 = '1' and pb0_debounce = false) then 
 					game_mode <= MODE_TITLE;
 					initial_lclick <= '0';
 					pipe_points <= 0;
@@ -1212,20 +1204,30 @@ begin
 					bottompipe(0).x0 <= to_unsigned(128, 10);
 					bottompipe(0).y0 <= to_unsigned(288, 10);
 					bottompipe(0).visible <= false;
+					bottompipe(0).underflow <= false;
 					bottompipe(0).scaling_factor_y <= 3;
 					bottompipe(1).x0 <= to_unsigned(500, 10);
 					bottompipe(1).y0 <= to_unsigned(288, 10);
+					bottompipe(1).underflow <= false;
 					bottompipe(1).visible <= false;
 					bottompipe(1).scaling_factor_y <= 3;
 					
 					toppipes(0).x0 <= to_unsigned(128, 10);
 					toppipes(0).y0 <= to_unsigned(0, 10);
 					toppipes(0).visible <= false;
+					toppipes(0).underflow <= false;
 					toppipes(0).scaling_factor_y <= 1;
 					toppipes(1).x0 <= to_unsigned(500, 10);
 					toppipes(1).y0 <= to_unsigned(0, 10);
+					toppipes(1).underflow <= false;
 					toppipes(1).visible <= false;
 					toppipes(1).scaling_factor_y <= 1;
+					
+					d_state := 0;
+					seconds := 0;
+					pickup_timer := 0;
+					health <= 3;
+					collision_flag <= '0';
 				else
 					game_mode <= MODE_OVER;
 				end if;
@@ -1278,7 +1280,37 @@ begin
 						tree0s(i).underflow <= false;
 						tree0s(i).x0 <= to_unsigned(640, 10); 
 					end if;
+			
 			end loop;
+
+			
+			if (coins(0).visible) then
+			   if (((coins(0).x0 >= bird(0).x0 and coins(0).x0 <= bird(0).x0 + bird(0).size - 1) or
+					(coins(0).x0 + coins(0).size - 1 >=  bird(0).x0 and coins(0).x0 + coins(0).size - 1 <= bird(0).x0 + bird(0).size - 1)) and
+					((coins(0).y0 >= bird(0).y0 and coins(0).y0 <= bird(0).y0 + bird(0).size - 1) or
+					(coins(0).y0 + coins(0).size - 1 >= bird(0).y0 and coins(0).y0 + coins(0).size - 1 <= bird(0).y0 + bird(0).size - 1)))
+				then
+					pipe_points <= pipe_points + 5;
+					coins(0).visible <= false;
+				end if;
+			end if;
+			if (coins(1).visible) then
+			   if (((coins(1).x0 >= bird(0).x0 and coins(1).x0 <= bird(0).x0 + bird(0).size - 1) or
+					(coins(1).x0 + coins(1).size - 1 >=  bird(0).x0 and coins(1).x0 + coins(1).size - 1 <= bird(0).x0 + bird(0).size - 1)) and
+					((coins(1).y0 >= bird(0).y0 and coins(1).y0 <= bird(0).y0 + bird(0).size - 1) or
+					(coins(1).y0 + coins(1).size - 1 >= bird(0).y0 and coins(1).y0 + coins(1).size - 1 <= bird(0).y0 + bird(0).size - 1)))
+				then
+					pipe_points <= pipe_points + 5;
+					coins(1).visible <= false;
+				end if;
+			end if;
+			
+			if (pickup_timer > 10 and game_mode = MODE_GAME) then
+				pickup_timer := 0;
+					coins(1).visible <= true;
+					coins(0).visible <= true;
+			end if;
+			
 			
 			for i in 0 to (coins'length - 1) loop
 				if (coins(i).x0 <= 640) then
@@ -1292,6 +1324,7 @@ begin
 					elsif (coins(i).x0 < 1023 - coins(i).size * coins(i).scaling_factor_x) then
 						coins(i).underflow <= false;
 						coins(i).x0 <= to_unsigned(640, 10);
+						coins(i).visible <= false;
 					end if;
 			end loop;
 			
