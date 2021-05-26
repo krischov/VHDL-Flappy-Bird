@@ -107,7 +107,7 @@ architecture x of main is
 	);
 	
 	signal mousecursor : all_sprites(0 to 1) := (
-		(16, to_unsigned(236, 10), to_unsigned(316,10), "000000000000", cursor, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(16, to_unsigned(236, 10), to_unsigned(316,10), "000000000000", cursor, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE),
 		(16, to_unsigned(150, 10), to_unsigned(50,10), "000000000000", cursor, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE)
 	);
 	
@@ -142,7 +142,6 @@ architecture x of main is
 	constant MODE_TITLE : integer range 0 to 7 := 0;
 	constant MODE_GAME : integer range 0 to 7 := 1;
 	constant MODE_TRAIN : integer range 0 to 7 := 2;
-	constant MODE_HARD : integer range 0 to 7 := 3;
 	constant MODE_OVER : integer range 0 to 7 := 4;
 	
 	
@@ -323,61 +322,7 @@ begin
 	green_out	<=	txt_g when txt_not_a = "1111" else sprite_g when sprite_z = "0000" else "1100"; -- 1100
 	blue_out	<= 	txt_b when txt_not_a = "1111" else sprite_b when sprite_z = "0000" else "1100"; -- 1100
 	
-	
-	process(clk)
-		variable ticks : integer := 0;
-		variable seedTicks : natural range 1 to 1023;
-		variable seedDone : boolean := false;
-	begin
-		if (rising_edge(clk)) then
-			ticks := ticks + 1;
-			if (ticks >= 25000000) then
-				-- things to happen every second
-				
-				sec <= sec + 1;
-				ticks := 0;
-			end if;
-			
-			if(initial_lclick = '0' and seedDone = false and (game_mode = MODE_GAME or game_mode = MODE_TRAIN)) then
-				seedTicks := seedTicks + 1;
-			end if;
-			
-			if (mouse_col <= 624) then
-				mousecursor(0).x0 <= mouse_col;
-			end if;
-			if (mouse_row <= 464) then
-				mousecursor(0).y0 <= mouse_row;
-			end if;
-			
-			if (mouse_lbtn = '1') then
-				mouse_btn <= var_len_str("Left Mouse button Pressed", mouse_btn'length);
-	
-				if (game_mode = MODE_GAME or game_mode = MODE_TRAIN) then
-					initial_lclick <= '1';
-					seedDone := True;
-					seed <= seedTicks;
-				end if;
-			elsif (mouse_rbtn = '1') then
-				mouse_btn <= var_len_str("Right Mouse button Pressed", mouse_btn'length);
-			else
-				mouse_btn <= var_len_str("No Mouse button Pressed", mouse_btn'length);
-			end if;
-		
-			if (game_mode = MODE_TITLE) then
-				text_vector <= tvec_mode_title;
-			elsif (game_mode = MODE_GAME) then
-				text_vector <= tvec_mode_game;
-			elsif (game_mode = MODE_OVER) then
-				text_vector <= tvec_mode_over;
-			elsif (game_mode = MODE_TRAIN) then
-				text_vector <= tvec_mode_train;
-			end if;
 
-			
-		end if;
-
-	end process;
-	
 	Pipe: process(v_sync)
 	variable mouse_flag : std_logic := '0';
 	variable birdxpos, birdypos : unsigned (9 downto 0);
@@ -398,8 +343,6 @@ begin
 	variable apply_h_boost : natural range 0 to 8 := 0; 
 	variable difficulty : natural range 0 to 2;
 	variable p_speed : natural range 2 to 4;
-	variable game_flag : std_logic := '0';
-	variable train_flag : std_logic := '0';
 	variable d_state : natural range 0 to 3 := 0; -- dynamic state of RnG of sprites
 	
 	begin
@@ -410,8 +353,44 @@ begin
 				storedRandNum <= storedRandNum;
 			end if;
 			
+			if (game_mode = MODE_TITLE) then
+				text_vector <= tvec_mode_title;
+			elsif (game_mode = MODE_GAME) then
+				text_vector <= tvec_mode_game;
+			elsif (game_mode = MODE_OVER) then
+				text_vector <= tvec_mode_over;
+			else
+				text_vector <= tvec_mode_train;
+			end if;
+			
+			if (mouse_lbtn = '1') then
+				if (game_mode = MODE_GAME or game_mode = MODE_TRAIN) then
+					initial_lclick <= '1';
+				end if;
+			end if;
+	
+			if (game_mode = MODE_TITLE) then
+				if (pb_0 = '1') then
+						game_mode <= MODE_GAME;
+						hearts(0).visible <= TRUE;
+						hearts(1).visible <= TRUE;
+						hearts(2).visible <= TRUE;
+						menus(0).visible <= FALSE;
+						menus(1).visible <= FALSE;
+				elsif (pb_1 = '1') then
+						game_mode <= MODE_TRAIN;
+						hearts(0).visible <= FALSE;
+						hearts(1).visible <= FALSE;
+						hearts(2).visible <= FALSE;
+						menus(0).visible <= FALSE;
+						menus(1).visible <= FALSE;
+				else
+					game_mode <= MODE_TITLE;
+				end if;				
+			end if;
+			
 			-- hide the 'click mouse to start' text
-			if ((game_mode = MODE_TITLE or game_mode = MODE_GAME) and initial_lclick = '1') then
+			if ((game_mode = MODE_TRAIN or game_mode = MODE_GAME) and initial_lclick = '1') then
 				hide_click2start_text <= true;
 			end if;
 			
@@ -419,31 +398,6 @@ begin
 				menus(0).visible <= FALSE;
 				menus(1).visible <= FALSE;
 				menus(2).visible <= FALSE;
-			end if;
-
-			--Menu navigation. If any range of x and y coordinate is overlapping with the menu button while the mouse is clicked, will act as a button click. 
-
-			if (mouse_lbtn = '1') then
-				if (menus(0).visible = TRUE and menus(1).visible = TRUE) then
-					if (((mousecursor(0).x0 >= menus(0).x0 and mousecursor(0).x0 <= menus(0).x0 + menus(0).size * menus(0).scaling_factor_x - 1) or
-						(mousecursor(0).x0 + 9 >= menus(0).x0 and mousecursor(0).x0 + 9 <= menus(0).x0 + menus(0).size * menus(0).scaling_factor_x - 1)) and
-						((mousecursor(0).y0 >= menus(0).y0 and mousecursor(0).y0 <= menus(0).y0 + menus(0).size * menus(0).scaling_factor_y - 1) or
-						(mousecursor(0).y0 + mousecursor(0).size - 1 >= menus(0).y0 and mousecursor(0).y0 + mousecursor(0).size - 1 <= menus(0).y0 * menus(0).scaling_factor_y - 1))) then
-							
-							game_flag := '1';
-					elsif (((mousecursor(0).x0 >= menus(1).x0 and mousecursor(0).x0 <= menus(1).x0 + menus(1).size * menus(1).scaling_factor_x - 1) or
-						(mousecursor(0).x0 + 9 >= menus(1).x0 and mousecursor(0).x0 + 9 <= menus(1).x0 + menus(1).size * menus(1).scaling_factor_x - 1)) and
-						((mousecursor(0).y0 >= menus(1).y0 and mousecursor(0).y0 <= menus(1).y0 + menus(1).size * menus(1).scaling_factor_y - 1) or
-						(mousecursor(0).y0 + mousecursor(0).size - 1 >= menus(1).y0 and mousecursor(0).y0 + mousecursor(0).size - 1 <= menus(1).y0 * menus(1).scaling_factor_y - 1))) then
-							train_flag := '1';
-					else
-						game_flag := '0';
-						train_flag := '0';
-					end if;
-				else
-					game_flag := '0';
-					train_flag := '0';
-				end if;
 			end if;
 
 			if (health_flag = '1') then
@@ -1062,25 +1016,6 @@ begin
 			d_state := d_state;
 		end if;
 			
-			if (pb_0 = '1' or game_flag = '1') then
-				if (game_mode = MODE_TITLE) then
-					game_mode <= MODE_GAME;
-					hearts(0).visible <= TRUE;
-					hearts(1).visible <= TRUE;
-					hearts(2).visible <= TRUE;
-					game_flag := '0';
-				end if;
-			end if;			
-			
-			if (pb_1 = '1'or train_flag = '1') then
-				if (game_mode = MODE_TITLE) then
-					game_mode <= MODE_TRAIN;
-					hearts(0).visible <= FALSE;
-					hearts(1).visible <= FALSE;
-					hearts(2).visible <= FALSE;
-				end if;	
-			end if;
-
 			frame := frame + 1;
 			if (frame > 59) then
 				frame := 0;
@@ -1116,8 +1051,6 @@ begin
 					pipe_points <= pipe_points + 1; 
 				end if;		
 
-
-		
 				if (initial_lclick = '1') then
 					if (collision_flag = '0' and (game_mode = MODE_GAME or game_mode = MODE_TRAIN)) then
 						if (bottompipe(i).underflow = false) then
@@ -1237,7 +1170,9 @@ begin
 						end if;
 				else
 					-- lower bird by 3 pixels (make it 'fall' 3 pixels)
-					if (bird(0).y0 + 3 <= 452)	then
+					if (bird(0).y0 + 3 >= 480) then
+						collision_flag := '1';
+					elsif (bird(0).y0 + 3 <= 452)	then
 						bird(0).y0 <= bird(0).y0 + 3;
 					end if;
 				end if;
@@ -1255,6 +1190,7 @@ begin
 			if (mouse_lbtn = '0' and mouse_flag = '1') then
 				mouse_flag := '0';
 			end if;
+			
 			if (game_mode = MODE_GAME or game_mode = MODE_TITLE or game_mode = MODE_TRAIN) then
 				for i in 0 to (tree0s'length - 1) loop
 					if (tree0s(i).x0 <= 640) then
