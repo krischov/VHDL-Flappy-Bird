@@ -131,8 +131,10 @@ architecture x of main is
 	
 	
 	signal game_mode : integer range 0 to 7 := MODE_TITLE;
+	
 	signal seed : natural range 1 to 1023;
 	signal randNum : std_logic_vector(3 downto 0);
+	signal storedRandNum : std_logic_vector(3 downto 0) := "1111";
 	-- ========================
 	
 	-- Player Stats
@@ -168,7 +170,8 @@ begin
 	-- Game Mode Screen Text Vector
 	
 	str2text(tvec_mode_game, 4, 2, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
-	
+	str2text(tvec_mode_game, 5, 2, 1, 1, "0011", "0100", "1010", "Seed " & int2str(seed));
+	str2text(tvec_mode_game, 6, 2, 1, 1, "0011", "0100", "1010", "RandNum " & int2str(to_integer(unsigned(storedRandNum))));
 	-- =================
 	
 	-- Game Over Screen Text Vector
@@ -363,7 +366,7 @@ begin
 	variable apply_h_boost : natural range 0 to 8 := 0; 
 	begin
 		if (rising_edge(v_sync)) then
-
+			storedRandNum <= randNum;
 		
 			if (health_flag = '1' and game_mode = MODE_GAME) then
 				ticks := ticks + 1;
