@@ -89,14 +89,22 @@ architecture x of main is
 		(32, to_unsigned(448, 10), to_unsigned(640,10), "000000000000", grass, "0000000000000000", false, 2, 1, TRUE, FALSE, FALSE)
 	);
 
-	signal bottompipe : all_sprites(0 to 1) := (
+	signal bottompipe : all_sprites(0 to 5) := (
 		(64, to_unsigned(288, 10), to_unsigned(340, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
-		(64, to_unsigned(288, 10), to_unsigned(540, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE)
+		(64, to_unsigned(288, 10), to_unsigned(540, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
+		(64, to_unsigned(288, 10), to_unsigned(540, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
+		(64, to_unsigned(288, 10), to_unsigned(540, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, FALSE, FALSE, FALSE),
+		(64, to_unsigned(288, 10), to_unsigned(540, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, FALSE, FALSE, FALSE),
+		(64, to_unsigned(288, 10), to_unsigned(540, 10), "000000000000", crackpipe, "0000000000000000", false, 1, 3, FALSE, FALSE, FALSE)
 	);
 	
-	signal toppipes : all_sprites(0 to 1) := (
+	signal toppipes : all_sprites(0 to 5) := (
 		(64, to_unsigned(0, 10), to_unsigned(340, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
-		(64, to_unsigned(0, 10), to_unsigned(540, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE)
+		(64, to_unsigned(0, 10), to_unsigned(540, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
+		(64, to_unsigned(0, 10), to_unsigned(340, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
+		(64, to_unsigned(0, 10), to_unsigned(540, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, FALSE, FALSE, FALSE),
+		(64, to_unsigned(0, 10), to_unsigned(340, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, FALSE, FALSE, FALSE),
+		(64, to_unsigned(0, 10), to_unsigned(540, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, FALSE, FALSE, FALSE)
 	);
 
 	
@@ -391,9 +399,11 @@ begin
 	constant h_boost_per_frame : natural range 0 to 8 := h_boost / 8; 
 	-- If > 0 the mouse bird should be boosted this frame. Decremented by 1 each frame a hboost is applied
 	variable apply_h_boost : natural range 0 to 8 := 0; 
+	variable difficulty : natural range 0 to 2;
+	variable p_speed : natural range 2 to 4;
+	
 	begin
 		if (rising_edge(v_sync)) then
-			storedRandNum <= randNum;
 		
 			if (health_flag = '1') then
 				ticks := ticks + 1;
@@ -478,8 +488,124 @@ begin
 					ticks := 0;
 				end if;
 			end if;
+			
+			--Random Number States
+			
+			if ((game_mode = MODE_GAME and difficulty = 0) or game_mode = MODE_TRAIN) then 
+				p_speed := 2;
+				if (storedRandNum = "0000") then
+				
+				elsif (storedRandNum = "0001") then
+				
+				elsif (storedRandNum = "0010") then
+				
+				elsif (storedRandNum = "0011") then 
+				
+				elsif (storedRandNum = "0100") then
+				
+				elsif (storedRandNum = "0101") then 
+				
+				elsif (storedRandNum = "0110") then 
+				
+				elsif (storedRandNum = "0111") then
+				
+				elsif (storedRandNum = "1000") then 
+				
+				elsif	(storedRandNum = "1001") then 
+				
+				elsif (storedRandNum = "1010") then
+				
+				elsif (storedRandNum = "1011") then 
+				
+				elsif (storedRandNum = "1100") then 
 
+				elsif (storedRandNum = "1101") then 
+				
+				elsif (storedRandNum = "1110") then
+				
+				elsif (storedRandNum = "1111") then
+				
+				end if;
 
+			elsif (game_mode = MODE_GAME and difficulty = 1) then
+				--p_speed := 3;
+				if (storedRandNum = "0000") then
+				
+				elsif (storedRandNum = "0001") then
+				
+				elsif (storedRandNum = "0010") then
+				
+				elsif (storedRandNum = "0011") then 
+				
+				elsif (storedRandNum = "0100") then
+				
+				elsif (storedRandNum = "0101") then 
+				
+				elsif (storedRandNum = "0110") then 
+				
+				elsif (storedRandNum = "0111") then
+				
+				elsif (storedRandNum = "1000") then 
+				
+				elsif	(storedRandNum = "1001") then 
+				
+				elsif (storedRandNum = "1010") then
+				
+				elsif (storedRandNum = "1011") then 
+				
+				elsif (storedRandNum = "1100") then 
+
+				elsif (storedRandNum = "1101") then 
+				
+				elsif (storedRandNum = "1110") then
+				
+				elsif (storedRandNum = "1111") then
+				
+				end if;
+			
+			elsif (game_mode = MODE_GAME and difficulty = 2) then
+				--p_speed := 4;
+				if (storedRandNum = "0000") then
+				
+				elsif (storedRandNum = "0001") then
+				
+				elsif (storedRandNum = "0010") then
+				
+				elsif (storedRandNum = "0011") then 
+				
+				elsif (storedRandNum = "0100") then
+				
+				elsif (storedRandNum = "0101") then 
+				
+				elsif (storedRandNum = "0110") then 
+				
+				elsif (storedRandNum = "0111") then
+				
+				elsif (storedRandNum = "1000") then 
+				
+				elsif	(storedRandNum = "1001") then 
+				
+				elsif (storedRandNum = "1010") then
+				
+				elsif (storedRandNum = "1011") then 
+				
+				elsif (storedRandNum = "1100") then 
+
+				elsif (storedRandNum = "1101") then 
+				
+				elsif (storedRandNum = "1110") then
+				
+				elsif (storedRandNum = "1111") then
+				
+				end if;
+				
+			else 
+			--Do nothing
+			end if;
+			
+			storedRandNum <= randNum;
+			
+			
 			if (pb_0 = '1') then
 				if (game_mode = MODE_TITLE) then
 					game_mode <= MODE_GAME;
@@ -522,6 +648,13 @@ begin
 				-- if the user has just passed through this pipe, give them a point			
 				if (enable_collision = '1' and bottompipe(i).passed_pipe = false and bird(0).x0 > bottompipe(i).x0 + bottompipe(i).size * bottompipe(i).scaling_factor_x) then
 					bottompipe(i).passed_pipe <= true;
+					if(pipe_points < 2) then 
+						difficulty := 0;
+					elsif(pipe_points = 2) then
+						difficulty := 1;
+					else
+						difficulty := 2;
+					end if;
 					pipe_points <= pipe_points + 1; 
 				end if;		
 		
@@ -529,12 +662,12 @@ begin
 					if (collision_flag = '0' and (game_mode = MODE_GAME or game_mode = MODE_TRAIN)) then
 						if (bottompipe(i).x0 <= 640) then
 							bottompipe(i).underflow <= false;
-							bottompipe(i).x0 <= bottompipe(i).x0 - 2;
+							bottompipe(i).x0 <= bottompipe(i).x0 - p_speed;
 							if (bottompipe(i).x0 < 1) then
 								bottompipe(i).underflow <= true;
 							end if;
 						elsif (bottompipe(i).x0 >= 1023 - bottompipe(i).size * bottompipe(i).scaling_factor_x) then
-							bottompipe(i).x0 <= bottompipe(i).x0 - 2;
+							bottompipe(i).x0 <= bottompipe(i).x0 - p_speed;
 						elsif (bottompipe(i).x0 < 1023 - bottompipe(i).size * bottompipe(i).scaling_factor_x) then
 							bottompipe(i).underflow <= false;
 							bottompipe(i).x0 <= to_unsigned(640, 10);
@@ -544,12 +677,12 @@ begin
 							
 						if (toppipes(i).x0 <= 640) then
 							toppipes(i).underflow <= false;
-							toppipes(i).x0 <= toppipes(i).x0 - 2;
+							toppipes(i).x0 <= toppipes(i).x0 - p_speed;
 							if (toppipes(i).x0 < 1) then
 								toppipes(i).underflow <= true;
 							end if;
 						elsif (toppipes(i).x0 >= 1023 - toppipes(i).size * toppipes(i).scaling_factor_x) then
-							toppipes(i).x0 <= toppipes(i).x0 - 2;
+							toppipes(i).x0 <= toppipes(i).x0 - p_speed;
 						elsif (toppipes(i).x0 < 1023 - toppipes(i).size * toppipes(i).scaling_factor_x) then
 							toppipes(i).underflow <= false;
 							toppipes(i).x0 <= to_unsigned(640, 10); 
@@ -670,12 +803,12 @@ begin
 				for i in 0 to (tree0s'length - 1) loop
 					if (tree0s(i).x0 <= 640) then
 							tree0s(i).underflow <= false;
-							tree0s(i).x0 <= tree0s(i).x0 - 2;
+							tree0s(i).x0 <= tree0s(i).x0 - p_speed;
 							if (tree0s(i).x0 < 1) then
 								tree0s(i).underflow <= true;
 							end if;
 						elsif (tree0s(i).x0 >= 1023 - tree0s(i).size * tree0s(i).scaling_factor_x) then
-							tree0s(i).x0 <= tree0s(i).x0 - 2;
+							tree0s(i).x0 <= tree0s(i).x0 - p_speed;
 						elsif (tree0s(i).x0 < 1023 - tree0s(i).size * tree0s(i).scaling_factor_x) then
 							tree0s(i).underflow <= false;
 							tree0s(i).x0 <= to_unsigned(640, 10); 
@@ -685,12 +818,12 @@ begin
 				for i in 0 to (grassplane'length - 1) loop
 					if (grassplane(i).x0 <= 640) then
 							grassplane(i).underflow <= false;
-							grassplane(i).x0 <= grassplane(i).x0 - 2;
+							grassplane(i).x0 <= grassplane(i).x0 - p_speed;
 							if (grassplane(i).x0 < 1) then
 								grassplane(i).underflow <= true;
 							end if;
 						elsif (grassplane(i).x0 >= 1023 - grassplane(i).size * grassplane(i).scaling_factor_x) then
-							grassplane(i).x0 <= grassplane(i).x0 - 2;
+							grassplane(i).x0 <= grassplane(i).x0 - p_speed;
 						elsif (grassplane(i).x0 < 1023 - grassplane(i).size * grassplane(i).scaling_factor_x) then
 							grassplane(i).underflow <= false;
 							grassplane(i).x0 <= to_unsigned(640, 10);
