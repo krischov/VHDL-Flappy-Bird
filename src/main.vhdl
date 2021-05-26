@@ -630,11 +630,9 @@ begin
 			-- Boost the bird up on mouse click, otherwise make it fall 
 			-- Don't let the bird flap if we have detected a collision (remember we are drawing the next frame here)
 			if (collision_flag = '0' and initial_lclick = '1') then
-				if (apply_h_boost > 0) then
-					if (bird(0).y0 - h_boost_per_frame >= 0) then
+				if (apply_h_boost > 0 and bird(0).y0 - h_boost_per_frame >= 0) then
 						bird(0).y0 <= bird(0).y0 - h_boost_per_frame;
 						apply_h_boost := apply_h_boost - 1;
-					end if;
 				else
 					-- lower bird by 3 pixels (make it 'fall' 3 pixels)
 					if (bird(0).y0 + 3 <= 452)	then
