@@ -101,8 +101,8 @@ architecture x of main is
 
 	
 	signal tree0s : all_sprites(0 to 2) := (
-		(64, to_unsigned(420, 10), to_unsigned(80, 10), "000000000000", tree0, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE),
-		(64, to_unsigned(380, 10), to_unsigned(200, 10), "000000000000", tree0, "0000000000000000", false, 1, 2, FALSE, FALSE, FALSE),
+		(64, to_unsigned(416, 10), to_unsigned(144, 10), "000000000000", tree0, "0000000000000000", false, 1, 1, FALSE, FALSE, FALSE),
+		(64, to_unsigned(380, 10), to_unsigned(272, 10), "000000000000", tree0, "0000000000000000", false, 1, 2, FALSE, FALSE, FALSE),
 		(64, to_unsigned(380, 10), to_unsigned(400, 10), "000000000000", tree0, "0000000000000000", false, 2, 2, FALSE, FALSE, FALSE)
 	);
 	
@@ -122,14 +122,16 @@ architecture x of main is
 		(16, to_unsigned(400, 10), to_unsigned(400, 10), "000000000000", coin, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
 	);
 	
-	signal heart_pickups: all_sprites(0 to 1) := (
-		(16, to_unsigned(80, 10), to_unsigned(300, 10), "000000000000", heart, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
-		(16, to_unsigned(400, 10), to_unsigned(400, 10), "000000000000", heart, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
-	);	
+	signal cloud0s : all_sprites(0 to 2) := (
+		(32, to_unsigned(150, 10), to_unsigned(80, 10), "000000000000", cloud0, "0000000000000000", false, 4, 2, TRUE, FALSE, FALSE),
+		(32, to_unsigned(220, 10), to_unsigned(200, 10), "000000000000", cloud0, "0000000000000000", false, 4, 2, TRUE, FALSE, FALSE),
+		(32, to_unsigned(300, 10), to_unsigned(60, 10), "000000000000", cloud0, "0000000000000000", false, 4, 2, TRUE, FALSE, FALSE)
+	);
 	
-	signal cloud0s : all_sprites(0 to 1) := (
-		(32, to_unsigned(150, 10), to_unsigned(80, 10), "000000000000", cloud0, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
-		(32, to_unsigned(220, 10), to_unsigned(200, 10), "000000000000", cloud0, "0000000000000000", false, 1, 2, TRUE, FALSE, FALSE)
+	signal tree2s : all_sprites(0 to 2) := (
+		(64, to_unsigned(416, 10), to_unsigned(80, 10), "000000000000", tree2, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(64, to_unsigned(416, 10), to_unsigned(208, 10), "000000000000", tree2, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE),
+		(64, to_unsigned(416, 10), to_unsigned(336, 10), "000000000000", tree2, "0000000000000000", false, 1, 1, TRUE, FALSE, FALSE)
 	);
 	
 	
@@ -138,7 +140,7 @@ architecture x of main is
 	
 	signal sprites_addrs : sprite_addr_array := (others => "000000000000");
 	signal sprites_out : sprite_output_array := (others => "0000000000000000");
-	signal grass_idx, bottompipe_idx, bird_idx, tree0_idx, toppipe_idx , mousecursor_idx, heart_idx, coin_idx, heart_pickup_idx, cloud0_idx: integer := -1;
+	signal grass_idx, bottompipe_idx, bird_idx, tree0_idx, toppipe_idx , mousecursor_idx, heart_idx, coin_idx, cloud0_idx, tree_idx, tree2_idx: integer := -1;
 	
 	-- ========================
 	
@@ -234,6 +236,8 @@ begin
 	cloud0_idx <= get_active_idx(cloud0s, vga_row, vga_col);
 	cloud0s(cloud0_idx).address <= calc_addr_f(cloud0s(cloud0_idx), vga_row, vga_col);
 	
+	tree2_idx <= get_active_idx(tree2s, vga_row, vga_col);
+	tree2s(tree2_idx).address <= calc_addr_f(tree2s(tree2_idx), vga_row, vga_col);
 	
 	
 	
@@ -246,6 +250,7 @@ begin
 	hearts(heart_idx).in_range <= return_in_range(hearts(heart_idx), vga_row, vga_col) when heart_idx /= -1 else false;
 	coins(coin_idx).in_range <= return_in_range(coins(coin_idx), vga_row, vga_col) when coin_idx /= -1 else false;
 	cloud0s(cloud0_idx).in_range <= return_in_range(cloud0s(cloud0_idx), vga_row, vga_col) when cloud0_idx /= -1 else false;
+	tree2s(tree2_idx).in_range <= return_in_range(tree2s(tree2_idx), vga_row, vga_col) when tree2_idx /= -1 else false;
 	
 
 	sprites_addrs(grass) <= grassplane(grass_idx).address;	
@@ -257,7 +262,7 @@ begin
 	sprites_addrs(heart) <= hearts(heart_idx).address;
 	sprites_addrs(coin) <= coins(coin_idx).address;
 	sprites_addrs(cloud0) <= cloud0s(cloud0_idx).address;
-	
+	sprites_addrs(tree2) <= tree2s(tree2_idx).address;
 	
 	bird(bird_idx).colours <= sprites_out(bird0);
 	grassplane(grass_idx).colours <= sprites_out(grass);
@@ -268,27 +273,30 @@ begin
 	hearts(heart_idx).colours <= sprites_out(heart);
 	coins(coin_idx).colours <= sprites_out(coin);
 	cloud0s(cloud0_idx).colours <= sprites_out(cloud0);
+	tree2s(tree2_idx).colours <= sprites_out(tree2);
 	
 	sprite_r <= unsigned(mousecursor(mousecursor_idx).colours(3 downto 0))	when mousecursor(mousecursor_idx).colours(15 downto 12) /= "1111" and mousecursor(mousecursor_idx).in_range else
 				unsigned(bird(bird_idx).colours(3 downto 0))				when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
 				unsigned(hearts(heart_idx).colours(3 downto 0))				when hearts(heart_idx).colours(15 downto 12) /= "1111" and hearts(heart_idx).in_range else
+				unsigned(coins(coin_idx).colours(3 downto 0))				when coins(coin_idx).colours(15 downto 12) /= "1111" and coins(coin_idx).in_range else
 				unsigned(grassplane(grass_idx).colours(3 downto 0))			when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range else
 				unsigned(bottompipe(bottompipe_idx).colours(3 downto 0))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
 				unsigned(toppipes(toppipe_idx).colours(3 downto 0))			when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
 				unsigned(tree0s(tree0_idx).colours(3 downto 0))				when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range else
-				unsigned(coins(coin_idx).colours(3 downto 0))				when coins(coin_idx).colours(15 downto 12) /= "1111" and coins(coin_idx).in_range else
-				unsigned(cloud0s(cloud0_idx).colours(3 downto 0))				when cloud0s(cloud0_idx).colours(15 downto 12) /= "1111" and cloud0s(cloud0_idx).in_range else
+				unsigned(tree2s(tree2_idx).colours(3 downto 0))				when tree2s(tree2_idx).colours(15 downto 12) /= "1111" and tree2s(tree2_idx).in_range else
+				unsigned(cloud0s(cloud0_idx).colours(3 downto 0))			when cloud0s(cloud0_idx).colours(15 downto 12) /= "1111" and cloud0s(cloud0_idx).in_range else
 				"1111";
 				
 	
 	sprite_g <= unsigned(mousecursor(mousecursor_idx).colours(7 downto 4))	when mousecursor(mousecursor_idx).colours(15 downto 12) /= "1111" and mousecursor(mousecursor_idx).in_range else 
 				unsigned(bird(bird_idx).colours(7 downto 4))				when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
 				unsigned(hearts(heart_idx).colours(7 downto 4))				when hearts(heart_idx).colours(15 downto 12) /= "1111" and hearts(heart_idx).in_range else
+				unsigned(coins(coin_idx).colours(7 downto 4))				when coins(coin_idx).colours(15 downto 12) /= "1111" and coins(coin_idx).in_range else
 				unsigned(grassplane(grass_idx).colours(7 downto 4))			when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range else				
 				unsigned(bottompipe(bottompipe_idx).colours(7 downto 4))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
 				unsigned(toppipes(toppipe_idx).colours(7 downto 4))			when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
 				unsigned(tree0s(tree0_idx).colours(7 downto 4))				when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range else
-				unsigned(coins(coin_idx).colours(7 downto 4))				when coins(coin_idx).colours(15 downto 12) /= "1111" and coins(coin_idx).in_range else
+				unsigned(tree2s(tree2_idx).colours(7 downto 4))				when tree2s(tree2_idx).colours(15 downto 12) /= "1111" and tree2s(tree2_idx).in_range else
 				unsigned(cloud0s(cloud0_idx).colours(7 downto 4))				when cloud0s(cloud0_idx).colours(15 downto 12) /= "1111" and cloud0s(cloud0_idx).in_range else
 				"1111";
 				
@@ -297,11 +305,12 @@ begin
 	sprite_b <= unsigned(mousecursor(mousecursor_idx).colours(11 downto 8)) when mousecursor(mousecursor_idx).colours(15 downto 12) /= "1111" and mousecursor(mousecursor_idx).in_range else
 				unsigned(bird(bird_idx).colours(11 downto 8)) 				when bird(bird_idx).colours(15 downto 12) /= "1111" and bird(bird_idx).in_range else
 				unsigned(hearts(heart_idx).colours(11 downto 8))			when hearts(heart_idx).colours(15 downto 12) /= "1111" and hearts(heart_idx).in_range else
+				unsigned(coins(coin_idx).colours(11 downto 8))				when coins(coin_idx).colours(15 downto 12) /= "1111" and coins(coin_idx).in_range else
 				unsigned(grassplane(grass_idx).colours(11 downto 8))		when grassplane(grass_idx).colours(15 downto 12) /= "1111" and grassplane(grass_idx).in_range else
 				unsigned(bottompipe(bottompipe_idx).colours(11 downto 8))	when bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" and bottompipe(bottompipe_idx).in_range else
 				unsigned(toppipes(toppipe_idx).colours(11 downto 8))		when toppipes(toppipe_idx).colours(15 downto 12) /= "1111" and toppipes(toppipe_idx).in_range else
 				unsigned(tree0s(tree0_idx).colours(11 downto 8))			when tree0s(tree0_idx).colours(15 downto 12) /= "1111" and tree0s(tree0_idx).in_range else
-				unsigned(coins(coin_idx).colours(11 downto 8))				when coins(coin_idx).colours(15 downto 12) /= "1111" and coins(coin_idx).in_range else
+				unsigned(tree2s(tree2_idx).colours(11 downto 8))			when tree2s(tree2_idx).colours(15 downto 12) /= "1111" and tree2s(tree2_idx).in_range else
 				unsigned(cloud0s(cloud0_idx).colours(11 downto 8))				when cloud0s(cloud0_idx).colours(15 downto 12) /= "1111" and cloud0s(cloud0_idx).in_range else
 				"1111";
 				
@@ -309,11 +318,11 @@ begin
 	sprite_z <= "0000" when mousecursor_idx /= -1 and mousecursor(mousecursor_idx).in_range and mousecursor(mousecursor_idx).colours(15 downto 12) /= "1111" else
 				"0000" when bird_idx /= -1 and bird(bird_idx).in_range and bird(bird_idx).colours(15 downto 12) /= "1111" else
 				"0000" when heart_idx /= -1 and hearts(heart_idx).in_range and hearts(heart_idx).colours(15 downto 12) /= "1111" else
+				"0000" when coin_idx /= -1 and coins(coin_idx).in_range and coins(coin_idx).colours(15 downto 12) /= "1111" else
 				"0000" when grass_idx /= -1 and grassplane(grass_idx).in_range and grassplane(grass_idx).colours(15 downto 12) /= "1111" else
 				"0000" when bottompipe_idx /= -1 and bottompipe(bottompipe_idx).in_range and bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" else
 				"0000" when toppipe_idx /= -1 and toppipes(toppipe_idx).in_range and toppipes(toppipe_idx).colours(15 downto 12) /= "1111" else
 				"0000" when tree0_idx /= -1 and tree0s(tree0_idx).in_range and tree0s(tree0_idx).colours(15 downto 12) /= "1111" else
-				"0000" when coin_idx /= -1 and coins(coin_idx).in_range and coins(coin_idx).colours(15 downto 12) /= "1111" else
 				"0000" when cloud0_idx /= -1 and cloud0s(cloud0_idx).in_range and cloud0s(cloud0_idx).colours(15 downto 12) /= "1111" else
 				"1111";
 				
@@ -345,6 +354,10 @@ begin
 	variable p_speed : natural range 2 to 4;
 	variable d_state : natural range 0 to 3 := 0; -- dynamic state of RnG of sprites
 	
+	
+	
+	variable seconds : natural range 0 to 60 := 0;
+	variable pickup_timer : natural range 0 to 20 := 0;
 	begin
 		if (rising_edge(v_sync)) then
 			if(d_state = 0) then
@@ -367,6 +380,16 @@ begin
 				if (game_mode = MODE_GAME or game_mode = MODE_TRAIN) then
 					initial_lclick <= '1';
 				end if;
+			end if;
+			
+			seconds := seconds + 1;
+			if (seconds > 59) then
+				seconds := 0;
+			end if;
+	
+			pickup_timer := pickup_timer + 1;
+			if (pickup_timer > 20) then
+				pickup_timer := 0;
 			end if;
 	
 			if (game_mode = MODE_TITLE) then
@@ -1027,6 +1050,21 @@ begin
 					bottompipe(i).visible <= TRUE;
 					toppipes(i).visible <= TRUE;
 				end if;		
+						
+			for i in 0 to (grassplane'length - 1) loop
+				if (grassplane(i).x0 <= 640) then
+						grassplane(i).underflow <= false;
+						grassplane(i).x0 <= grassplane(i).x0 - p_speed;
+						if (grassplane(i).x0 < 1) then
+							grassplane(i).underflow <= true;
+						end if;
+					elsif (grassplane(i).x0 >= 1023 - grassplane(i).size * grassplane(i).scaling_factor_x) then
+						grassplane(i).x0 <= grassplane(i).x0 - p_speed;
+					elsif (grassplane(i).x0 < 1023 - grassplane(i).size * grassplane(i).scaling_factor_x) then
+						grassplane(i).underflow <= false;
+						grassplane(i).x0 <= to_unsigned(640, 10);
+					end if;
+			end loop;
 			
 				-- if the user has just passed through this pipe, give them a point			
 				if (enable_collision = '1' and bottompipe(i).passed_pipe = false and bird(0).x0 > bottompipe(i).x0 + bottompipe(i).size * bottompipe(i).scaling_factor_x) then
@@ -1038,7 +1076,15 @@ begin
 					else
 						difficulty := 2;
 					end if;
-					pipe_points <= pipe_points + 1; 
+					pipe_points <= pipe_points + 1;
+					
+					if (pickup_timer = 20) then
+						if (bird(0).y0 < 240) then
+							coins(1).visible <= true;
+						else
+							coins(0).visible <= true;
+						end if;
+					end if;
 				end if;		
 
 				if (initial_lclick = '1') then
@@ -1160,6 +1206,24 @@ begin
 					pipe_points <= 0;
 					bird(0).x0 <= to_unsigned(195, 10);
 					bird(0).y0 <= to_unsigned(50, 10);
+					
+					bottompipe(0).x0 <= to_unsigned(128, 10);
+					bottompipe(0).y0 <= to_unsigned(288, 10);
+					bottompipe(0).visible <= false;
+					bottompipe(0).scaling_factor_y <= 3;
+					bottompipe(1).x0 <= to_unsigned(500, 10);
+					bottompipe(1).y0 <= to_unsigned(288, 10);
+					bottompipe(1).visible <= false;
+					bottompipe(1).scaling_factor_y <= 3;
+					
+					toppipes(0).x0 <= to_unsigned(128, 10);
+					toppipes(0).y0 <= to_unsigned(0, 10);
+					toppipes(0).visible <= false;
+					toppipes(0).scaling_factor_y <= 1;
+					toppipes(1).x0 <= to_unsigned(500, 10);
+					toppipes(1).y0 <= to_unsigned(0, 10);
+					toppipes(1).visible <= false;
+					toppipes(1).scaling_factor_y <= 1;
 				else
 					game_mode <= MODE_OVER;
 				end if;
@@ -1227,7 +1291,22 @@ begin
 						coins(i).underflow <= false;
 						coins(i).x0 <= to_unsigned(640, 10);
 					end if;
-			end loop;			
+			end loop;
+			
+			for i in 0 to (tree2s'length - 1) loop
+				if (tree2s(i).x0 <= 640) then
+						tree2s(i).underflow <= false;
+						tree2s(i).x0 <= tree2s(i).x0 - p_speed;
+						if (tree2s(i).x0 < 1) then
+							tree2s(i).underflow <= true;
+						end if;
+					elsif (tree2s(i).x0 >= 1023 - tree2s(i).size * tree2s(i).scaling_factor_x) then
+						tree2s(i).x0 <= tree0s(i).x0 - p_speed;
+					elsif (tree2s(i).x0 < 1023 - tree2s(i).size * tree2s(i).scaling_factor_x) then
+						tree2s(i).underflow <= false;
+						tree2s(i).x0 <= to_unsigned(640, 10); 
+					end if;
+			end loop;
 			
 			for i in 0 to (cloud0s'length - 1) loop
 				if (cloud0s(i).x0 <= 640) then
@@ -1243,22 +1322,6 @@ begin
 						cloud0s(i).x0 <= to_unsigned(640, 10); 
 					end if;
 			end loop;
-			
-			for i in 0 to (grassplane'length - 1) loop
-				if (grassplane(i).x0 <= 640) then
-						grassplane(i).underflow <= false;
-						grassplane(i).x0 <= grassplane(i).x0 - p_speed;
-						if (grassplane(i).x0 < 1) then
-							grassplane(i).underflow <= true;
-						end if;
-					elsif (grassplane(i).x0 >= 1023 - grassplane(i).size * grassplane(i).scaling_factor_x) then
-						grassplane(i).x0 <= grassplane(i).x0 - p_speed;
-					elsif (grassplane(i).x0 < 1023 - grassplane(i).size * grassplane(i).scaling_factor_x) then
-						grassplane(i).underflow <= false;
-						grassplane(i).x0 <= to_unsigned(640, 10);
-					end if;
-			end loop;
-			
 		end if; 
 	end process;
 end architecture;
