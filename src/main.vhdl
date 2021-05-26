@@ -30,7 +30,7 @@ architecture x of main is
 			sprites_out : out sprite_output_array
 			);
 	end component spriteengine;
-	-- signals -- 
+
 	component randomNumGen is
 		port(
 			clk							: 		in std_logic;
@@ -38,6 +38,9 @@ architecture x of main is
 			randNum  					: 		out std_logic_vector(3 downto 0)
 		);
 	end component randomNumGen;
+
+	-- signals -- 
+
 	
 	signal text_vector: textengine_vector := (others => init_textengine_row);
 	
@@ -45,7 +48,7 @@ architecture x of main is
 	signal tvec_mode_game: textengine_vector := (others => init_textengine_row);
 	signal tvec_mode_over: textengine_vector := (others => init_textengine_row);
 	signal tvec_mode_train: textengine_vector := (others=> init_textengine_row);
-	signal show_click2start_text: boolean := true;
+	signal show_click2start_text: boolean := false;
 	
 	
 	signal txt_r : unsigned(3 downto 0) := "0000";
@@ -169,11 +172,12 @@ begin
 	-- Game Mode Screen Text Vector
 	
 	str2text(tvec_mode_game, 4, 2, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
-	str2text(tvec_mode_game, 5, 5, 4, 4, "0011", "0100", "1010", "Ready? Press the mouse to get started!", show_click2start_text);
+	str2text(tvec_mode_game, 6, 1, 2, 3, "0011", "0011", "0111", "Ready? Press the mouse to get started!", show_click2start_text);
 
 	-- Training Mode Text Vector
 	str2text(tvec_mode_train, 2, 3, 4, 4, "0011", "0100", "1010", "Training Mode");
-	
+	str2text(tvec_mode_game, 6, 1, 2, 3, "0011", "0011", "0111", "Ready? Press the mouse to get started!", show_click2start_text);
+
 	-- =================
 	
 	-- Game Over Screen Text Vector
@@ -317,6 +321,12 @@ begin
 			
 			if (mouse_lbtn = '1') then
 				mouse_btn <= var_len_str("Left Mouse button Pressed", mouse_btn'length);
+			
+				-- hide the 'click mouse to start' text
+				if ((game_mode = MODE_TITLE or game_mode = MODE_GAME) and show_click2start_text = false) then
+					show_click2start_text <= true;
+				end if;
+	
 				if (game_mode = GAME_MODE) then
 					initial_lclick <= '1';
 					seedDone := True;
@@ -337,7 +347,7 @@ begin
 			elsif (game_mode = MODE_TRAIN) then
 				text_vector <= tvec_mode_train;
 			end if;
-	
+
 			
 		end if;
 
@@ -494,7 +504,6 @@ begin
 				end if;		
 		
 				if (initial_lclick = '1') then
-					show_click2start_text <= true;
 					if (collision_flag = '0' and (game_mode = MODE_GAME or game_mode = MODE_TRAIN)) then
 						if (bottompipe(i).x0 <= 640) then
 							bottompipe(i).underflow <= false;
@@ -630,7 +639,7 @@ begin
 			
 			-- Mouse input (make the bird flap)
 			-- Don't let the bird flap if we have detected a collision (remember we are drawing the next frame here)
-			if (collision_flag = '0' and initial_lclick = '1') then
+			if (collision_flag = '0' and initial_lclick = '1' and game_mode /= MODE_TITLE) then
 				if (mouse_lbtn = '1' and mouse_flag = '0') then
 					mouse_flag := '1';
 					apply_h_boost := 8;
