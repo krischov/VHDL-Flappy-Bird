@@ -187,8 +187,8 @@ begin
 	str2text(tvec_mode_game, 6, 1, 2, 3, "0011", "0011", "0111", "Ready? Press the mouse to get started!", hide_click2start_text);
 
 	-- Training Mode Text Vector
-	str2text(tvec_mode_train, 2, 1, 1, 1, "0011", "0100", "1010", "Successfully Passed Pipes " & int2str(pipe_points));
-	str2text(tvec_mode_train, 3, 5, 4, 4, "0011", "0100", "1010", "Training Mode");
+	str2text(tvec_mode_train, 0, 0, 4, 4, "1111", "0000", "0000", "Training Mode");
+	str2text(tvec_mode_train, 5, 1, 1, 1, "0011", "0100", "1010", "Successfully Passed Pipes " & int2str(pipe_points));
 	str2text(tvec_mode_train, 8, 1, 2, 3, "0011", "0011", "0111", "Ready? Press the mouse to get started!", hide_click2start_text);
 
 	-- =================
@@ -1158,6 +1158,34 @@ begin
 				end if;	
 			end loop;
 		
+		
+		
+		
+			if (game_mode = MODE_OVER) then
+				if (bird(0).y0 + 5 <= 512) then
+					bird(0).y0 <= bird(0).y0 + 5;
+				end if;
+				collision_flag := '0';
+				
+				if (pb_0 = '1') then 
+					game_mode <= MODE_TITLE;
+					initial_lclick <= '0';
+					pipe_points <= 0;
+				else
+					game_mode <= MODE_OVER;
+				end if;
+			end if;
+		
+		
+			-- Mouse input (make the bird flap)
+			-- Don't let the bird flap if we have detected a collision (remember we are drawing the next frame here)
+			if (collision_flag = '0' and initial_lclick = '1' and game_mode /= MODE_TITLE) then
+				if (mouse_lbtn = '1' and mouse_flag = '0') then
+					mouse_flag := '1';
+					apply_h_boost := 8;
+				end if;
+			end if;
+		
 			-- Boost the bird up on mouse click, otherwise make it fall 
 			-- Don't let the bird flap if we have detected a collision (remember we are drawing the next frame here)
 			if (collision_flag = '0' and initial_lclick = '1') then
@@ -1172,18 +1200,10 @@ begin
 					-- lower bird by 3 pixels (make it 'fall' 3 pixels)
 					if (bird(0).y0 + 3 >= 480) then
 						collision_flag := '1';
-					elsif (bird(0).y0 + 3 <= 452)	then
+						game_mode <= MODE_OVER;
+					else
 						bird(0).y0 <= bird(0).y0 + 3;
 					end if;
-				end if;
-			end if;
-			
-			-- Mouse input (make the bird flap)
-			-- Don't let the bird flap if we have detected a collision (remember we are drawing the next frame here)
-			if (collision_flag = '0' and initial_lclick = '1' and game_mode /= MODE_TITLE) then
-				if (mouse_lbtn = '1' and mouse_flag = '0') then
-					mouse_flag := '1';
-					apply_h_boost := 8;
 				end if;
 			end if;
 			
@@ -1191,44 +1211,37 @@ begin
 				mouse_flag := '0';
 			end if;
 			
-			if (game_mode = MODE_GAME or game_mode = MODE_TITLE or game_mode = MODE_TRAIN) then
-				for i in 0 to (tree0s'length - 1) loop
-					if (tree0s(i).x0 <= 640) then
-							tree0s(i).underflow <= false;
-							tree0s(i).x0 <= tree0s(i).x0 - p_speed;
-							if (tree0s(i).x0 < 1) then
-								tree0s(i).underflow <= true;
-							end if;
-						elsif (tree0s(i).x0 >= 1023 - tree0s(i).size * tree0s(i).scaling_factor_x) then
-							tree0s(i).x0 <= tree0s(i).x0 - p_speed;
-						elsif (tree0s(i).x0 < 1023 - tree0s(i).size * tree0s(i).scaling_factor_x) then
-							tree0s(i).underflow <= false;
-							tree0s(i).x0 <= to_unsigned(640, 10); 
+			for i in 0 to (tree0s'length - 1) loop
+				if (tree0s(i).x0 <= 640) then
+						tree0s(i).underflow <= false;
+						tree0s(i).x0 <= tree0s(i).x0 - p_speed;
+						if (tree0s(i).x0 < 1) then
+							tree0s(i).underflow <= true;
 						end if;
-				end loop;
-				
-				for i in 0 to (grassplane'length - 1) loop
-					if (grassplane(i).x0 <= 640) then
-							grassplane(i).underflow <= false;
-							grassplane(i).x0 <= grassplane(i).x0 - p_speed;
-							if (grassplane(i).x0 < 1) then
-								grassplane(i).underflow <= true;
-							end if;
-						elsif (grassplane(i).x0 >= 1023 - grassplane(i).size * grassplane(i).scaling_factor_x) then
-							grassplane(i).x0 <= grassplane(i).x0 - p_speed;
-						elsif (grassplane(i).x0 < 1023 - grassplane(i).size * grassplane(i).scaling_factor_x) then
-							grassplane(i).underflow <= false;
-							grassplane(i).x0 <= to_unsigned(640, 10);
-						end if;
-				end loop;
-			end if;
+					elsif (tree0s(i).x0 >= 1023 - tree0s(i).size * tree0s(i).scaling_factor_x) then
+						tree0s(i).x0 <= tree0s(i).x0 - p_speed;
+					elsif (tree0s(i).x0 < 1023 - tree0s(i).size * tree0s(i).scaling_factor_x) then
+						tree0s(i).underflow <= false;
+						tree0s(i).x0 <= to_unsigned(640, 10); 
+					end if;
+			end loop;
 			
-			if (game_mode = MODE_OVER) then
-				if (bird(0).y0 + 5 <= 512) then
-					bird(0).y0 <= bird(0).y0 + 5;
-				end if;
-				collision_flag := '0';
-			end if;
+			for i in 0 to (grassplane'length - 1) loop
+				if (grassplane(i).x0 <= 640) then
+						grassplane(i).underflow <= false;
+						grassplane(i).x0 <= grassplane(i).x0 - p_speed;
+						if (grassplane(i).x0 < 1) then
+							grassplane(i).underflow <= true;
+						end if;
+					elsif (grassplane(i).x0 >= 1023 - grassplane(i).size * grassplane(i).scaling_factor_x) then
+						grassplane(i).x0 <= grassplane(i).x0 - p_speed;
+					elsif (grassplane(i).x0 < 1023 - grassplane(i).size * grassplane(i).scaling_factor_x) then
+						grassplane(i).underflow <= false;
+						grassplane(i).x0 <= to_unsigned(640, 10);
+					end if;
+			end loop;
+		
+		
 			
 
 		end if; 
