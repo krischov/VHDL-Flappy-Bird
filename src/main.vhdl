@@ -321,6 +321,7 @@ begin
 				"0000" when grass_idx /= -1 and grassplane(grass_idx).in_range and grassplane(grass_idx).colours(15 downto 12) /= "1111" else
 				"0000" when bottompipe_idx /= -1 and bottompipe(bottompipe_idx).in_range and bottompipe(bottompipe_idx).colours(15 downto 12) /= "1111" else
 				"0000" when toppipe_idx /= -1 and toppipes(toppipe_idx).in_range and toppipes(toppipe_idx).colours(15 downto 12) /= "1111" else
+				"0000" when tree2_idx /= -1 and tree2s(tree2_idx).in_range and tree2s(tree2_idx).colours(15 downto 12) /= "1111" else
 				"0000" when tree0_idx /= -1 and tree0s(tree0_idx).in_range and tree0s(tree0_idx).colours(15 downto 12) /= "1111" else
 				"0000" when cloud0_idx /= -1 and cloud0s(cloud0_idx).in_range and cloud0s(cloud0_idx).colours(15 downto 12) /= "1111" else
 				"1111";
@@ -1227,7 +1228,7 @@ begin
 					seconds := 0;
 					pickup_timer := 0;
 					health <= 3;
-					collision_flag <= '0';
+					collision_flag := '0';
 				else
 					game_mode <= MODE_OVER;
 				end if;
@@ -1305,13 +1306,6 @@ begin
 				end if;
 			end if;
 			
-			if (pickup_timer > 10 and game_mode = MODE_GAME) then
-				pickup_timer := 0;
-					coins(1).visible <= true;
-					coins(0).visible <= true;
-			end if;
-			
-			
 			for i in 0 to (coins'length - 1) loop
 				if (coins(i).x0 <= 640) then
 						coins(i).underflow <= false;
@@ -1326,7 +1320,16 @@ begin
 						coins(i).x0 <= to_unsigned(640, 10);
 						coins(i).visible <= false;
 					end if;
-			end loop;
+			end loop;			
+			
+			if (pickup_timer > 10 and game_mode = MODE_GAME) then
+				pickup_timer := 0;
+					coins(1).visible <= true;
+					coins(0).visible <= true;
+			end if;
+			
+			
+
 			
 			for i in 0 to (tree2s'length - 1) loop
 				if (tree2s(i).x0 <= 640) then
