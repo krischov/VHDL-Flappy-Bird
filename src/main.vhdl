@@ -407,6 +407,7 @@ begin
 	variable difficulty : natural range 0 to 2;
 	variable p_speed : natural range 2 to 4;
 	variable d_state : natural range 0 to 3 := 0;
+	variable game_flag : std_logic := '0';
 	
 	begin
 		if (rising_edge(v_sync)) then
@@ -423,6 +424,24 @@ begin
 				menus(0).visible <= FALSE;
 				menus(1).visible <= FALSE;
 				menus(2).visible <= FALSE;
+			end if;
+
+			--Menu navigation. If any range of x and y coordinate is overlapping with the menu button while the mouse is clicked, will act as a button click. 
+			if (mouse_lbtn = '1') then
+				if (menus(0).visible = TRUE and menus(1).visible = TRUE and menus(2).visible = TRUE) then
+					if (((mousecursor(0).x0 >= menus(0).x0 and mousecursor(0).x0 <= menus(0).x0 + menus(0).size * menus(0).scaling_factor_x - 1) or
+						(mousecursor(0).x0 + 9 >= menus(0).x0 and mousecursor(0).x0 + 9 <= menus(0).x0 + menus(0).size * menus(0).scaling_factor_x - 1)) and
+						((mousecursor(0).y0 >= menus(0).y0 and mousecursor(0).y0 <= menus(0).y0 + menus(0).size * menus(0).scaling_factor_y - 1) or
+						(mousecursor(0).y0 + mousecursor(0).size - 1 >= menus(0).y0 and mousecursor(0).y0 + mousecursor(0).size - 1 <= menus(0).y0 * menus(0).scaling_factor_y - 1))) then
+							game_mode <= MODE_GAME;
+							game_flag := '1';
+					elsif (((mousecursor(0).x0 >= menus(1).x0 and mousecursor(0).x0 <= menus(1).x0 + menus(1).size * menus(1).scaling_factor_x - 1) or
+						(mousecursor(0).x0 + 9 >= menus(1).x0 and mousecursor(0).x0 + 9 <= menus(1).x0 + menus(1).size * menus(1).scaling_factor_x - 1)) and
+						((mousecursor(0).y0 >= menus(1).y0 and mousecursor(0).y0 <= menus(1).y0 + menus(1).size * menus(1).scaling_factor_y - 1) or
+						(mousecursor(0).y0 + mousecursor(0).size - 1 >= menus(1).y0 and mousecursor(0).y0 + mousecursor(0).size - 1 <= menus(1).y0 * menus(1).scaling_factor_y - 1))) then
+							game_mode <= MODE_TRAIN;
+					end if;
+				end if;
 			end if;
 
 			if (health_flag = '1') then
@@ -675,16 +694,17 @@ begin
 			end if;
 			
 			
-			if (pb_0 = '1') then
+			if (pb_0 = '1' or game_flag = '1') then
 				if (game_mode = MODE_TITLE) then
 					game_mode <= MODE_GAME;
-					hearts(0).visible <= true;
-					hearts(1).visible <= true;
-					hearts(2).visible <= true;
+					hearts(0).visible <= TRUE;
+					hearts(1).visible <= TRUE;
+					hearts(2).visible <= TRUE;
+					game_flag := '0';
 				end if;
 			end if;			
 			
-			if (pb_1 = '1') then
+			if (pb_1 = '1'or game_flag = '0') then
 				if (game_mode = MODE_TITLE) then
 					game_mode <=MODE_TRAIN;
 					hearts(0).visible <= FALSE;
@@ -703,72 +723,6 @@ begin
 			if (health = 0) then
 				game_mode <= MODE_OVER;
 			end if;
-
-
-
-			if (mouse_lbtn = '1') then
-				if (((mousecursor(0).x0 >= menus(0).x0 and mousecursor(0).x0 <= menus(0).x0 + menus(0).size * menus(0).scaling_factor_x - 1) or
-					(mousecursor(0).x0 + 9 >= menus(0).x0 and mousecursor(0).x0 + 9 <= menus(0).x0 + menus(0).size * menus(0).scaling_factor_x - 1)) and
-					((mousecursor(0).y0 >= menus(0).y0 and mousecursor(0).y0 <= menus(0).y0 + menus(0).size * menus(0).scaling_factor_y - 1) or
-					(mousecursor(0).y0 + mousecursor(0).size - 1 >= menus(0).y0 and mousecursor(0).y0 + mousecursor(0).size - 1 <= menus(0).y0 * menus(0).scaling_factor_y - 1))) then
-						game_mode <= MODE_GAME;
-				elsif (((mousecursor(0).x0 >= menus(1).x0 and mousecursor(0).x0 <= menus(1).x0 + menus(1).size * menus(1).scaling_factor_x - 1) or
-					(mousecursor(0).x0 + 9 >= menus(1).x0 and mousecursor(0).x0 + 9 <= menus(1).x0 + menus(1).size * menus(1).scaling_factor_x - 1)) and
-					((mousecursor(0).y0 >= menus(1).y0 and mousecursor(0).y0 <= menus(1).y0 + menus(1).size * menus(1).scaling_factor_y - 1) or
-					(mousecursor(0).y0 + mousecursor(0).size - 1 >= menus(1).y0 and mousecursor(0).y0 + mousecursor(0).size - 1 <= menus(1).y0 * menus(1).scaling_factor_y - 1))) then
-						game_mode <= MODE_TRAIN;
-				-- if (((mousecursor(0).x0 >= menus(0).x0 and mousecursor.x0 <= menus(0).x0 + menus(0).size * menus(0).scaling_factor_x - 1) and 
-				-- 	(mousecursor.y0 >= menus(0).y0 and mousecursor.y0 <= menus(0).y0 + menus(0).size * menus(0).scaling_factor_y - 1)) or 
-					
-				-- 	((mousecursor(0).x0 + 1  >= menus(0).x0 and mousecursor.x0 + 1 <= menus(0).x0 + menus(0).size * menus(0).scaling_factor_x - 1) and 
-				-- 	(mousecursor(0).y0 >= menus(0).y0 and mousecursor.y0 <= menus(0).y0 + menus(0).size * menus(0).scaling_factor_y - 1)) or
-
-				-- 	((mousecursor(0).x0 >= menus(0).x0 and mousecursor.x0 <= menus(0).x0 + menus(0).size * menus(0).scaling_factor_x - 1) and 
-				-- 	(mousecursor(0).y0 + 1 >= menus(0).y0 and mousecursor.y0 + 1 <= menus(0).y0 + menus(0).size * menus(0).scaling_factor_y - 1)) or
-
-				-- 	((mousecursor(0).x0 + 1 >= menus(0).x0 and mousecursor.x0 + 1 <= menus(0).x0 + menus(0).size * menus(0).scaling_factor_x - 1) and 
-				-- 	(mousecursor(0).y0 + 1 >= menus(0).y0 and mousecursor.y0 + 1 <= menus(0).y0 + menus(0).size * menus(0).scaling_factor_y - 1)) or
-					
-				-- 	((mousecursor(0).x0 + 2 >= menus(0).x0 and mousecursor.x0 + 2 <= menus(0).x0 + menus(0).size * menus(0).scaling_factor_x - 1) and 
-				-- 	(mousecursor(0).y0 + 1 >= menus(0).y0 and mousecursor.y0 + 1 <= menus(0).y0 + menus(0).size * menus(0).scaling_factor_y - 1))) then
-						
-				-- 			game_mode <= MODE_GAME;
-				
-				-- elsif (((mousecursor(0).x0 >= menus(1).x0 and mousecursor.x0 <= menus(1).x0 + menus(1).size * menus(1).scaling_factor_x - 1) and 
-				-- 		(mousecursor.y0 >= menus(1).y0 and mousecursor.y0 <= menus(1).y0 + menus(1).size * menus(1).scaling_factor_y - 1)) or 
-						
-				-- 		((mousecursor(0).x0 + 1  >= menus(1).x0 and mousecursor.x0 + 1 <= menus(1).x0 + menus(1).size * menus(1).scaling_factor_x - 1) and 
-				-- 		(mousecursor(0).y0 >= menus(1).y0 and mousecursor.y0 <= menus(1).y0 + menus(1).size * menus(1).scaling_factor_y - 1)) or
-
-				-- 		((mousecursor(0).x0 >= menus(1).x0 and mousecursor.x0 <= menus(1).x0 + menus(1).size * menus(1).scaling_factor_x - 1) and 
-				-- 		(mousecursor(0).y0 + 1 >= menus(1).y0 and mousecursor.y0 + 1 <= menus(1).y0 + menus(1).size * menus(1).scaling_factor_y - 1)) or
-
-				-- 		((mousecursor(0).x0 + 1 >= menus(1).x0 and mousecursor.x0 + 1 <= menus(1).x0 + menus(1).size * menus(1).scaling_factor_x - 1) and 
-				-- 		(mousecursor(0).y0 + 1 >= menus(1).y0 and mousecursor.y0 + 1 <= menus(1).y0 + menus(1).size * menus(1).scaling_factor_y - 1)) or
-						
-				-- 		((mousecursor(0).x0 + 2 >= menus(1).x0 and mousecursor.x0 + 2 <= menus(1).x0 + menus(1).size * menus(1).scaling_factor_x - 1) and 
-				-- 		(mousecursor(0).y0 + 1 >= menus(1).y0 and mousecursor.y0 + 1 <= menus(1).y0 + menus(1).size * menus(1).scaling_factor_y - 1))) then
-						
-				-- 			game_mode <= MODE_TRAIN;
-				
-				-- elsif (((mousecursor(0).x0 >= menus(2).x0 and mousecursor.x0 <= menus(2).x0 + menus(2).size * menus(2).scaling_factor_x - 1) and 
-				-- 		(mousecursor.y0 >= menus(2).y0 and mousecursor.y0 <= menus(2).y0 + menus(2).size * menus(2).scaling_factor_y - 1)) or 
-						
-				-- 		((mousecursor(0).x0 + 1  >= menus(2).x0 and mousecursor.x0 + 1 <= menus(2).x0 + menus(2).size * menus(2).scaling_factor_x - 1) and 
-				-- 		(mousecursor(0).y0 >= menus(2).y0 and mousecursor.y0 <= menus(2).y0 + menus(2).size * menus(2).scaling_factor_y - 1)) or
-
-				-- 		((mousecursor(0).x0 >= menus(2).x0 and mousecursor.x0 <= menus(2).x0 + menus(2).size * menus(2).scaling_factor_x - 1) and 
-				-- 		(mousecursor(0).y0 + 1 >= menus(2).y0 and mousecursor.y0 + 1 <= menus(2).y0 + menus(2).size * menus(2).scaling_factor_y - 1)) or
-
-				-- 		((mousecursor(0).x0 + 1 >= menus(2).x0 and mousecursor.x0 + 1 <= menus(2).x0 + menus(2).size * menus(2).scaling_factor_x - 1) and 
-				-- 		(mousecursor(0).y0 + 1 >= menus(2).y0 and mousecursor.y0 + 1 <= menus(2).y0 + menus(2).size * menus(2).scaling_factor_y - 1)) or
-						
-				-- 		((mousecursor(0).x0 + 2 >= menus(2).x0 and mousecursor.x0 + 2 <= menus(2).x0 + menus(2).size * menus(2).scaling_factor_x - 1) and 
-				-- 		(mousecursor(0).y0 + 1 >= menus(2).y0 and mousecursor.y0 + 1 <= menus(2).y0 + menus(2).size * menus(2).scaling_factor_y - 1))) then
-				end if;
-			end if;
-
-
 
 
 			for i in 0 to (bottompipe'length - 1) loop
