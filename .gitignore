@@ -6,3 +6,5 @@ vhdltool-config.yaml
 output_files/
 *db/
 .qsys_edit/
+# VHDL language server config file (vs code)
+vhdl_ls.toml
