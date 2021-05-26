@@ -95,7 +95,7 @@ architecture x of main is
 	);
 	
 	signal toppipes : all_sprites(0 to 1) := (
-		(64, to_unsigned(0, 10), to_unsigned(256, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
+		(64, to_unsigned(0, 10), to_unsigned(128, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE),
 		(64, to_unsigned(0, 10), to_unsigned(500, 10), "000000000000", toppipe, "0000000000000000", false, 1, 3, TRUE, FALSE, FALSE)
 	);
 
@@ -160,7 +160,6 @@ architecture x of main is
 	
 	
 	-- ========================
-	signal debug_print0 : natural range 0 to 3;
 begin
 
 	spriteengine0 : spriteengine port map (clk, vga_row, vga_col, sprites_addrs, sprites_out);
@@ -187,7 +186,6 @@ begin
 	-- Game Mode Screen Text Vector
 	str2text(tvec_mode_game, 4, 1, 1, 1, "0011", "0100", "1010", "Points " & int2str(pipe_points));
 	str2text(tvec_mode_game, 6, 1, 2, 3, "0011", "0011", "0111", "Ready? Press the mouse to get started!", hide_click2start_text);
-	str2text(tvec_mode_game, 10, 1, 2, 3, "0011", "0011", "0111", "dstate " & int2str(debug_print0));
 
 	-- Training Mode Text Vector
 	str2text(tvec_mode_train, 2, 1, 1, 1, "0011", "0100", "1010", "Successfully Passed Pipes " & int2str(pipe_points));
@@ -528,10 +526,9 @@ begin
 			
 			--Random Number States
 			
+		if((bottompipe(d_state).x0 < (1023 - bottompipe(d_state).size * bottompipe(d_state).scaling_factor_x)) and bottompipe(d_state).underflow = true) then
 			if ((game_mode = MODE_GAME and difficulty = 0) or game_mode = MODE_TRAIN) then 
 				p_speed := 2;
-				
-				if((bottompipe(d_state).x0 < (1023 - bottompipe(d_state).size * bottompipe(d_state).scaling_factor_x)) and bottompipe(d_state).underflow = true) then
 					if (storedRandNum = "0000" or storedRandNum = "0001" or storedRandNum = "0010" or storedRandNum = "0011") then
 						-- four unique pipe height setups for easy 
 						if(d_state = 0) then 
@@ -630,8 +627,6 @@ begin
 						  d_state := 0;								
 						end if;
 					end if;
-				end if;
-
 			elsif (game_mode = MODE_GAME and difficulty = 1) then
 				--p_speed := 3;
 				-- four new pipe setups for medium, plus previous setups from easy (8 total)
@@ -698,7 +693,9 @@ begin
 			else 
 				d_state := d_state;
 			end if;
-			debug_print0 <= d_state;
+		else
+		d_state := d_state;
+	end if;
 			
 			if (pb_0 = '1' or game_flag = '1') then
 				if (game_mode = MODE_TITLE) then
