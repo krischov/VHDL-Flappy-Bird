@@ -186,7 +186,7 @@ begin
 	str2text(tvec_mode_title, 9, 3, 8, 8, "0011", "0100", "1010", "Bird");
 	str2text(tvec_mode_title, 40, 8, 2, 2, "0011", "0100", "1010", "Created and Developed by");
 	str2text(tvec_mode_title, 42, 10, 2, 2, "0011", "0100", "1010", "The Modelsim Mobsters");
-	str2text(tvec_mode_title, 50, 16, 1, 1, "0011", "0100", "1010", "Based on the concept of flappybird.io");
+	str2text(tvec_mode_title, 44, 23, 1, 1, "0011", "0100", "1010", "Based on the concept of flappybird.io");
 	
 	
 	-- =================
