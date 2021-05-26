@@ -364,12 +364,14 @@ begin
 		if (rising_edge(v_sync)) then
 
 		
-			if (health_flag = '1' and game_mode = MODE_GAME) then
+			if (health_flag = '1') then
 				ticks := ticks + 1;
 				if (ticks = 5) then
-					health <= health - 1;
-					hearts(health - 1).visible <= FALSE;
-					bird(0).visible <= FALSE;
+					if (game_mode = MODE_GAME) then
+						health <= health - 1;
+						hearts(health - 1).visible <= FALSE;
+						bird(0).visible <= FALSE;
+					end if;
 				elsif (ticks = 10) then
 					bird(0).visible <= TRUE;
 				elsif (ticks = 15) then
